@@ -24,7 +24,7 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am an undergraduate student at the University of Costa Rica (UCR) pursuing concurrent B.A. degrees in Economics and Mathematics. My primary research interests include Monetary Economics, Applied Macroeconomics, and International Economics. I am currently working as a research assistant, mentored by Dr. Jose P. Vasquez and Dr. Isabela Manelici of the London School of Economics and Political Science (LSE). 
+I am an undergraduate student at the University of Costa Rica (UCR) pursuing concurrent B.A. degrees in Economics and Mathematics. My primary research interests include Macroeconomics and International Economics. I am currently working as a research assistant, mentored by Dr. Jose P. Vasquez and Dr. Isabela Manelici of the London School of Economics and Political Science (LSE). 
 
 In line with my current research interests, I am particularly engaged in a project analyzing "Inflationary Convergence in Costa Rica" alongside Alberth Vargas Miranda (UCR). In this work, we are implementing a state-of-the-art state-space model that integrates both realized inflation data and long-run inflation expectations. The goal is to recover the underlying inflationary trend within Costa Rica to empirically assess the Central Bank's compliance with its 3% inflation target. Our preliminary estimates are significant, revealing a persistent inflationary trend that has remained consistently below the target. This finding suggests the potential presence of an excessively contractionary monetary stance. 
 
