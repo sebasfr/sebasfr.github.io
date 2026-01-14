@@ -16,6 +16,13 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
+        },{id: "nav-research",
+          title: "research",
+          description: "A collection of my research and writing.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/research/";
+          },
         },{id: "post-a-post-with-plotly-js",
         
           title: "a post with plotly.js",
@@ -384,16 +391,13 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
-          description: "",
-          section: "News",},{id: "news-a-long-announcement-with-details",
-          title: 'A long announcement with details',
+            },},{id: "news-launching-my-personal-academic-website",
+          title: 'Launching my personal academic website',
           description: "",
           section: "News",handler: () => {
-              window.location.href = "/news/announcement_2/";
-            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
-          title: 'A simple inline announcement with Markdown emoji! :sparkles: :smile:',
+              window.location.href = "/news/2026-01-12-welcome/";
+            },},{id: "news-new-working-paper-out-the-gap-between-mandate-and-execution-an-evaluation-of-the-inflation-target-in-costa-rica-finds-empirical-evidence-supporting-the-existence-of-a-contractionary-bias-in-costa-rica-s-monetary-policy-read-it-on-my-research-page",
+          title: 'New working paper out! 📄 “The Gap Between Mandate and Execution: An Evaluation...',
           description: "",
           section: "News",},{id: "projects-project-1",
           title: 'project 1',
