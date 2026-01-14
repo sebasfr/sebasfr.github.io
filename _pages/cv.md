@@ -9,7 +9,7 @@ layout: cv
 permalink: /cv/
 title: cv
 nav: true
-nav_order: 5
+nav_order: 2
 cv_pdf: SebastianFernandezRivera_EN.pdf # you can also use external links here
 description: Here you can see the key takeaways from my CV. You can also download a PDF version.
 toc:

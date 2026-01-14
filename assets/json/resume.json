@@ -3,7 +3,6 @@
     "name": "Sebastián Fernández Rivera",
     "image": "assets/img/prof_pic_1.jpg",
     "email": "sebastian.fernandezrivera24@gmail.com",
-    "phone": "+(506) 8730-3185",
     "url": "https://sebasfr.github.io/",
     "summary": "Advanced undergraduate student and research assistant at LSE.",
     "location": {
@@ -71,26 +70,33 @@
     }
   ],
     "projects": [
+      {
+      "name": "The Gap Between Mandate and Execution: An Evaluation of the Inflation Target in Costa Rica",
+      "summary": "This paper addresses recent concerns about a possible contractionary bias in the policy execution of the Central Bank of Costa Rica (BCCR). I implement three empirical methodologies to measure the implicit long-run expectations anchor, the long-run inflationary trend, and to test for possible asymmetries in the policy response of the BCCR. The results show that the implicit anchor and the long-run inflationary trend are below the official 3% target, while there is statistically significant evidence of an asymmetric policy rule, characterized by a more aggressive reaction to positive inflation deviations relative to negative ones.",
+      "startDate": "2026",
+      "endDate": "",
+      "url": ""
+    },
+    
     {
-      "name": "Inflationary Convergence in Costa Rica: An Empirical Evaluation of the Inflation",
+      "name": "Trend Inflation Estimation Using Unobserved Components",
       "summary": "Co-authored with Alberth Vargas Miranda (UCR). We implement a state-of-the-art state-space model that fuses realized inflation and long-run inflation expectations to recover the underlying inflationary trend in Costa Rica in order to evaluate the Central Bank's compliance with the target value of 3%. Our estimates reveal a trend that has been consistently below the target, suggesting the presence of an excessively contractionary monetary stance.",
       "startDate": "2025",
       "endDate": "",
-      "url": "https://example.com"
+      "url": ""
     },
     {
       "name": "Reserve Requirements and Deposits: Evidence From Financial Microdata",
       "summary": "Co-authored with Jonathan Garita (Central Bank of Costa Rica and UCR). This study seeks to analyze the effects of Costa Rica’s June 2019 reduction and August 2022 reinstatement of domestic-currency reserve requirements on sight and term deposits. We construct a comprehensive anonymized dataset from administrative microdata spanning from 2013 to 2024, which comprises the universe of loan and deposit-level records (of both domestic currency and USD) within the supervised financial system. The next step is to choose an adequate empirical specification to exploit the granularity of the data.",
       "startDate": "2025",
-      "endDate": "",
-      "url": "https://example.com"
+      "endDate": ""
     },
     {
       "name": "Supply Shocks, Monetary Policy and Foreign Investment: The Costa Rican Case",
       "summary": "Awarded Essay at the Latin American Reserve Fund Research Contest. I investigate the implications of global supply disruptions for Latin American economies, with a particular focus on the Costa Rican case. I argue that the interplay between foreign investment attraction strategies, nearshoring, and monetary policy can collectively account for the country’s atypical display of accelerated growth and deflation shortly after a supply shock. For such purposes, I adopt a mixed framework by combining a descriptive analysis of macroeconomic indicators and an endogenous New Keynesian Growth Model to reconcile the apparent disconnect between standard business cycles literature and the empirical findings.",
       "startDate": "2024",
       "endDate": "",
-      "url": "https://example.com"
+      "url": ""
     }
   ],
   "awards": [
