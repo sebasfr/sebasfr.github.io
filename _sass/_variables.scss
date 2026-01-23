@@ -37,6 +37,216 @@ $black-color: #000000 !default;
 $code-bg-color-light: rgba($purple-color, 0.05);
 $code-bg-color-dark: #2c3237 !default;
 
+/* ==========================================================================
+   THEME PALETTE DEFINITIONS
+   ========================================================================== */
+
+/* --- THEME 1: THE ECONOMETRICIAN (Teal/Cyan) ---
+   UX Goal: High tech, clean, data-focused. High legibility for code. */
+
+// LIGHT MODE
+$econometrician-light-bg:                   #d5e4eb;  /* Economist Blue-Grey */
+$econometrician-light-code-bg:              #c7d7e0;  /* Slightly darker Blue-Grey */
+$econometrician-light-text:                 #2d2d2d;  /* Charcoal */
+$econometrician-light-text-light:           #595959;  /* Dark Grey */
+$econometrician-light-theme:                #e3120b;  /* Economist Red */
+$econometrician-light-hover:                #b30e08;  /* Deep Red */
+$econometrician-light-hover-text:           #ffffff;
+$econometrician-light-footer-bg:            #cddce3;  /* Muted Blue-Grey */
+$econometrician-light-footer-text:          #4a4a4a;
+$econometrician-light-footer-link:          #e3120b;
+$econometrician-light-distill:              #595959;
+$econometrician-light-divider:              rgba(45, 45, 45, 0.1); /* White grid equivalent */
+$econometrician-light-card-bg:              #ffffff;
+$econometrician-light-highlight:            #006ba2;  /* Economist Blue (secondary) */
+$econometrician-light-back-to-top:          #2d2d2d;
+$econometrician-light-newsletter-bg:        #cddce3;
+$econometrician-light-newsletter-text:      #2d2d2d;
+
+// DARK MODE
+$econometrician-dark-bg:                    #0f161e;  /* Deep Navy-Black */
+$econometrician-dark-code-bg:               #1a2430;  /* Dark Slate */
+$econometrician-dark-text:                  #e0e6eb;  /* Off-white */
+$econometrician-dark-text-light:            #909aa4;  /* Muted Blue-Grey */
+$econometrician-dark-theme:                 #ff4d46;  /* Bright Red */
+$econometrician-dark-hover:                 #ff8a85;  /* Soft Red */
+$econometrician-dark-hover-text:            #0f161e;
+$econometrician-dark-footer-bg:             #1a2430;  /* Dark Slate */
+$econometrician-dark-footer-text:           #909aa4;
+$econometrician-dark-footer-link:           #e0e6eb;
+$econometrician-dark-distill:               #909aa4;
+$econometrician-dark-divider:               rgba(224, 230, 235, 0.1);
+$econometrician-dark-card-bg:               #1a2430;
+$econometrician-dark-highlight:             #3399cc;  /* Bright Blue */
+$econometrician-dark-back-to-top:           #e0e6eb;
+$econometrician-dark-newsletter-bg:         #1a2430;
+$econometrician-dark-newsletter-text:       #e0e6eb;
+
+/* --- THEME 2: THE JOURNAL (Monochrome) ---
+   UX Goal: Print-like, serif-friendly, maximum focus on content. */
+
+// LIGHT MODE
+$journal-light-bg:                   #ffffff;  /* Pure White */
+$journal-light-code-bg:              #f5f5f5;  /* Light Grey */
+$journal-light-text:                 #000000;  /* Pure Black */
+$journal-light-text-light:           #444444;  /* Dark Grey */
+$journal-light-theme:                #000000;  /* Black (Monochrome theme) */
+$journal-light-hover:                #333333;  /* Charcoal */
+$journal-light-hover-text:           #ffffff;
+$journal-light-footer-bg:            #f9f9f9;  /* Off-White */
+$journal-light-footer-text:          #444444;
+$journal-light-footer-link:          #000000;
+$journal-light-distill:              #444444;
+$journal-light-divider:              rgba(0, 0, 0, 0.1);
+$journal-light-card-bg:              #ffffff;
+$journal-light-highlight:            #595959;  /* Mid-Grey */
+$journal-light-back-to-top:          #000000;
+$journal-light-newsletter-bg:        #f9f9f9;
+$journal-light-newsletter-text:      #000000;
+
+// DARK MODE
+$journal-dark-bg:                    #121212;  /* Standard Dark Reader BG */
+$journal-dark-code-bg:               #1e1e1e;  /* Slightly lighter grey */
+$journal-dark-text:                  #e0e0e0;  /* High readability grey */
+$journal-dark-text-light:            #a0a0a0;  /* Medium Grey */
+$journal-dark-theme:                 #ffffff;  /* White (Inverted Monochrome) */
+$journal-dark-hover:                 #cccccc;  /* Light Grey */
+$journal-dark-hover-text:            #121212;
+$journal-dark-footer-bg:             #1e1e1e;  /* Dark Grey */
+$journal-dark-footer-text:           #a0a0a0;
+$journal-dark-footer-link:           #ffffff;
+$journal-dark-distill:               #a0a0a0;
+$journal-dark-divider:               rgba(255, 255, 255, 0.1);
+$journal-dark-card-bg:               #1e1e1e;
+$journal-dark-highlight:             #cccccc;  /* Light Grey */
+$journal-dark-back-to-top:           #ffffff;
+$journal-dark-newsletter-bg:         #1e1e1e;
+$journal-dark-newsletter-text:       #ffffff;
+
+/* --- THEME 3: THE LEDGER (Warm/Financial) ---
+   UX Goal: Mimic high-end financial print journalism. Authoritative & comfortable. */
+
+// LIGHT MODE
+$ledger-light-bg:                 #fffbf5;  /* "FT Pink" / Warm Cream */
+$ledger-light-code-bg:            #f2eee6;  /* Slightly darker cream */
+$ledger-light-text:               #2d2a26;  /* Warm Charcoal */
+$ledger-light-text-light:         #5d5a56;  /* Warm Grey */
+$ledger-light-theme:              #9e2a2b;  /* Burnt Red/Orange (Oxblood) */
+$ledger-light-hover:              #540b0e;  /* Deep Maroon */
+$ledger-light-hover-text:         #fffbf5;  /* Cream text on hover */
+$ledger-light-footer-bg:          #e6e2dd;  /* Darker Paper */
+$ledger-light-footer-text:        #5d5a56;
+$ledger-light-footer-link:        #9e2a2b;
+$ledger-light-distill:            #5d5a56;
+$ledger-light-divider:            rgba(45, 42, 38, 0.1);
+$ledger-light-card-bg:            #ffffff;  /* Pure white cards pop against cream */
+$ledger-light-highlight:          #e09f3e;  /* Gold/Amber for highlighting */
+$ledger-light-back-to-top:        #2d2a26;
+$ledger-light-newsletter-bg:      #ffffff;
+$ledger-light-newsletter-text:    #2d2a26;
+
+// DARK MODE
+$ledger-dark-bg:                  #1c1917;  /* Warm Black (Espresso) */
+$ledger-dark-code-bg:             #292524;  /* Lighter Espresso */
+$ledger-dark-text:                #e7e5e4;  /* Stone White */
+$ledger-dark-text-light:          #a8a29e;  /* Warm Grey */
+$ledger-dark-theme:               #ff8a80;  /* Muted Coral/Salmon */
+$ledger-dark-hover:               #ffccbc;  /* Pale Peach */
+$ledger-dark-hover-text:          #1c1917;  /* Dark text */
+$ledger-dark-footer-bg:           #0c0a09;  /* Deepest Brown */
+$ledger-dark-footer-text:         #a8a29e;
+$ledger-dark-footer-link:         #e7e5e4;
+$ledger-dark-distill:             #a8a29e;
+$ledger-dark-divider:             rgba(231, 229, 228, 0.1);
+$ledger-dark-card-bg:             #292524;
+$ledger-dark-highlight:           #fb8c00;  /* Amber */
+$ledger-dark-back-to-top:         #e7e5e4;
+$ledger-dark-newsletter-bg:       #292524;
+$ledger-dark-newsletter-text:     #e7e5e4;
+
+
+/* --- THEME 4: THE ALGO (Indigo/Tech) ---
+   UX Goal: Modern FinTech/AI aesthetic. Sharp, precise, and digital-first. */
+
+// LIGHT MODE
+$algo-light-bg:                   #ffffff;  /* Stark White */
+$algo-light-code-bg:              #f3f4f6;  /* Cool Blue-Grey */
+$algo-light-text:                 #0f172a;  /* Slate 900 (Not black, deep blue-black) */
+$algo-light-text-light:           #64748b;  /* Slate 500 */
+$algo-light-theme:                #4f46e5;  /* Electric Indigo */
+$algo-light-hover:                #312e81;  /* Deep Indigo */
+$algo-light-hover-text:           #ffffff;
+$algo-light-footer-bg:            #f8fafc;  /* Very light slate */
+$algo-light-footer-text:          #475569;
+$algo-light-footer-link:          #4f46e5;
+$algo-light-distill:              #64748b;
+$algo-light-divider:              rgba(15, 23, 42, 0.05);
+$algo-light-card-bg:              #ffffff;
+$algo-light-highlight:            #06b6d4;  /* Cyan (for data highlights) */
+$algo-light-back-to-top:          #0f172a;
+$algo-light-newsletter-bg:        #f8fafc;
+$algo-light-newsletter-text:      #0f172a;
+
+// DARK MODE
+$algo-dark-bg:                    #020617;  /* Deepest Slate (Almost black) */
+$algo-dark-code-bg:               #1e293b;  /* Slate 800 */
+$algo-dark-text:                  #f8fafc;  /* Slate 50 */
+$algo-dark-text-light:            #94a3b8;  /* Slate 400 */
+$algo-dark-theme:                 #818cf8;  /* Soft Indigo */
+$algo-dark-hover:                 #c7d2fe;  /* Lavender */
+$algo-dark-hover-text:            #020617;
+$algo-dark-footer-bg:             #0f172a;  /* Slate 900 */
+$algo-dark-footer-text:           #94a3b8;
+$algo-dark-footer-link:           #f8fafc;
+$algo-dark-distill:               #94a3b8;
+$algo-dark-divider:               rgba(248, 250, 252, 0.1);
+$algo-dark-card-bg:               #1e293b;
+$algo-dark-highlight:             #22d3ee;  /* Bright Cyan */
+$algo-dark-back-to-top:           #f8fafc;
+$algo-dark-newsletter-bg:         #1e293b;
+$algo-dark-newsletter-text:       #f8fafc;
+
+
+/* --- THEME 5: THE VINTAGE (Beige/Brown) ---*/
+
+// LIGHT MODE
+$vintage-light-bg:                   #fdfbf7;  /* Warm Cream/Beige */
+$vintage-light-code-bg:              #f3f0e6;  /* Darker Beige/Tan */
+$vintage-light-text:                 #433422;  /* Deep Espresso Brown */
+$vintage-light-text-light:           #8c7866;  /* Muted Mocha */
+$vintage-light-theme:                #c2410c;  /* Burnt Orange / Terra Cotta */
+$vintage-light-hover:                #9a3412;  /* Deep Rust */
+$vintage-light-hover-text:           #ffffff;
+$vintage-light-footer-bg:            #f3f0e6;  /* Tan */
+$vintage-light-footer-text:          #786452;  /* Medium Brown */
+$vintage-light-footer-link:          #c2410c;
+$vintage-light-distill:              #8c7866;
+$vintage-light-divider:              rgba(67, 52, 34, 0.08);
+$vintage-light-card-bg:              #ffffff;
+$vintage-light-highlight:            #d97706;  /* Amber/Gold */
+$vintage-light-back-to-top:          #433422;
+$vintage-light-newsletter-bg:        #f3f0e6;
+$vintage-light-newsletter-text:      #433422;
+
+// DARK MODE
+$vintage-dark-bg:                    #1c1917;  /* Warm Black / Dark Espresso */
+$vintage-dark-code-bg:               #292524;  /* Dark Coffee */
+$vintage-dark-text:                  #e7e5e4;  /* Warm Grey / Stone */
+$vintage-dark-text-light:            #a8a29e;  /* Stone Grey */
+$vintage-dark-theme:                 #fb923c;  /* Bright Muted Orange */
+$vintage-dark-hover:                 #fed7aa;  /* Pale Orange */
+$vintage-dark-hover-text:            #1c1917;
+$vintage-dark-footer-bg:             #292524;
+$vintage-dark-footer-text:           #a8a29e;
+$vintage-dark-footer-link:           #e7e5e4;
+$vintage-dark-distill:               #a8a29e;
+$vintage-dark-divider:               rgba(231, 229, 228, 0.1);
+$vintage-dark-card-bg:               #292524;
+$vintage-dark-highlight:             #fcd34d;  /* Muted Gold */
+$vintage-dark-back-to-top:           #e7e5e4;
+$vintage-dark-newsletter-bg:         #292524;
+$vintage-dark-newsletter-text:       #e7e5e4;
+
 // Font awesome location
 $fa-font-path: "../webfonts";
 
