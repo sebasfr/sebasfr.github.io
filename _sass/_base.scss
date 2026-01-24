@@ -3,21 +3,42 @@
  ******************************************************************************/
 
 // Typography
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-em,
-div,
-li,
-span,
-strong {
-  color: var(--global-text-color);
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+// 1. Set Global Body Font (Lora)
+body {
   font-family: 'Playfair Display', serif;
+}
+
+// 2. Set "Display" Elements to Playfair (Headers + Bold)
+h1, h2,  // Standard Markdown Headers (#, ##)                  
+.strong_text {              // Custom class for manual use
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+// 3. Bold elements
+h3, h4, h5, h6,
+.title,                  // The main page title class in al-folio     
+strong,                  // Markdown Bold text (**text**)
+b, {              
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+}
+
+// 4. BADGES & TAGS: Lora
+.badge, 
+.post-tags a, 
+.tag-category-list ul li {
+  font-family: 'Lora', serif;
+  font-weight: 400;
+}
+
+// 4. Apply Text Colors (Standard logic)
+p,
+h1, h2, h3, h4, h5, h6,
+em, div, li, span, strong {
+  color: var(--global-text-color);
 }
 
 hr {
