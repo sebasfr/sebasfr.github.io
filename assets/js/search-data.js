@@ -397,7 +397,7 @@ ninja.data = [{
           section: "News",handler: () => {
               window.location.href = "/news/2026-01-12-welcome/";
             },},{id: "news-new-working-paper-out-the-gap-between-mandate-and-execution-an-evaluation-of-the-inflation-target-in-costa-rica-finds-empirical-evidence-supporting-the-existence-of-a-contractionary-bias-in-costa-rica-s-monetary-policy-read-it-on-my-research-page",
-          title: 'New working paper out! 📄 “The Gap Between Mandate and Execution: An Evaluation...',
+          title: 'New working paper out! “The Gap Between Mandate and Execution: An Evaluation of...',
           description: "",
           section: "News",},{id: "projects-project-1",
           title: 'project 1',
