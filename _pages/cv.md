@@ -11,7 +11,7 @@ title: cv
 nav: true
 nav_order: 2
 cv_pdf: SebastianFernandezRivera_EN.pdf # you can also use external links here
-description: Here you can see the key takeaways from my CV. You can also download a PDF version.
+description: Key takeaways from my CV. A PDF version is also available.
 toc:
   sidebar: left
 ---

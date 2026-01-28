@@ -54,7 +54,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
 <br>
 
 <h3>Non-Academic Writing</h3>
-<p>Here is a selection of my economic commentary, opinion pieces, and fact-checking work.</p>
+<p>Here is a selection of my economic commentary, opinion pieces, and fact-checking work. Mostly in Spanish.</p>
 
 
 <div class="publications">
@@ -63,7 +63,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
     <li>
       <div class="row">
         <div class="col-sm-2 abbr">
-          <abbr class="badge fact-check">Fact Check</abbr>
+          <abbr class="badge fact-check">Verificación</abbr>
         </div>
         <div class="col-sm-9">
           <div class="title">
@@ -72,12 +72,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
             </a>
           </div>
           <div class="author">
-            Published in <em>Doble Check (Radios UCR)</em>
+            Publicado en <em>Doble Check (Radios UCR)</em>
           </div>
           <div class="periodical">
-            Nov 21, 2025 &ndash; Co-authored with David Bolaños.
+            21 de noviembre de 2025 &ndash; Coautoría con David Bolaños.
             <br>
-            Data analysis showing how homicides doubled in over 100 districts, countering recent political claims.
+            Análisis de datos que muestra cómo los homicidios se duplicaron en más de 100 distritos, contradiciendo afirmaciones políticas recientes.
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
 
 <details>
   <summary class="custom-btn" style="cursor: pointer; padding: 12px 18px; background-color: var(--global-code-bg-color); color: var(--global-text-color); border-radius: 6px; display: inline-block; font-weight: 500; border: 1px solid var(--global-tip-bg-color); transition: all 0.2s ease-in-out;">
-    <span class="arrow">▶</span> &nbsp; View all articles
+    <span class="arrow">▶</span> &nbsp; Ver todos los artículos
   </summary>
 
   <div class="publications" style="margin-top: 20px;">
@@ -98,7 +98,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-             <abbr class="badge fact-check">Fact Check</abbr>
+             <abbr class="badge fact-check">Verificación</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -107,12 +107,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              July 24, 2025 &ndash; Co-authored with Darío Chinchilla.
+              24 de julio de 2025 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              Using CPI data to show that rice prices rose 8.2% despite executive claims of a 33% drop.
+              Usamos de datos del IPC para demostrar que el precio del arroz subió un 8,2%, pese a las afirmaciones del Ejecutivo de una caída del 33%.
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-            <abbr class="badge analysis">Analysis</abbr>
+            <abbr class="badge analysis">Análisis</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -130,12 +130,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              July 2, 2025 &ndash; Co-authored with Darío Chinchilla.
+              2 de julio de 2025 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              Validating that inflation hits lower-income households harder, while clarifying that most price spikes occurred in 2022-2023.
+              Confirmación de que la inflación golpea más fuerte a los hogares de menores ingresos, aclarando que la mayoría de los picos de precios ocurrieron entre 2022 y 2023.
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-            <abbr class="badge fact-check">Fact Check</abbr>
+            <abbr class="badge fact-check">Verificación</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -153,12 +153,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              Feb 6, 2025 &ndash; Co-authored with Darío Chinchilla.
+              6 de febrero de 2025 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              Clarifying that housing bond allocation in Limón (19%) was lower than the 25% claimed by the minister, and historically stable above 16%.
+              Aclaración de que la asignación de bonos de vivienda en Limón (19%) fue menor al 25% afirmado por la ministra, manteniéndose históricamente estable por encima del 16%.
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-            <abbr class="badge fact-check">Fact Check</abbr>
+            <abbr class="badge fact-check">Verificación</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -176,12 +176,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              Feb 6, 2025 &ndash; Co-authored with Darío Chinchilla.
+              6 de febrero de 2025 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              Analysis showing that despite a high 2025 projection, the administration's cumulative housing investment is the lowest in the 21st century.
+              Análisis que demuestra que, pese a una alta proyección para 2025, la inversión acumulada en vivienda de esta administración es la más baja del siglo XXI.
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-            <abbr class="badge fact-check">Fact Check</abbr>
+            <abbr class="badge fact-check">Verificación</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -199,12 +199,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              Jan 28, 2025 &ndash; Co-authored with Darío Chinchilla.
+              28 de enero de 2025 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              Explaining the economic distinction between price stability (low inflation) and relative price levels (cost of living) to debunk government claims.
+              Explicación de la distinción económica entre estabilidad de precios (baja inflación) y niveles relativos de precios (costo de vida) para desmentir afirmaciones gubernamentales.
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ My research interests covers the fields of **Macroeconomics and International Ec
       <li>
         <div class="row">
           <div class="col-sm-2 abbr">
-            <abbr class="badge fact-check">Fact Check</abbr>
+            <abbr class="badge fact-check">Verificación</abbr>
           </div>
           <div class="col-sm-9">
             <div class="title">
@@ -222,12 +222,12 @@ My research interests covers the fields of **Macroeconomics and International Ec
               </a>
             </div>
             <div class="author">
-              Published in <em>Doble Check (Radios UCR)</em>
+              Publicado en <em>Doble Check (Radios UCR)</em>
             </div>
             <div class="periodical">
-              Dec 11, 2024 &ndash; Co-authored with Darío Chinchilla.
+              11 de diciembre de 2024 &ndash; Coautoría con Darío Chinchilla.
               <br>
-              A statistical analysis explaining why methodological changes in 2010 make historical unemployment comparisons impossible.
+              Análisis estadístico que explica por qué los cambios metodológicos de 2010 hacen imposibles las comparaciones históricas de desempleo.
             </div>
           </div>
         </div>
