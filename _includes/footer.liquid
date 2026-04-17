@@ -1,30 +1,34 @@
-{% capture footer_contents %}
-  &copy; Copyright {{ site.time | date: '%Y' }}
-  {{ site.first_name }}
-  {{ site.middle_name }}
-  {{ site.last_name }}. {{ site.footer_text }}
-  {% if site.impressum_path %}
-    <a href="{{ site.url }}{{ site.baseurl }}{{ site.impressum_path }}">Impressum</a>.
-  {% endif %}
-  {% if site.last_updated %}
-    Last updated: {{ 'now' | date: '%B %d, %Y' }}.
-  {% endif %}
-{% endcapture %}
+{%- comment -%}
+  Editorial footer: secondary nav (demoted pages) + colophon. Fraunces + mono.
+{%- endcomment -%}
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+    <nav class="footer-secondary-nav" aria-label="Secondary">
+      <p class="footer-secondary-label mono">ELSEWHERE</p>
+      <ul class="footer-secondary-list">
+        <li><a href="{{ '/news/' | relative_url }}" class="u-underline">news</a></li>
+        <li><a href="{{ '/books/' | relative_url }}" class="u-underline">books</a></li>
+        <li><a href="{{ '/profiles/' | relative_url }}" class="u-underline">profiles</a></li>
+        <li><a href="{{ '/repositories/' | relative_url }}" class="u-underline">repositories</a></li>
+      </ul>
+    </nav>
 
-{% if site.footer_fixed %}
-  <footer class="fixed-bottom" role="contentinfo">
-    <div class="container mt-0">
-      {{ footer_contents }}
+    <div class="footer-contact">
+      <p class="footer-secondary-label mono">CONTACT</p>
+      {% include social.liquid %}
     </div>
-  </footer>
-{% else %}
-  <footer class="sticky-bottom mt-5" role="contentinfo">
-    {% if site.newsletter.enabled %}
-      {% include newsletter.liquid %}
-    {% endif %}
 
-    <div class="container">
-      {{ footer_contents }}
-    </div>
-  </footer>
-{% endif %}
+    <p class="footer-colophon mono">
+      Set in Fraunces &amp; JetBrains Mono.
+      Last updated {{ site.time | date: "%B %Y" }}.
+      &copy; {{ site.time | date: '%Y' }} {{ site.first_name }} {{ site.last_name }}.
+      {% if site.impressum_path %}
+        <a href="{{ site.url }}{{ site.baseurl }}{{ site.impressum_path }}">Impressum</a>.
+      {% endif %}
+    </p>
+  </div>
+
+  {% if site.newsletter.enabled %}
+    {% include newsletter.liquid %}
+  {% endif %}
+</footer>

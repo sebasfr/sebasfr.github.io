@@ -1,0 +1,267 @@
+/*******************************************************************************
+ * Research page — broadsheet-essay treatment.
+ * Restyles jekyll-scholar's bib.liquid output via CSS only (no template fork).
+ ******************************************************************************/
+
+.research-page {
+  .page-head-dek {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--type-dek);
+    color: var(--global-text-color-light);
+    max-width: var(--measure);
+    margin: 0.5rem 0 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Section rules shared between publications and projects
+// -----------------------------------------------------------------------------
+.section-rule {
+  border: 0;
+  border-top: 1px solid var(--rule-color);
+  margin: clamp(3rem, 5vw, 5rem) 0 clamp(1.25rem, 2vw, 2rem);
+  opacity: 0.65;
+}
+.section-supertitle {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+  margin: 0 0 1.5rem;
+}
+
+// -----------------------------------------------------------------------------
+// jekyll-scholar reskin — scoped to .publications ol.bibliography
+// (bib.liquid emits .row / .col-sm-8 / .col-sm-2; we neutralize and restyle)
+// -----------------------------------------------------------------------------
+.research-body .publications {
+  margin: 0;
+}
+
+.research-body .publications ol.bibliography {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  > li {
+    padding: clamp(1.5rem, 2.5vw, 2.5rem) 0;
+    border-bottom: 1px solid var(--global-divider-color);
+    &:last-child { border-bottom: 0; }
+  }
+
+  // Kill Bootstrap row behavior; we are not using the 2/8 grid.
+  > li > .row {
+    display: block;
+    margin: 0;
+  }
+  > li > .row > .col-sm-2,
+  > li > .row > .col-sm-8,
+  > li > .row > .col-sm-9,
+  > li > .row > .col-sm-10 {
+    padding: 0;
+    flex: initial;
+    max-width: none;
+    width: auto;
+  }
+
+  // Optional preview thumbnail (rare; when present, float it right on desktop).
+  .col-sm-2.abbr {
+    float: none;
+    margin: 0 0 0.75rem;
+
+    .preview { max-width: 160px; }
+    .badge {
+      display: inline-block;
+      width: auto !important;
+      background: transparent !important;
+      color: var(--global-theme-color) !important;
+      border: 1px solid var(--global-theme-color);
+      padding: 0.2rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: var(--type-meta);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 0;
+    }
+  }
+
+  .title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 600;
+    font-variation-settings: "opsz" 72, "SOFT" 50;
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.4rem);
+    line-height: 1.15;
+    color: var(--global-text-color);
+    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+  }
+
+  .author {
+    font-family: var(--font-serif);
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    font-size: 1rem;
+    color: var(--global-text-color-light);
+    margin: 0 0 0.35rem;
+
+    em { color: var(--global-theme-color); font-style: italic; }
+    a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+    a:hover { border-bottom-color: var(--global-theme-color); color: var(--global-theme-color); }
+  }
+
+  .periodical {
+    font-family: var(--font-mono);
+    font-size: var(--type-meta);
+    letter-spacing: 0.06em;
+    color: var(--mono-label-color);
+    margin: 0 0 0.35rem;
+
+    em { color: var(--mono-label-color); font-style: italic; }
+  }
+
+  .links {
+    margin: 0.9rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+
+    .btn, a.btn {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: 1px solid var(--global-text-color);
+      color: var(--global-text-color);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 0;
+      padding: 0.35rem 0.75rem;
+      box-shadow: none !important;
+
+      &:hover,
+      &:focus-visible {
+        background: var(--global-theme-color);
+        border-color: var(--global-theme-color);
+        color: var(--global-hover-text-color);
+      }
+    }
+
+    .award {
+      background: var(--global-highlight-color);
+      border-color: var(--global-highlight-color);
+      color: #1c1917;
+      font-weight: 600;
+      &:hover { opacity: 0.9; }
+    }
+  }
+
+  .badges {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  // Abstract / BibTeX / Award collapsibles — follow al-folio's contract:
+  // .hidden starts collapsed (max-height: 0); common.js adds .open to expand.
+  // We restyle the open state only; the base .hidden rule lives in _base.scss.
+  .abstract.hidden,
+  .bibtex.hidden,
+  .award.hidden {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 200ms var(--motion-ease-out),
+                padding 200ms var(--motion-ease-out),
+                margin 200ms var(--motion-ease-out);
+    margin-top: 0;
+    padding: 0 1rem;
+    background: var(--global-code-bg-color);
+    border-left: 2px solid transparent;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .abstract.hidden.open,
+  .bibtex.hidden.open,
+  .award.hidden.open {
+    max-height: 200em;
+    margin-top: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-left-color: var(--global-theme-color);
+  }
+  .bibtex.hidden pre {
+    background: transparent;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Non-academic writing blocks (existing markup in publications.md)
+// -----------------------------------------------------------------------------
+.research-body .publications .badge.fact-check,
+.research-body .publications .badge.analysis {
+  color: #fdfbf7 !important;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 0;
+  padding: 0.25rem 0.6rem;
+}
+.research-body .publications .badge.fact-check {
+  background-color: var(--global-theme-color) !important;
+}
+.research-body .publications .badge.analysis {
+  background-color: #1c1917 !important;
+}
+
+// -----------------------------------------------------------------------------
+// Projects list
+// -----------------------------------------------------------------------------
+.research-projects {
+  margin-top: clamp(3rem, 5vw, 5rem);
+}
+.research-project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.research-project {
+  padding: clamp(1.25rem, 2vw, 2rem) 0;
+  border-bottom: 1px solid var(--global-divider-color);
+  &:last-child { border-bottom: 0; }
+}
+.research-project-meta {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.08em;
+  color: var(--mono-label-color);
+  margin: 0 0 0.35rem;
+}
+.research-project-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.8rem);
+  line-height: 1.2;
+  margin: 0;
+  a { color: inherit; }
+}
+.research-project-dek {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--global-text-color);
+  max-width: var(--measure);
+  margin: 0.5rem 0 0;
+}

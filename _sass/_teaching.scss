@@ -1,0 +1,67 @@
+/*******************************************************************************
+ * Teaching page — minimal hairline list. Uses the generic page layout.
+ * Page body may contain either a table (markdown) or an html list; we style
+ * both as an editorial hairline list.
+ ******************************************************************************/
+
+.post.brutalist-page .brutalist-article table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-serif);
+
+  th {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mono-label-color);
+    border-bottom: 1px solid var(--rule-color);
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    text-align: left;
+  }
+  td {
+    padding: 0.8rem 0.75rem 0.8rem 0;
+    border-bottom: 1px solid var(--global-divider-color);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: 0; }
+}
+
+/* Teaching-specific hairline rows when using a <ul class="teaching-list"> */
+.teaching-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.teaching-row {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--global-divider-color);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+}
+@media (min-width: 600px) {
+  .teaching-row {
+    grid-template-columns: 110px 1fr 180px;
+    gap: 1.25rem;
+    align-items: baseline;
+  }
+}
+.teaching-term {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--mono-label-color);
+}
+.teaching-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+}
+.teaching-role {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mono-label-color);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

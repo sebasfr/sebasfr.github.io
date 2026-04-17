@@ -1,0 +1,176 @@
+/*******************************************************************************
+ * Post page — full editorial: drop cap, mono supertitle, marginal footnotes.
+ ******************************************************************************/
+
+.post-article {
+  padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 2.5rem);
+  max-width: min(100%, 70rem);
+  margin: 0 auto;
+}
+
+.post-head {
+  margin-bottom: clamp(2rem, 3vw, 3rem);
+  max-width: var(--measure);
+}
+.post-head .post-meta {
+  color: var(--mono-label-color);
+  font-size: var(--type-meta);
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+}
+.post-article-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.5rem;
+  color: var(--global-text-color);
+}
+.post-article-dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--type-dek);
+  color: var(--global-text-color-light);
+  margin: 0;
+  line-height: 1.45;
+  max-width: var(--measure);
+}
+
+// -----------------------------------------------------------------------------
+// Grid: body + margin column. On mobile collapses to single column.
+// -----------------------------------------------------------------------------
+.post-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+@media (min-width: 900px) {
+  .post-grid {
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+    column-gap: clamp(1.5rem, 3vw, 3rem);
+  }
+}
+
+.post-body {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--global-text-color);
+  max-width: var(--measure);
+}
+.post-body p { margin: 0 0 1.2rem; }
+
+// Drop cap only on the first non-image paragraph.
+.post-body > p:first-of-type::first-letter {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-size: 5.5em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.12em 0.14em 0 0;
+  color: var(--global-theme-color);
+  font-weight: 700;
+}
+// Opt-out marker: add `.no-drop-cap` to the <article> or first <p>.
+.post-body.no-drop-cap > p:first-of-type::first-letter,
+.post-body > p.no-drop-cap::first-letter {
+  all: unset;
+}
+
+.post-body h2,
+.post-body h3 {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  letter-spacing: -0.01em;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+.post-body h2 { font-size: var(--type-h2); font-weight: 700; }
+.post-body h3 { font-size: 1.4rem; font-weight: 600; }
+
+.post-body blockquote {
+  border-left: 3px solid var(--global-theme-color);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  margin: 1.5rem 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--global-text-color);
+}
+.post-body pre,
+.post-body code {
+  font-family: var(--font-mono);
+}
+
+// -----------------------------------------------------------------------------
+// Marginal footnotes (desktop >=900px only)
+// Kramdown emits: <sup id="fnref:N"><a href="#fn:N">N</a></sup>
+// and a trailing: <div class="footnotes"><ol><li id="fn:N">...</li></ol></div>
+// On desktop, footnotes.js clones text (without ids) into <aside.margin-note>
+// elements inside .post-margin, positioned next to their ref. The canonical
+// list is hidden visually but remains in DOM for assistive tech.
+// -----------------------------------------------------------------------------
+.post-margin {
+  position: relative;
+  display: none; // injected margin-notes show only on >=900px
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .post-margin { display: block; }
+}
+// The <aside class="post-margin"> element itself is presentational (empty
+// container); the cloned margin-notes inside carry role="doc-footnote".
+
+.margin-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--footnote-rail-color);
+  padding: 0.25rem 0 0.25rem 0.9rem;
+  border-left: 1px solid var(--rail-border-color);
+}
+.margin-note .margin-note-index {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--global-theme-color);
+  letter-spacing: 0.08em;
+  margin-right: 0.4rem;
+  vertical-align: top;
+}
+.margin-note p { margin: 0; }
+
+// On desktop, hide the canonical footnote list entirely — the visually
+// positioned margin-notes ARE the canonical footnotes for both sighted and
+// assistive-tech users (margin-notes drop their aria-hidden on desktop).
+// On mobile, the canonical list is shown inline as usual; margin-notes
+// are not injected.
+@media (min-width: 900px) {
+  .post-body .footnotes {
+    display: none;
+  }
+}
+
+// Footnote superscript refs stay inline in both breakpoints.
+.post-body sup[id^="fnref"] a {
+  color: var(--global-theme-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+}
+.post-body sup[id^="fnref"] a:hover {
+  text-decoration: underline;
+}
+
+// -----------------------------------------------------------------------------
+// Post references section
+// -----------------------------------------------------------------------------
+.post-references {
+  margin-top: clamp(2.5rem, 4vw, 4rem);
+}

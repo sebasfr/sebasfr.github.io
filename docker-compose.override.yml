@@ -1,0 +1,11 @@
+# Worktree-only override: bypasses bin/entry_point.sh which shells out to git.
+# In a Git worktree, `.git` is a text pointer to a host-absolute path that
+# Linux cannot resolve, so those git calls blow up the container. Since
+# Gemfile.lock is already in .gitignore, the entry point's Gemfile.lock
+# management logic is unnecessary — we just run Jekyll directly.
+services:
+  jekyll:
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - "bundle install && bundle exec jekyll serve --watch --port=8080 --host=0.0.0.0 --livereload --verbose --trace --force_polling"

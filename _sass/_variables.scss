@@ -41,7 +41,14 @@ $code-bg-color-dark: #2c3237 !default;
    THEME PALETTE DEFINITIONS
    ========================================================================== */
 
-/* --- THEME 1: THE ECONOMETRICIAN (Teal/Cyan) ---
+/* -----------------------------------------------------------------------------
+   INACTIVE PALETTES — PRESERVED FOR REVIVAL. DO NOT DELETE.
+   Only the VINTAGE palette (further down) is mapped to CSS custom properties
+   in _themes.scss. Econometrician / Journal / Ledger / Algo remain here as
+   reference for future theme swaps.
+   ----------------------------------------------------------------------------- */
+
+/* --- THEME 1: THE ECONOMETRICIAN (Teal/Cyan) — INACTIVE ---
    UX Goal: High tech, clean, data-focused. High legibility for code. */
 
 // LIGHT MODE
@@ -207,15 +214,18 @@ $algo-dark-newsletter-bg:         #1e293b;
 $algo-dark-newsletter-text:       #f8fafc;
 
 
-/* --- THEME 5: THE VINTAGE (Beige/Brown) ---*/
+/* --- THEME 5: THE VINTAGE (Sharpened) — ACTIVE ---
+   UX Goal: Neo-brutalist serif editorial. Cream paper + espresso body +
+   deep oxblood accent. Amber is reserved for data highlights only,
+   never for interaction (see .data-highlight utility in _base.scss). */
 
 // LIGHT MODE
 $vintage-light-bg:                   #fdfbf7;  /* Warm Cream/Beige */
 $vintage-light-code-bg:              #f3f0e6;  /* Darker Beige/Tan */
 $vintage-light-text:                 #433422;  /* Deep Espresso Brown */
 $vintage-light-text-light:           #8c7866;  /* Muted Mocha */
-$vintage-light-theme:                #c2410c;  /* Burnt Orange / Terra Cotta */
-$vintage-light-hover:                #9a3412;  /* Deep Rust */
+$vintage-light-theme:                #6b1410;  /* Deep Oxblood (sharpened; was #c2410c) */
+$vintage-light-hover:                #4a0e0c;  /* Darker Oxblood (sharpened; was #9a3412) */
 $vintage-light-hover-text:           #ffffff;
 $vintage-light-footer-bg:            #f3f0e6;  /* Tan */
 $vintage-light-footer-text:          #786452;  /* Medium Brown */
@@ -233,7 +243,7 @@ $vintage-dark-bg:                    #1c1917;  /* Warm Black / Dark Espresso */
 $vintage-dark-code-bg:               #292524;  /* Dark Coffee */
 $vintage-dark-text:                  #e7e5e4;  /* Warm Grey / Stone */
 $vintage-dark-text-light:            #a8a29e;  /* Stone Grey */
-$vintage-dark-theme:                 #fb923c;  /* Bright Muted Orange */
+$vintage-dark-theme:                 #f59e6b;  /* Sharpened Muted Orange (was #fb923c) */
 $vintage-dark-hover:                 #fed7aa;  /* Pale Orange */
 $vintage-dark-hover-text:            #1c1917;
 $vintage-dark-footer-bg:             #292524;

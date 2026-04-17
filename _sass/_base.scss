@@ -2,30 +2,49 @@
  * Styles for the base elements of the theme.
  ******************************************************************************/
 
-// Typography
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-// 1. Set Global Body Font 
+// Typography — Fraunces (self-hosted, see _fonts.scss) + JetBrains Mono (CSS2).
+// 1. Global body font
 body {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
 }
 
-// 2. Set "Display" Elements
-h1, h2, h3, h4, h5, 
-.title,                  // The main page title class in al-folio     
-strong,                  // Markdown Bold text (**text**)
-b, 
-.strong_text{              
-  font-family: 'Playfair Display', serif;
+// 2. Display elements — Fraunces with WONK axis for editorial personality.
+h1, h2, h3, h4, h5,
+.title,                  // al-folio main page title
+strong,                  // **bold** in markdown
+b,
+.strong_text {
+  font-family: var(--font-serif);
   font-weight: 700;
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
 }
 
-// 4. BADGES & TAGS:
-.badge, 
-.post-tags a, 
-.tag-category-list ul li {
-  font-family: 'Playfair Display SC', serif;
-  font-weight: 400;
+// 3. Small-caps utility (replaces Playfair Display SC).
+// Applied on badges and tag categories; uses Fraunces' font-variant.
+.badge,
+.post-tags a,
+.tag-category-list ul li,
+.small-caps {
+  font-family: var(--font-serif);
+  font-variant: small-caps;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   text-transform: none !important;
+}
+
+// 4. Monospace utility for metadata, supertitles, date gutters.
+.mono,
+.mono-link {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.01em;
+}
+
+// 5. Amber data-highlight utility. Only place amber is allowed.
+.data-highlight {
+  color: var(--global-highlight-color);
+  font-variation-settings: "opsz" 36, "WONK" 1;
+  font-weight: 600;
 }
 
 // 4. Apply Text Colors (Standard logic)

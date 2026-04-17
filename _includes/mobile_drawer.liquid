@@ -1,0 +1,36 @@
+{%- comment -%}
+  Off-canvas drawer. Visible <900px only. The #drawer-toggle button that
+  opens this <aside> lives in the mobile header (_includes/header.liquid).
+  Focus-trapped while open; closes on ESC.
+{%- endcomment -%}
+<aside id="mobile-drawer" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="drawer-inner">
+    <button type="button" id="drawer-close" class="drawer-close" aria-label="Close menu">×</button>
+    <nav aria-label="Primary (mobile)">
+      <ol class="drawer-list">
+        {%- assign items = "I,/,about|II,/research/,research|III,/cv/,cv|IV,/notes/,notes|V,/teaching/,teaching" | split: "|" -%}
+        {%- for raw in items -%}
+          {%- assign parts = raw | split: "," -%}
+          {%- assign numeral = parts[0] -%}
+          {%- assign href = parts[1] -%}
+          {%- assign label = parts[2] -%}
+          <li class="drawer-item">
+            <a href="{{ href | relative_url }}">
+              <span class="drawer-numeral" aria-hidden="true">{{ numeral }}.</span>
+              <span class="drawer-label">{{ label }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </nav>
+    <div class="drawer-secondary">
+      <p class="drawer-secondary-label mono">ELSEWHERE</p>
+      <ul class="drawer-secondary-list">
+        <li><a href="{{ '/news/' | relative_url }}">news</a></li>
+        <li><a href="{{ '/books/' | relative_url }}">books</a></li>
+        <li><a href="{{ '/profiles/' | relative_url }}">profiles</a></li>
+        <li><a href="{{ '/repositories/' | relative_url }}">repositories</a></li>
+      </ul>
+    </div>
+  </div>
+</aside>

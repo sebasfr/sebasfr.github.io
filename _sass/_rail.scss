@@ -1,0 +1,338 @@
+/*******************************************************************************
+ * Left sidebar rail (>=900px) + off-canvas mobile drawer (<900px).
+ ******************************************************************************/
+
+// -----------------------------------------------------------------------------
+// Rail (desktop)
+// -----------------------------------------------------------------------------
+.site-rail {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .site-rail {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--rail-width);
+    height: 100vh;
+    background-color: var(--rail-bg-color);
+    border-right: 1px solid var(--rail-border-color);
+    padding: clamp(1.25rem, 2vw, 2rem) 1.5rem;
+    z-index: 20;
+  }
+  .rail-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .rail-wordmark {
+    display: inline-flex;
+    text-decoration: none;
+    transition: transform var(--motion-duration-fast) var(--motion-ease-out),
+                opacity var(--motion-duration-fast) var(--motion-ease-out);
+  }
+  .rail-wordmark .sfr-logo {
+    width: 56px;
+    height: 56px;
+    display: block;
+  }
+  .rail-wordmark:hover .sfr-logo,
+  .rail-wordmark:focus-visible .sfr-logo {
+    transform: translateY(-1px);
+    opacity: 0.88;
+  }
+
+  .rail-list {
+    list-style: none;
+    padding: 0;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+  }
+  .rail-item {
+    margin: 0 0 0.5rem;
+  }
+  .rail-item a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.35rem 0;
+    text-decoration: none;
+    color: var(--global-text-color);
+    border-left: 2px solid transparent;
+    padding-left: 0.75rem;
+    margin-left: -0.75rem;
+    transition: border-color var(--motion-duration-fast) var(--motion-ease-out),
+                color var(--motion-duration-fast) var(--motion-ease-out);
+  }
+  .rail-item a:hover,
+  .rail-item a:focus-visible {
+    color: var(--global-theme-color);
+    border-left-color: var(--global-theme-color);
+  }
+  .rail-item.is-current a {
+    color: var(--global-theme-color);
+    border-left-color: var(--global-theme-color);
+  }
+  .rail-numeral {
+    font-family: var(--font-serif);
+    font-variation-settings: "opsz" 36, "WONK" 1;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--mono-label-color);
+    text-align: right;
+  }
+  .rail-item.is-current .rail-numeral,
+  .rail-item a:hover .rail-numeral {
+    color: var(--global-theme-color);
+  }
+  .rail-label {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+  }
+
+  .rail-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rail-border-color);
+  }
+  .rail-toggle {
+    background: none;
+    border: none;
+    padding: 0.25rem 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--mono-label-color);
+    font-family: var(--font-mono);
+  }
+  .rail-toggle:hover { color: var(--global-theme-color); }
+  .rail-meta {
+    color: var(--mono-label-color);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    margin: 0.75rem 0 0;
+    word-spacing: 0.2em;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Mobile drawer (<900px)
+// -----------------------------------------------------------------------------
+.drawer-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--rail-border-color);
+  cursor: pointer;
+  padding: 0 10px;
+}
+.drawer-toggle-bar {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--global-text-color);
+}
+
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--global-bg-color);
+  overflow-y: auto;
+}
+.mobile-drawer[hidden] { display: none; }
+
+.drawer-inner {
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.drawer-close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--global-text-color);
+  font-family: var(--font-serif);
+}
+
+.drawer-list {
+  list-style: none;
+  padding: 0;
+  margin: clamp(1.5rem, 5vw, 3rem) 0 0;
+}
+.drawer-item {
+  border-bottom: 1px solid var(--rail-border-color);
+}
+.drawer-item a {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.9rem 0;
+  text-decoration: none;
+  color: var(--global-text-color);
+}
+.drawer-item a:hover,
+.drawer-item a:focus-visible {
+  color: var(--global-theme-color);
+}
+.drawer-numeral {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 48, "WONK" 1;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--mono-label-color);
+}
+.drawer-label {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.drawer-secondary {
+  margin-top: clamp(2rem, 6vw, 3rem);
+}
+.drawer-secondary-label {
+  color: var(--mono-label-color);
+  letter-spacing: 0.1em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+.drawer-secondary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+.drawer-secondary-list a {
+  color: var(--global-text-color);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.drawer-secondary-list a:hover { color: var(--global-theme-color); }
+
+// Hide drawer UI at >=900px (rail takes over).
+@media (min-width: 900px) {
+  .drawer-toggle,
+  .mobile-drawer { display: none !important; }
+}
+
+// Prevent body scroll when drawer is open.
+html.drawer-open body {
+  overflow: hidden;
+}
+
+// -----------------------------------------------------------------------------
+// Mobile header (<900px only)
+// -----------------------------------------------------------------------------
+.site-header-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem clamp(1rem, 4vw, 1.5rem);
+  border-bottom: 1px solid var(--rail-border-color);
+  background-color: var(--global-bg-color);
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+.header-wordmark {
+  display: inline-flex;
+  text-decoration: none;
+}
+.header-wordmark .sfr-logo {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+// -----------------------------------------------------------------------------
+// SFR logo fill — light = oxblood, dark = lighter orange (matches wordmark
+// italic color in _home.scss). Scoped to the logo's classes so the inline
+// SVG is CSS-driven in both modes.
+// -----------------------------------------------------------------------------
+.sfr-logo .sfr-logo-disk { fill: #6b1410; }
+html[data-theme="dark"] .sfr-logo .sfr-logo-disk { fill: #f59e6b; }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (min-width: 900px) {
+  .site-header-mobile { display: none !important; }
+}
+
+// -----------------------------------------------------------------------------
+// Footer
+// -----------------------------------------------------------------------------
+.site-footer {
+  margin-top: clamp(4rem, 8vw, 8rem);
+  padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 3rem);
+  border-top: 1px solid var(--rail-border-color);
+  background-color: var(--global-bg-color);
+}
+.footer-inner {
+  max-width: min(100%, 72rem);
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 700px) {
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-colophon { grid-column: 1 / -1; }
+}
+.footer-secondary-label {
+  color: var(--mono-label-color);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+  font-size: var(--type-meta);
+}
+.footer-secondary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+.footer-secondary-list a {
+  color: var(--global-text-color);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-style: italic;
+}
+.footer-colophon {
+  color: var(--mono-label-color);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rail-border-color);
+}

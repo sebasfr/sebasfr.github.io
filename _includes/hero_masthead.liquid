@@ -1,0 +1,37 @@
+{%- comment -%}
+  Hero variant B (alternative): editorial broadsheet masthead.
+  Switch via `hero_variant: masthead` in _pages/about.md front-matter.
+{%- endcomment -%}
+<section class="hero hero--masthead">
+  <div class="hero-masthead-rule-top"></div>
+  <div class="hero-masthead-row">
+    <p class="hero-masthead-dateline mono">
+      {{ 'now' | date: "%A, %B %-d, %Y" | upcase }}
+    </p>
+    <p class="hero-masthead-issue mono">ISSUE {{ 'now' | date: "%y.%m" }}</p>
+  </div>
+  <h1 class="hero-masthead-title">
+    {{ site.first_name | default: "Sebastián" }}
+    {{ site.last_name | default: "Fernández Rivera" }}
+  </h1>
+  <div class="hero-masthead-rule-bottom"></div>
+
+  <div class="hero-masthead-body">
+    <h2 class="hero-masthead-thesis">
+      Inflation, credibility, and the unreasonable behavior of small open economies.
+    </h2>
+    {% if page.profile and page.profile.image %}
+      {% assign profile_image_path = page.profile.image | prepend: 'assets/img/' %}
+      <figure class="hero-masthead-photo">
+        {%
+          include figure.liquid loading="eager" path=profile_image_path
+          class="hero-photo-img" alt=page.profile.image cache_bust=true
+        %}
+        <figcaption class="hero-masthead-caption">
+          <span class="mono">FIG. 1</span>
+          &mdash; {{ page.subtitle | default: "Economist. San José → London." }}
+        </figcaption>
+      </figure>
+    {% endif %}
+  </div>
+</section>

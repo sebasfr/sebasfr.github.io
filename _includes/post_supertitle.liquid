@@ -1,0 +1,13 @@
+{%- comment -%}
+  Mono supertitle for post pages. Expects `words` and `reading_time` assigns
+  from the parent layout. Tags are upper-cased and comma-separated.
+{%- endcomment -%}
+<p class="post-meta mono">
+  {{ page.date | date: "%d %b %Y" | upcase }}
+  &middot; {{ words | default: 0 }} WORDS
+  &middot; {{ reading_time | default: 1 }} MIN
+  {% if page.tags and page.tags.size > 0 %}
+    &middot;
+    {% for t in page.tags %}{{ t | upcase }}{% unless forloop.last %}, {% endunless %}{% endfor %}
+  {% endif %}
+</p>

@@ -9,9 +9,9 @@ layout: cv
 permalink: /cv/
 title: cv
 nav: true
-nav_order: 2
+nav_order: 3
+rail_numeral: "III"
+drop_numeral: "III"
 cv_pdf: SebastianFernandezRivera_EN.pdf # you can also use external links here
 description: Key takeaways from my CV. A PDF version is also available.
-toc:
-  sidebar: left
 ---

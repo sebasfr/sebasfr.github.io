@@ -1,0 +1,23 @@
+---
+layout: default
+---
+{% if page._styles %}
+  <style type="text/css">
+    {{ page._styles }}
+  </style>
+{% endif %}
+
+<div class="post brutalist-page research-page">
+  <header class="post-header page-head">
+    <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "II" }}.</div>
+    <div class="page-head-body">
+      <p class="page-head-supertitle">II &mdash; RESEARCH &middot; PAPERS &amp; WRITING</p>
+      <h1 class="page-head-title">{{ page.title | default: "research" }}</h1>
+      {% if page.description %}<p class="page-head-dek">{{ page.description }}</p>{% endif %}
+    </div>
+  </header>
+
+  <article class="brutalist-article research-body">
+    {{ content }}
+  </article>
+</div>

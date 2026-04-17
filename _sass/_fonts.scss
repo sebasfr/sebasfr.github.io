@@ -1,0 +1,24 @@
+/*******************************************************************************
+ * Self-hosted Fraunces (variable, SOFT/WONK/opsz/wght axes).
+ * JetBrains Mono is loaded via Google Fonts CSS2 in _includes/head.liquid.
+ ******************************************************************************/
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-roman-var.woff2") format("woff2-variations"),
+       url("../fonts/fraunces-roman-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  font-stretch: 100%;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-italic-var.woff2") format("woff2-variations"),
+       url("../fonts/fraunces-italic-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+  font-stretch: 100%;
+}

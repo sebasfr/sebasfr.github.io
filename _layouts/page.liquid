@@ -8,13 +8,23 @@ layout: default
   </style>
 {% endif %}
 
-<div class="post">
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title }}</h1>
-    <p class="post-description">{{ page.description }}</p>
+<div class="post brutalist-page">
+  <header class="post-header page-head">
+    {% if page.drop_numeral %}
+      <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral }}.</div>
+    {% endif %}
+    <div class="page-head-body">
+      {% if page.rail_numeral %}
+        <p class="page-head-supertitle">{{ page.rail_numeral }} &mdash; {{ page.title | upcase }}</p>
+      {% endif %}
+      <h1 class="post-title page-head-title">{{ page.title }}</h1>
+      {% if page.description %}
+        <p class="post-description">{{ page.description }}</p>
+      {% endif %}
+    </div>
   </header>
 
-  <article>
+  <article class="brutalist-article">
     {{ content }}
   </article>
 
