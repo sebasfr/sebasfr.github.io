@@ -42,7 +42,7 @@
   font-family: var(--font-serif);
   font-weight: 600;
   font-variation-settings: "opsz" 96, "SOFT" 50;
-  font-size: clamp(1.4rem, 1.1rem + 1vw, 2.2rem);
+  font-size: clamp(1.4rem, calc(1.1rem + 1vw), 2.2rem);
   line-height: 1.18;
   margin: 0 0 0.3rem;
   letter-spacing: -0.012em;
