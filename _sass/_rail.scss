@@ -28,17 +28,20 @@
     height: 100%;
   }
   .rail-wordmark {
-    font-family: var(--font-serif);
-    font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
-    font-weight: 800;
-    font-size: 1.5rem;
-    color: var(--global-text-color);
+    display: inline-flex;
     text-decoration: none;
-    letter-spacing: 0.05em;
+    transition: transform var(--motion-duration-fast) var(--motion-ease-out),
+                opacity var(--motion-duration-fast) var(--motion-ease-out);
   }
-  .rail-wordmark:hover,
-  .rail-wordmark:focus-visible {
-    color: var(--global-theme-color);
+  .rail-wordmark .sfr-logo {
+    width: 56px;
+    height: 56px;
+    display: block;
+  }
+  .rail-wordmark:hover .sfr-logo,
+  .rail-wordmark:focus-visible .sfr-logo {
+    transform: translateY(-1px);
+    opacity: 0.88;
   }
 
   .rail-list {
@@ -250,14 +253,22 @@ html.drawer-open body {
   z-index: 15;
 }
 .header-wordmark {
-  font-family: var(--font-serif);
-  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: 0.05em;
-  color: var(--global-text-color);
+  display: inline-flex;
   text-decoration: none;
 }
+.header-wordmark .sfr-logo {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+// -----------------------------------------------------------------------------
+// SFR logo fill — light = oxblood, dark = lighter orange (matches wordmark
+// italic color in _home.scss). Scoped to the logo's classes so the inline
+// SVG is CSS-driven in both modes.
+// -----------------------------------------------------------------------------
+.sfr-logo .sfr-logo-disk { fill: #6b1410; }
+html[data-theme="dark"] .sfr-logo .sfr-logo-disk { fill: #f59e6b; }
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;

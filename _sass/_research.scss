@@ -167,27 +167,40 @@
     flex-wrap: wrap;
   }
 
+  // Abstract / BibTeX / Award collapsibles — follow al-folio's contract:
+  // .hidden starts collapsed (max-height: 0); common.js adds .open to expand.
+  // We restyle the open state only; the base .hidden rule lives in _base.scss.
   .abstract.hidden,
   .bibtex.hidden,
   .award.hidden {
-    display: none;
-  }
-  // al-folio normally animates these open via JS. Style the revealed state.
-  .abstract:not(.hidden),
-  .bibtex:not(.hidden) {
-    margin-top: 0.75rem;
-    padding: 0.9rem 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 200ms var(--motion-ease-out),
+                padding 200ms var(--motion-ease-out),
+                margin 200ms var(--motion-ease-out);
+    margin-top: 0;
+    padding: 0 1rem;
     background: var(--global-code-bg-color);
-    border-left: 2px solid var(--global-theme-color);
+    border-left: 2px solid transparent;
     font-family: var(--font-serif);
     font-size: 0.95rem;
     line-height: 1.6;
   }
-  .bibtex:not(.hidden) pre {
+  .abstract.hidden.open,
+  .bibtex.hidden.open,
+  .award.hidden.open {
+    max-height: 200em;
+    margin-top: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-left-color: var(--global-theme-color);
+  }
+  .bibtex.hidden pre {
     background: transparent;
     margin: 0;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }
 

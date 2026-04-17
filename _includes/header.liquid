@@ -4,9 +4,8 @@
   On desktop (>=900px) this header is hidden; the left rail replaces it.
 {%- endcomment -%}
 <header class="site-header-mobile" role="banner">
-  <a class="header-wordmark" href="{{ '/' | relative_url }}">
-    <span class="header-mark" aria-hidden="true">SFR</span>
-    <span class="visually-hidden">Home</span>
+  <a class="header-wordmark" href="{{ '/' | relative_url }}" aria-label="Home">
+    {% include sfr_logo.liquid %}
   </a>
   <button type="button" id="drawer-toggle" class="drawer-toggle" aria-label="Open menu" aria-controls="mobile-drawer" aria-expanded="false">
     <span class="drawer-toggle-bar" aria-hidden="true"></span>

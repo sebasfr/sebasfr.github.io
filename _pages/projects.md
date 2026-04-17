@@ -7,7 +7,7 @@ nav: false
 nav_order: 99
 display_categories: [work, fun]
 horizontal: false
-redirect: /research/#projects
+redirect: /research/
 ---
 
 <!-- pages/projects.md -->

@@ -11,7 +11,7 @@ layout: default
   <header class="post-header page-head">
     <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "II" }}.</div>
     <div class="page-head-body">
-      <p class="page-head-supertitle">II &mdash; RESEARCH &middot; PAPERS, WORKING DRAFTS, PROJECTS</p>
+      <p class="page-head-supertitle">II &mdash; RESEARCH &middot; PAPERS &amp; WRITING</p>
       <h1 class="page-head-title">{{ page.title | default: "research" }}</h1>
       {% if page.description %}<p class="page-head-dek">{{ page.description }}</p>{% endif %}
     </div>
@@ -19,33 +19,5 @@ layout: default
 
   <article class="brutalist-article research-body">
     {{ content }}
-
-    {% assign projects = site.projects | sort: "importance" %}
-    {% if projects.size > 0 %}
-      <section id="projects" class="research-projects">
-        <hr class="section-rule">
-        <p class="section-supertitle">PROJECTS</p>
-        <ol class="research-project-list">
-          {% for project in projects %}
-            <li class="research-project">
-              <div class="research-project-head">
-                <p class="research-project-meta">
-                  {% if project.category %}{{ project.category | upcase }}{% endif %}
-                  {% if project.importance %}&middot; {{ project.importance }}{% endif %}
-                </p>
-                <h3 class="research-project-title">
-                  <a class="u-underline" href="{{ project.url | relative_url }}">
-                    {{ project.title }}
-                  </a>
-                </h3>
-              </div>
-              {% if project.description %}
-                <p class="research-project-dek">{{ project.description }}</p>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ol>
-      </section>
-    {% endif %}
   </article>
 </div>
