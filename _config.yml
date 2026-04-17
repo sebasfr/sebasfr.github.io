@@ -231,6 +231,7 @@ sass:
 
 jekyll-minifier:
   compress_javascript: false # set to false since we are using terser as the js minifier
+  compress_css: false # Sass already outputs compressed CSS; jekyll-minifier's html-minifier pass strips whitespace inside clamp()/calc(), producing invalid CSS that breaks clamp() font-size rules (e.g. clamp(3rem,5vw+2rem,7.5rem)).
   exclude: ["robots.txt", "assets/js/search/*.js"]
 
 # -----------------------------------------------------------------------------
