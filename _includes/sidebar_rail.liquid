@@ -1,0 +1,47 @@
+{%- comment -%}
+  Primary navigation: a fixed left rail on >=900px with Roman-numeral items.
+  Collapses to an off-canvas drawer below 900px (see mobile_drawer.liquid).
+  Items are hardcoded by design — see docs/plans/.
+{%- endcomment -%}
+<aside class="site-rail" aria-label="Primary navigation">
+  <div class="rail-inner">
+    <a class="rail-wordmark" href="{{ '/' | relative_url }}" aria-label="Home">
+      <span aria-hidden="true">SFR</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ol class="rail-list">
+        {%- assign items = "I,/,about|II,/research/,research|III,/cv/,cv|IV,/notes/,notes|V,/teaching/,teaching" | split: "|" -%}
+        {%- for raw in items -%}
+          {%- assign parts = raw | split: "," -%}
+          {%- assign numeral = parts[0] -%}
+          {%- assign href = parts[1] -%}
+          {%- assign label = parts[2] -%}
+          {%- assign current = false -%}
+          {%- if href == "/" and page.url == "/" -%}
+            {%- assign current = true -%}
+          {%- elsif href != "/" and page.url contains href -%}
+            {%- assign current = true -%}
+          {%- endif -%}
+          <li class="rail-item{% if current %} is-current{% endif %}">
+            <a href="{{ href | relative_url }}"{% if current %} aria-current="page"{% endif %}>
+              <span class="rail-numeral" aria-hidden="true">{{ numeral }}</span>
+              <span class="rail-label">{{ label }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </nav>
+
+    <div class="rail-footer">
+      {% if site.enable_darkmode %}
+        <button id="light-toggle" class="rail-toggle" aria-label="Toggle color theme" type="button">
+          <span id="light-toggle-system" aria-hidden="true">◐</span>
+          <span id="light-toggle-dark" aria-hidden="true">●</span>
+          <span id="light-toggle-light" aria-hidden="true">○</span>
+        </button>
+      {% endif %}
+      <p class="rail-meta mono">{{ site.first_name | upcase }} {{ site.last_name | upcase }}</p>
+    </div>
+  </div>
+</aside>

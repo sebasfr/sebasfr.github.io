@@ -1,0 +1,357 @@
+/*******************************************************************************
+ * Home page (about layout) — hero variants, bio, FLAR, dispatches, latest notes.
+ ******************************************************************************/
+
+.home-page {
+  padding: 0 clamp(1rem, 3vw, 2.5rem) clamp(3rem, 6vw, 6rem);
+  max-width: min(100%, 78rem);
+  margin: 0 auto;
+}
+
+// -----------------------------------------------------------------------------
+// Page-turn reveal (home only)
+// -----------------------------------------------------------------------------
+html.js-motion body.home main.page-turn--enter {
+  clip-path: inset(0 100% 0 0);
+  animation: page-turn var(--motion-duration-page-turn) var(--motion-ease-page-turn) forwards;
+}
+@keyframes page-turn {
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion body.home main.page-turn--enter {
+    animation: none;
+    clip-path: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Section heading pattern (used by latest-research, dispatches, latest-notes)
+// -----------------------------------------------------------------------------
+.home-page .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.home-page .section-link {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--global-text-color);
+}
+
+// -----------------------------------------------------------------------------
+// Hero A — oversized wordmark
+// -----------------------------------------------------------------------------
+.hero--wordmark {
+  padding: clamp(2rem, 6vw, 6rem) 0 clamp(2rem, 4vw, 4rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+@media (min-width: 900px) {
+  .hero--wordmark {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+.hero-wordmark-inner { min-width: 0; }
+.hero-supertitle {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.12em;
+  color: var(--mono-label-color);
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+.hero-wordmark-name {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-weight: 800;
+  font-size: var(--type-hero-wordmark);
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  margin: 0;
+  color: var(--global-text-color);
+  display: block;
+}
+.hero-wordmark-first,
+.hero-wordmark-last {
+  display: block;
+}
+.hero-wordmark-last {
+  color: var(--global-theme-color);
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+}
+.hero-rule {
+  border: 0;
+  border-top: 2px solid var(--rule-color);
+  margin: clamp(1rem, 2vw, 1.75rem) 0 1rem;
+  width: clamp(60px, 15vw, 140px);
+}
+.hero-wordmark-role {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--global-text-color-light);
+  margin: 0;
+  max-width: 48ch;
+}
+.hero-wordmark-photo {
+  margin: 0;
+  max-width: 260px;
+  justify-self: start;
+}
+@media (min-width: 900px) {
+  .hero-wordmark-photo { justify-self: end; }
+}
+.hero-wordmark-caption,
+.hero-masthead-caption {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--mono-label-color);
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+}
+.hero-photo-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+// -----------------------------------------------------------------------------
+// Hero B — editorial masthead
+// -----------------------------------------------------------------------------
+.hero--masthead {
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(2rem, 4vw, 4rem);
+}
+.hero-masthead-rule-top,
+.hero-masthead-rule-bottom {
+  border-top: 1px solid var(--rule-color);
+}
+.hero-masthead-rule-bottom { border-top-width: 2px; }
+.hero-masthead-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: var(--type-meta);
+  color: var(--mono-label-color);
+  letter-spacing: 0.08em;
+}
+.hero-masthead-row p { margin: 0; }
+.hero-masthead-title {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-weight: 700;
+  font-size: clamp(3rem, 5vw + 2rem, 7.5rem);
+  text-align: center;
+  line-height: 1;
+  margin: 0.35rem 0;
+  letter-spacing: -0.02em;
+  color: var(--global-text-color);
+  text-transform: uppercase;
+  font-variant: small-caps;
+}
+.hero-masthead-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+@media (min-width: 900px) {
+  .hero-masthead-body { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+}
+.hero-masthead-thesis {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3.5rem);
+  line-height: 1.1;
+  margin: 0;
+  max-width: var(--measure);
+  color: var(--global-text-color);
+}
+.hero-masthead-photo { margin: 0; }
+.hero-masthead-caption {
+  text-transform: none;
+  letter-spacing: 0.04em;
+  max-width: 32ch;
+}
+
+// -----------------------------------------------------------------------------
+// Bio — drop cap
+// -----------------------------------------------------------------------------
+.home-bio {
+  padding: clamp(2rem, 4vw, 4rem) 0;
+  max-width: var(--measure);
+}
+.bio .section-supertitle {
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.12em;
+}
+.bio-body {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--global-text-color);
+}
+.bio-body p { margin: 0 0 1.15rem; }
+.bio-body p:first-of-type::first-letter {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-size: 5.5em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.12em 0.12em 0 0;
+  color: var(--global-theme-color);
+  font-weight: 700;
+}
+// Ignore drop cap if the paragraph starts with an image/figure node.
+.bio-body > figure:first-child + p::first-letter,
+.bio-body > img:first-child ~ p::first-letter {
+  all: unset;
+}
+
+// -----------------------------------------------------------------------------
+// FLAR feature
+// -----------------------------------------------------------------------------
+.flar-feature {
+  padding: clamp(2rem, 4vw, 4rem) 0;
+  max-width: var(--measure);
+}
+.flar-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-size: clamp(1.8rem, 1.4rem + 1.5vw, 3rem);
+  line-height: 1.15;
+  margin: 0.5rem 0;
+  letter-spacing: -0.015em;
+}
+.flar-title em {
+  font-style: italic;
+  color: var(--global-theme-color);
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+}
+.flar-dek {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: var(--global-text-color);
+  margin: 0 0 1rem;
+}
+.flar-cta {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+// -----------------------------------------------------------------------------
+// Dispatches (news)
+// -----------------------------------------------------------------------------
+.home-dispatches { padding: clamp(1.5rem, 3vw, 3rem) 0; }
+.dispatch-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dispatch-item {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--global-divider-color);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+}
+@media (min-width: 600px) {
+  .dispatch-item {
+    grid-template-columns: 110px 1fr;
+    gap: 1.25rem;
+    align-items: baseline;
+  }
+}
+.dispatch-date {
+  color: var(--mono-label-color);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.dispatch-body p { margin: 0; }
+.dispatch-body {
+  font-family: var(--font-serif);
+  line-height: 1.5;
+}
+
+// -----------------------------------------------------------------------------
+// Latest notes
+// -----------------------------------------------------------------------------
+.home-latest-notes { padding: clamp(1.5rem, 3vw, 3rem) 0; }
+.home-notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.home-note-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--global-divider-color);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+}
+@media (min-width: 600px) {
+  .home-note-item {
+    grid-template-columns: 120px 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+  }
+}
+.home-note-date {
+  font-size: 0.82rem;
+  color: var(--mono-label-color);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.home-note-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.6rem);
+  line-height: 1.2;
+  margin: 0 0 0.25rem;
+}
+.home-note-dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--global-text-color-light);
+  margin: 0;
+}
+
+// -----------------------------------------------------------------------------
+// Latest research (home-embedded)
+// -----------------------------------------------------------------------------
+.home-latest-research {
+  padding: clamp(1.5rem, 3vw, 3rem) 0;
+
+  // jekyll-scholar output here is also styled via _research.scss;
+  // we only compact the spacing for the home-embedded variant.
+  .publications ol.bibliography > li {
+    padding: clamp(0.9rem, 2vw, 1.5rem) 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Home social
+// -----------------------------------------------------------------------------
+.home-social {
+  padding: clamp(1.5rem, 3vw, 3rem) 0 0;
+}

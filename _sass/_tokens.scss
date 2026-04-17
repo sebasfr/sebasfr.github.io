@@ -1,0 +1,50 @@
+/*******************************************************************************
+ * Design tokens — type scale, spatial scale, motion, new semantic tokens.
+ * Layered on top of the vintage-sharpened palette (see _variables.scss + _themes.scss).
+ ******************************************************************************/
+
+:root {
+  // Type
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --type-hero-wordmark: clamp(4.5rem, 6vw + 2rem, 11rem);
+  --type-drop-numeral: clamp(7rem, 12vw, 20rem);
+  --type-h1: clamp(2.2rem, 1.5rem + 2.2vw, 3.6rem);
+  --type-h2: clamp(1.6rem, 1.2rem + 1vw, 2.2rem);
+  --type-dek: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem);
+  --type-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  --type-meta: 0.8125rem;
+  --measure: 68ch;
+  --rail-width: 220px;
+
+  // Editorial semantic tokens (new — complement existing --global-* tokens)
+  --rule-color: #{$vintage-light-text};
+  --rail-bg-color: #{$vintage-light-bg};
+  --rail-border-color: rgba(67, 52, 34, 0.14);
+  --mono-label-color: #{$vintage-light-text-light};
+  --footnote-rail-color: #{$vintage-light-text-light};
+
+  // Motion
+  --motion-duration-fast: 180ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-page-turn: 600ms;
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-page-turn: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+html[data-theme="dark"] {
+  --rule-color: #{$vintage-dark-text};
+  --rail-bg-color: #{$vintage-dark-bg};
+  --rail-border-color: rgba(231, 229, 228, 0.12);
+  --mono-label-color: #{$vintage-dark-text-light};
+  --footnote-rail-color: #{$vintage-dark-text-light};
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-page-turn: 0ms;
+  }
+}

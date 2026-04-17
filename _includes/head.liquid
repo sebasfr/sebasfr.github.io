@@ -1,6 +1,29 @@
 <!-- Metadata, OpenGraph and Schema.org -->
 {% include metadata.liquid %}
 
+<!-- Motion gate: adds .js-motion to <html> only if JS is on AND user has not
+     requested reduced motion. CSS hooks initial motion states off this class,
+     which means no FOUC when JS is off or reduced-motion is requested. -->
+<script>
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      document.documentElement.classList.add('js-motion');
+    }
+  } catch (e) { /* leave .js-motion off */ }
+</script>
+
+<!-- Fonts: self-hosted Fraunces (variable, SOFT/WONK/opsz/wght axes) -->
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ '/assets/fonts/fraunces-roman-var.woff2' | relative_url }}">
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ '/assets/fonts/fraunces-italic-var.woff2' | relative_url }}">
+
+<!-- Fonts: JetBrains Mono via Google Fonts CSS2 (standard axes only) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap">
+
 <!-- Bootstrap & MDB -->
 <link rel="stylesheet" href="{{ '/assets/css/bootstrap.min.css' | relative_url | bust_file_cache }}">
 <link
@@ -21,15 +44,9 @@
   >
 {% endif %}
 
-<!-- Fonts & Icons -->
+<!-- Icons (fonts are loaded above) -->
 <link defer rel="stylesheet" href="{{ '/assets/css/academicons.min.css' | relative_url | bust_file_cache }}">
 <link defer rel="stylesheet" href="{{ '/assets/css/scholar-icons.css' | relative_url | bust_file_cache }}">
-<link
-  defer
-  rel="stylesheet"
-  type="text/css"
-  href="{{ site.third_party_libraries.google_fonts.url.fonts }}"
->
 
 <!-- Code Syntax Highlighting -->
 <link

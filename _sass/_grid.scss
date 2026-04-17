@@ -1,0 +1,119 @@
+/*******************************************************************************
+ * Site grid shell — wraps AROUND Bootstrap, does not replace it.
+ * Rail track reserved on >=900px; content is the second track.
+ ******************************************************************************/
+
+.site-grid {
+  display: block;
+}
+
+@media (min-width: 900px) {
+  .site-grid {
+    display: grid;
+    grid-template-columns: [rail] var(--rail-width) [content] minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  // The content track is anything that is NOT the rail. Bootstrap .container
+  // inside here continues to work — we only reserve the rail column.
+  .site-grid > .site-rail {
+    grid-column: rail;
+  }
+  .site-grid > .site-content {
+    grid-column: content;
+    min-width: 0; // prevents overflow of wide code blocks / bib entries
+  }
+}
+
+// Drop-numeral gutter within neo-brutalist page layouts (research/cv/notes/etc.)
+// Pages opt in by wrapping their H1 in a .page-head.drop-numeral-head.
+.page-head {
+  position: relative;
+  padding: clamp(2rem, 5vw, 5rem) 0 clamp(1.5rem, 3vw, 3rem);
+
+  .drop-numeral {
+    font-family: var(--font-serif);
+    font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+    font-weight: 700;
+    font-size: var(--type-drop-numeral);
+    line-height: 0.85;
+    color: var(--global-theme-color);
+    letter-spacing: -0.04em;
+    user-select: none;
+  }
+
+  .page-head-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: var(--type-h1);
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+
+  .page-head-supertitle {
+    font-family: var(--font-mono);
+    font-size: var(--type-meta);
+    color: var(--mono-label-color);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .page-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+    align-items: start;
+    column-gap: clamp(1rem, 2vw, 2.5rem);
+
+    .drop-numeral {
+      grid-column: 1;
+      justify-self: start;
+    }
+    .page-head-body {
+      grid-column: 2;
+    }
+  }
+}
+
+// Editorial article shell used by neo-brutalist layouts (notes, research, etc.)
+.brutalist-article {
+  padding: 0 clamp(1rem, 3vw, 2.5rem) clamp(2rem, 5vw, 5rem);
+  max-width: min(100%, 72rem);
+  margin: 0 auto;
+}
+
+// Reveal-on-scroll baseline state. The .is-visible class is added by motion.js
+// only when prefers-reduced-motion is no-preference AND JS is enabled.
+html.js-motion .reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--motion-duration-normal) var(--motion-ease-out),
+    transform var(--motion-duration-normal) var(--motion-ease-out);
+}
+html.js-motion .reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+// Draw-underline utility for editorial links.
+.u-underline {
+  text-decoration: none;
+  background-image: linear-gradient(var(--global-theme-color), var(--global-theme-color));
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  background-position: 0 100%;
+  transition: background-size var(--motion-duration-normal) var(--motion-ease-out);
+}
+.u-underline:hover,
+.u-underline:focus-visible {
+  background-size: 100% 1px;
+  color: var(--global-theme-color);
+}
+@media (prefers-reduced-motion: reduce) {
+  .u-underline {
+    transition: none;
+    background-size: 100% 1px;
+  }
+}

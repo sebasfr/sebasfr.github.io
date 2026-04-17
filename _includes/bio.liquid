@@ -1,0 +1,11 @@
+{%- comment -%}
+  Bio block: mono supertitle + drop-cap first paragraph. The markdown
+  `content` is rendered verbatim; we add the .bio-body wrapper so that
+  `.bio-body p:first-of-type::first-letter` is a stable selector.
+{%- endcomment -%}
+<div class="bio">
+  <p class="section-supertitle">I &mdash; ABOUT</p>
+  <div class="bio-body">
+    {{ content }}
+  </div>
+</div>

@@ -1,10 +1,14 @@
 ---
-layout: page
+layout: research
 permalink: /research/
 title: research
 description: A collection of my research and writing.
 nav: true
-nav_order: 3
+nav_order: 2
+rail_numeral: "II"
+drop_numeral: "II"
+redirect_from:
+  - /publications/
 ---
 
 <!-- _pages/publications.md -->

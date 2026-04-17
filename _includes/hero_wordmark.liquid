@@ -1,0 +1,29 @@
+{%- comment -%}
+  Hero variant A (default): oversized serif wordmark. Page-turn safe.
+{%- endcomment -%}
+<section class="hero hero--wordmark">
+  <div class="hero-wordmark-inner">
+    <p class="hero-supertitle mono">ECONOMIST &middot; MACROECONOMICS &middot; SMALL OPEN ECONOMIES</p>
+    <h1 class="hero-wordmark-name" aria-label="{{ site.first_name }} {{ site.last_name }}">
+      <span class="hero-wordmark-first">{{ site.first_name | default: "Sebastián" }}</span>
+      <span class="hero-wordmark-last">{{ site.last_name | default: "Fernández Rivera" }}</span>
+    </h1>
+    <hr class="hero-rule">
+    <p class="hero-wordmark-role mono">
+      {{ page.subtitle | default: "Research Assistant at LSE &middot; B.A. (Hons), UCR." }}
+    </p>
+  </div>
+
+  {% if page.profile and page.profile.image %}
+    {% assign profile_image_path = page.profile.image | prepend: 'assets/img/' %}
+    <figure class="hero-wordmark-photo">
+      {%
+        include figure.liquid loading="eager" path=profile_image_path
+        class="hero-photo-img" alt=page.profile.image cache_bust=true
+      %}
+      <figcaption class="hero-wordmark-caption mono">
+        {{ site.first_name | upcase }} {{ site.last_name | upcase }} &middot; {{ 'now' | date: "%Y" }}
+      </figcaption>
+    </figure>
+  {% endif %}
+</section>

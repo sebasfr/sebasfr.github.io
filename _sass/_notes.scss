@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Notes index — chronological hairline list. Three-column grid on >=600px.
+ ******************************************************************************/
+
+.notes-page .page-head-dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--type-dek);
+  color: var(--global-text-color-light);
+  max-width: var(--measure);
+  margin: 0.5rem 0 0;
+}
+
+.notes-body { padding-top: clamp(1rem, 2vw, 2rem); }
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.notes-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  padding: clamp(1.1rem, 2vw, 1.75rem) 0;
+  border-bottom: 1px solid var(--global-divider-color);
+}
+@media (min-width: 600px) {
+  .notes-row {
+    grid-template-columns: 120px 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+  }
+}
+.notes-row-date {
+  font-size: 0.8rem;
+  color: var(--mono-label-color);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.notes-row-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-variation-settings: "opsz" 96, "SOFT" 50;
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2.2rem);
+  line-height: 1.18;
+  margin: 0 0 0.3rem;
+  letter-spacing: -0.012em;
+}
+.notes-row-title a { color: inherit; }
+.notes-row-dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--global-text-color);
+  max-width: var(--measure);
+  margin: 0 0 0.4rem;
+}
+.notes-row-meta {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--mono-label-color);
+  margin: 0;
+}

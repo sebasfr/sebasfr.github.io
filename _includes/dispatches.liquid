@@ -1,0 +1,22 @@
+{%- comment -%}
+  Dispatches: the site's news feed, rendered as a dated editorial list
+  (not scrollable cards). Honors `page.announcements.limit` if set.
+{%- endcomment -%}
+{% assign news_items = site.news | reverse %}
+{% if page.announcements.limit %}
+  {% assign news_items = news_items | slice: 0, page.announcements.limit %}
+{% endif %}
+
+<hr class="section-rule">
+<div class="section-heading">
+  <p class="section-supertitle">DISPATCHES</p>
+  <a class="section-link u-underline" href="{{ '/news/' | relative_url }}">→ all dispatches</a>
+</div>
+<ol class="dispatch-list">
+  {% for item in news_items %}
+    <li class="dispatch-item">
+      <p class="dispatch-date mono">{{ item.date | date: "%Y.%m.%d" }}</p>
+      <div class="dispatch-body">{{ item.content | markdownify }}</div>
+    </li>
+  {% endfor %}
+</ol>

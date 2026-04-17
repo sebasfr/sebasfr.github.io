@@ -1,0 +1,56 @@
+---
+layout: default
+---
+<div class="post brutalist-page notes-page">
+  <header class="post-header page-head">
+    <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "IV" }}.</div>
+    <div class="page-head-body">
+      <p class="page-head-supertitle">IV &mdash; NOTES &middot; DISPATCHES, ESSAYS, FIELD NOTES</p>
+      <h1 class="page-head-title">{{ page.title | default: "notes" }}</h1>
+      {% if page.description %}<p class="page-head-dek">{{ page.description }}</p>{% endif %}
+    </div>
+  </header>
+
+  <article class="brutalist-article notes-body">
+    {% if page.pagination.enabled %}
+      {% assign postlist = paginator.posts %}
+    {% else %}
+      {% assign postlist = site.posts %}
+    {% endif %}
+
+    <ol class="notes-list">
+      {% for post in postlist %}
+        {% assign words = post.content | strip_html | number_of_words %}
+        {% assign reading_time = words | divided_by: 220 | at_least: 1 %}
+        <li class="notes-row">
+          <p class="notes-row-date mono">{{ post.date | date: "%Y.%m.%d" }}</p>
+          <div class="notes-row-body">
+            <h2 class="notes-row-title">
+              {% if post.redirect == blank %}
+                <a class="u-underline" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              {% elsif post.redirect contains '://' %}
+                <a class="u-underline" href="{{ post.redirect }}" target="_blank" rel="noopener">{{ post.title }}</a>
+              {% else %}
+                <a class="u-underline" href="{{ post.redirect | relative_url }}">{{ post.title }}</a>
+              {% endif %}
+            </h2>
+            {% if post.description %}
+              <p class="notes-row-dek">{{ post.description }}</p>
+            {% endif %}
+            <p class="notes-row-meta mono">
+              {{ reading_time }} MIN READ
+              {% if post.tags and post.tags.size > 0 %}
+                &middot;
+                {% for t in post.tags %}{{ t | upcase }}{% unless forloop.last %}, {% endunless %}{% endfor %}
+              {% endif %}
+            </p>
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+
+    {% if page.pagination.enabled %}
+      {% include pagination.liquid %}
+    {% endif %}
+  </article>
+</div>

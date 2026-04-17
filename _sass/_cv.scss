@@ -218,3 +218,92 @@ ul.timeline li::before {
      color: var(--global-text-color);
 }
 */
+
+/*******************************************************************************
+ * Neo-brutalist CV overrides — printed-CV-as-webpage.
+ * Appended 2026-04. Scoped to .cv-page. The existing styles above still apply
+ * to legacy CV content (buttons, tables) until they are retired.
+ ******************************************************************************/
+
+.cv-page .page-head-dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--type-dek);
+  color: var(--global-text-color-light);
+  max-width: var(--measure);
+  margin: 0.25rem 0 0.75rem;
+}
+
+.cv-page .cv-pdf-link {
+  margin: 1rem 0 0;
+}
+.cv-page .cv-pdf-link .mono-link {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--global-text-color);
+  text-transform: uppercase;
+}
+
+.cv-page .cv { margin: 0; }
+
+.cv-page .cv-section {
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  border-top: 1px solid var(--rule-color);
+  &:first-child { border-top: 0; padding-top: clamp(1rem, 2vw, 1.5rem); }
+}
+.cv-page .cv-section .section-supertitle {
+  margin: 0 0 1.25rem;
+}
+
+/* Reset Bootstrap card chrome that might leak from legacy partials. */
+.cv-page .card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+.cv-page .card-title {
+  display: none; /* supertitle replaces it */
+}
+
+/* Date gutter for time_table and list_groups rows (al-folio partials).
+   The existing partials emit rows with .row + .col-*; we coerce to
+   a two-column grid: date gutter | entry body. */
+.cv-page .time-table,
+.cv-page .cv-time-table,
+.cv-page table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td, th {
+    padding: 0.35rem 0;
+    vertical-align: top;
+  }
+  td:first-child,
+  th:first-child {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--mono-label-color);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    padding-right: 1.25rem;
+    width: 10rem;
+  }
+  td:last-child {
+    font-family: var(--font-serif);
+  }
+}
+
+.cv-page .cv-section-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.cv-page .cv-section-body ul li {
+  padding: 0.25rem 0;
+  font-family: var(--font-serif);
+}
+

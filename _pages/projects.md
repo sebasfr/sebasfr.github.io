@@ -2,11 +2,12 @@
 layout: page
 title: projects
 permalink: /projects/
-description: A growing collection of your cool projects.
+description: A growing collection of projects. All projects now live on the Research page.
 nav: false
-nav_order: 3
+nav_order: 99
 display_categories: [work, fun]
 horizontal: false
+redirect: /research/#projects
 ---
 
 <!-- pages/projects.md -->
