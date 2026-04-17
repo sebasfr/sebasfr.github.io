@@ -269,6 +269,18 @@ ul.timeline li::before {
   display: none; /* supertitle replaces it */
 }
 
+/* Strip Bootstrap list-group-item boxes from time_table entries. */
+.cv-page .list-group-item {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.cv-page .list-group {
+  border: 0 !important;
+}
+
 /* Date gutter for time_table and list_groups rows (al-folio partials).
    The existing partials emit rows with .row + .col-*; we coerce to
    a two-column grid: date gutter | entry body. */
