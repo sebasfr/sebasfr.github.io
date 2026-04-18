@@ -5,12 +5,12 @@ layout: default
   <header class="post-header page-head">
     <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "III" }}.</div>
     <div class="page-head-body">
-      <p class="page-head-supertitle">
+      <p class="page-head-supertitle anim-clip-reveal">
         III &mdash; CURRICULUM VITAE &middot; LAST UPDATED {{ site.time | date: "%b %Y" | upcase }}
       </p>
-      <h1 class="page-head-title">{{ page.title }}</h1>
+      <h1 class="page-head-title anim-letter-mask">{{ page.title }}</h1>
       {% if page.description %}
-        <p class="page-head-dek">{{ page.description }}</p>
+        <p class="page-head-dek anim-fade-rise">{{ page.description }}</p>
       {% endif %}
       {% if page.cv_pdf %}
         <p class="cv-pdf-link">

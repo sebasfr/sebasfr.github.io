@@ -157,6 +157,11 @@ module.exports = {
       "footer-colophon",
       "visually-hidden",
       "small-caps",
+      // Hero wordmark animations (motion.js + _animations.scss)
+      "anim-letter-mask",
+      "anim-axis-morph",
+      "anim-char",
+      "is-space",
       // jekyll-scholar bib output (rendered by Liquid, used inside .publications)
       "publications",
       "bibliography",
@@ -216,6 +221,7 @@ module.exports = {
       /^hero--/,
       /^sfr-logo/,
       /^bio/,
+      /^anim-/,
     ],
     // greedy: keep the WHOLE selector if any part matches. Required for:
     //  - ::first-letter drop caps (.post-body > p:first-of-type::first-letter,

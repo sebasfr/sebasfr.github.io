@@ -5,9 +5,9 @@ layout: default
   <header class="post-header page-head">
     <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "IV" }}.</div>
     <div class="page-head-body">
-      <p class="page-head-supertitle">IV &mdash; NOTES &middot; DISPATCHES, ESSAYS, FIELD NOTES</p>
-      <h1 class="page-head-title">{{ page.title | default: "notes" }}</h1>
-      {% if page.description %}<p class="page-head-dek">{{ page.description }}</p>{% endif %}
+      <p class="page-head-supertitle anim-clip-reveal">IV &mdash; NOTES &middot; DISPATCHES, ESSAYS, FIELD NOTES</p>
+      <h1 class="page-head-title anim-letter-mask">{{ page.title | default: "notes" }}</h1>
+      {% if page.description %}<p class="page-head-dek anim-fade-rise">{{ page.description }}</p>{% endif %}
     </div>
   </header>
 
