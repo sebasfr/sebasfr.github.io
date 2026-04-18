@@ -1,0 +1,263 @@
+% --- LaTeX CV Template - S. Venkatraman ---
+
+% --- Set document class and font size ---
+
+\documentclass[letterpaper, 11pt]{article}
+
+% --- Package imports ---
+
+\usepackage{hyperref, enumitem, longtable, amsmath, array, lipsum}
+
+
+
+% --- Page layout settings ---
+
+% Set page margins
+\usepackage[left=0.7in, right=0.8in, bottom=.8in, top=0.8in, headsep=0in, footskip=.2in]{geometry}
+
+
+% Set line spacing
+\renewcommand{\baselinestretch}{1.2}
+
+% --- Page formatting settings ---
+
+% Set link colors
+\usepackage[dvipsnames]{xcolor}
+\hypersetup{colorlinks=true, linkcolor=ChadBlue, urlcolor=ChadBlue}
+
+% Set font to Libertine, including math support
+\usepackage{heuristica}
+\usepackage[libertine]{newtxmath}
+
+% Remove page numbering
+\pagenumbering{gobble}
+
+% === COLOR DEFINITIONS ===
+\definecolor{ChadDarkBlue}{rgb}{.1, 0, .2}
+\definecolor{ChadBlue}{rgb}{.1, .1, .5}
+\definecolor{ChadRoyal}{rgb}{.2, .2, .8}
+\definecolor{ChadGreen}{rgb}{0, .4, 0}
+\definecolor{ChadRed}{rgb}{.5, 0, .5}
+
+% Define font size and color for section headings
+\newcommand{\headingfont}{\bfseries\Large\color{ChadDarkBlue}}
+
+\newcommand{\namefont}{\Huge\color{ChadDarkBlue}}
+
+% --- CV section settings ---
+
+% Note: each section of this table (Education, Awards, Publications etc.) is 
+% stored in a two-column table. The left-hand column is narrow (1 inch) and is 
+% meant to store dates. The right-hand column is wide (5.2 inches) and stores 
+% the main text.  Sections in which each entry might have multiple lines 
+% (e.g., Education) are stored in a 'SectionTable' environment). Sections in 
+% which each entry might just have one line are stored in a 'SectionTableSingleSpace'
+% environment. The only difference between the two environments is the line 
+% spacing between each entry. Both environments take one argument, which is the
+% title of the section. See main document for how these environments are used.
+
+% Define settings for left-hand column in which dates are printed
+\newcolumntype{R}{>{\raggedleft}p{1in}}
+
+% Define 'SectionTable' environment
+\newenvironment{SectionTable}[1]{
+	\renewcommand*{\arraystretch}{1.7}
+	\setlength{\tabcolsep}{10pt}
+	\begin{longtable}{Rp{5.2in}} & #1 \\}
+{\end{longtable}\vspace{-1cm}}
+
+% Define 'SectionTableSingleSpace' environment
+\newenvironment{SectionTableSingleSpace}[1]{
+	\renewcommand*{\arraystretch}{1.2}
+	\setlength{\tabcolsep}{10pt}
+	\begin{longtable}{Rp{5.2in}} & #1 \\[0.6em]}
+{\end{longtable}\vspace{-1cm}}
+
+% --- Document starts here ---
+
+\begin{document}
+
+% --- Name and contact information ---
+
+\begin{SectionTable}{\namefont Sebastián Fernández Rivera} & 
+sebastian.fernandezrivera24@gmail.com   $\;\boldsymbol{\cdot}\;$ 
+\href{https://sebasfr.github.io/}{sebasfr.github.io}$\;\boldsymbol{\cdot}\;$ \newline
++506 8730-3185 $\;\boldsymbol{\cdot}\;$ Citizenship: Costa Rica
+\end{SectionTable}
+
+% --- Section: Research interests ---
+
+\begin{SectionTable}{\headingfont Research Interests}
+& Macroeconomics: Monetary Economics, International Economics
+\end{SectionTable}
+
+% --- Section: Education ---
+
+\begin{SectionTable}{\headingfont Education}
+
+2022 -- 2026 & 
+\textbf{University of Costa Rica  (UCR)} -- San Jos\'e, Costa Rica \newline
+B.A. (Honors) in Economics. Enrolled in B.A. in Mathematics. \newline 
+\textit{GPA: 9.6 / 10.0}. \\
+
+% --- Un-comment the next few lines if you want to include some courses you've taken ---
+
+%& \textbf{Selected coursework}
+%\begin{itemize}[itemsep=0pt, leftmargin=*]
+%\item \textit{Macroeconomics}: Real business cycle and New Keynesian models, dynamic programming, growth theory, open economy macroeconomics and central banking models. \textit{GPA} of 9.8/10 in macroeconomics coursework.
+
+%\item \textit{Mathematics}: Proof-based mathematics coursework including real analysis (single variable and multivariate) and linear algebra. \textit{GPA} of 10/10 in elective mathematics coursework.
+%\end{itemize}
+\end{SectionTable}
+
+% --- Section: Research experience ---
+
+\begin{SectionTable}{\headingfont Working Experience}
+April 2025 -- Present &
+\textbf{Responsible Sourcing?
+ Evidence from Costa Rica} \newline
+Mentors: Jose P. Vasquez (LSE) and Isabela Manelici (LSE)\newline
+R\&R at the \textit{American Economic Review}. Contribution mainly on ChatGPT–based text‐analysis, which systematically extracts qualitative and quantitative information from a sample of responsible-sourcing policy documents. Development of a comprehensive replication package encompassing all Stata and Python code used in the paper, fully compliant with the AER’s standards for replication packages. \\
+
+September 2024 -- February 2026 & \textbf{Production Assistant for \textit{Doble Check}} \newline 
+\textit{Doble Check} is a public discourse verification initiative funded by the University of Costa Rica (UCR). Provided economic guidance for the development and publication of fact-checking articles, encompassing public data collection, literature review, and descriptive statistical analysis to assess the accuracy of claims made in public discourse.
+\\
+
+August 2024 -- March 2025 &
+\textbf{Do Central Banks Follow the Fed?} \newline
+Mentor: Alfredo Mendoza-Fern\'andez (Ph.D. Candidate, UC Berkeley). \newline
+Assisted in the construction of a novel dataset leveraging meeting-frequency data on monetary policy rate decisions for 50+ emerging economies, displaying empirical relationships hitherto unobservable in monthly or quarterly frequency data. This new data will contribute in the development of precise monetary policy shock measures for emerging markets. \\
+
+\end{SectionTable}
+
+% --- Section: Teaching experience ---
+
+\begin{SectionTable}{\headingfont Teaching experience}
+
+March 2026 -- Present & 
+\textbf{Lecturer, Department of Economics (UCR)} \newline
+    Lead Instructor for XE0156 (Introductory Economics for non-majors). Facilitator for EC1100 (Introductory Economics) practice and discussion sessions. \\
+
+April 2024 -- July 2025 & 
+\textbf{Teaching assistant, EC2200: Microeconomic Theory II (UCR)} \newline
+    Under the supervision of Edgar Robles Cordero (UCR). Lecturing on optimization, consumer theory, welfare, producer theory, and general equilibrium models. Design and implementation of practice sets and quizzes.
+\end{SectionTable}
+
+
+% --- Section: Awards, scholarships, etc ---
+
+\begin{SectionTableSingleSpace}{\headingfont Honors and Awards}
+2024 & $1^{\text{st}}$ Place Award, Latin American Reserve Fund Research Contest (\$5000) \\
+
+2021 &
+Silver Medal, Costa Rican Mathematical Olympiad \\
+
+2020 &
+Bronze Medal, Costa Rican Mathematical Olympiad \\
+
+2017 &
+Bronze Medal, Costa Rican Mathematical Olympiad \\
+
+\end{SectionTableSingleSpace}
+
+% --- Section: Publications ---
+\begin{SectionTable}{\headingfont Selected Work in Progress} 
+2026 & 
+\textbf{The Gap Between Mandate and Execution: An Evaluation of the Inflation Target in Costa Rica}, \vspace{2mm} \newline 
+\small \textit{Summary}: This paper addresses recent concerns about a possible contractionary bias in the policy execution of the Central Bank of Costa Rica (BCCR). I implement three empirical methodologies to measure the implicit long-run expectations anchor, the long-run inflationary trend, and to test for possible asymmetries in the policy response of the BCCR. The results show that the implicit anchor and the long-run inflationary trend are below the official 3\% target, while there is statistically significant evidence of an asymmetric policy rule, characterized by a more aggressive reaction to positive inflation deviations relative to negative ones. \\
+
+2025 & 
+\textbf{Trend Inflation Estimation Using Unobserved Components}, with Alberth Vargas Miranda (UCR) \vspace{2mm} \newline 
+\small \textit{Summary}: We implement a state-of-the-art state-space model that fuses realized inflation and long-run inflation expectations to recover the underlying inflationary trend in Costa Rica in order to evaluate the Central Bank's compliance with the target value of 3\%. Our estimates reveal a trend that has been consistently below the target, suggesting the presence of an excessively contractionary monetary stance. The next step is to quantify the potential welfare losses associated with these deviations. \\
+
+2025 & 
+\textbf{Reserve Requirements and Deposits: Evidence From Financial Microdata}, with Jonathan Garita (Central Bank of Costa Rica and UCR) \vspace{2mm} \newline
+\small \textit{Summary}: This study seeks to analyze the effects of Costa Rica’s June 2019 reduction and August 2022 reinstatement of domestic-currency reserve requirements on sight and term deposits. We construct a comprehensive anonymized dataset from administrative microdata spanning from 2013 to 2024, which comprises the universe of loan and deposit-level records (of both domestic currency and USD) within the supervised financial system. The next step is to choose an adequate empirical specification to exploit the granularity of the data. \\
+
+2024 & 
+\textbf{Supply Shocks, Monetary Policy and Foreign Investment: The Costa Rican Case}, Awarded Essay at the Latin American Reserve Fund Research Contest\vspace{2mm} \newline
+\small \textit{Summary}: I investigate the implications of global supply disruptions for Latin American economies, with a particular focus on the Costa Rican case. I argue that the interplay between foreign investment attraction strategies, nearshoring, and monetary policy can collectively account for the country’s atypical display of accelerated growth and deflation shortly after a supply shock. For such purposes, I adopt a mixed framework by combining a descriptive analysis of macroeconomic indicators and an endogenous New Keynesian Growth Model to reconcile the apparent disconnect between standard business cycles literature and the empirical findings.\\
+
+\end{SectionTable}
+
+% --- Section: Publications ---
+
+
+% --- Section: Industry experience ---
+
+%\begin{SectionTable}{\headingfont Industry experience}
+%Summer 2020 &
+%\textbf{Name of company (Title of job or internship)} -- City, State \newline
+%Description of your responsibilities. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. Phasellus at purus et lib ero lacinia dictum.  \\
+
+%Summer 2019 &
+%\textbf{Name of company (Title of job or internship)} -- City, State \newline
+%Description of your responsibilities. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. Phasellus at purus et lib ero lacinia dictum.  \\
+
+%Summer 2018 &
+%\textbf{Name of company (Title of job or internship)} -- City, State \newline
+%Description of your responsibilities. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. Phasellus at purus et lib ero lacinia dictum.  \\
+%\end{SectionTable}
+
+% --- Section: Talks and tutorials ---
+
+\begin{SectionTable}{\headingfont Talks}
+December 2024 &
+Supply Shocks, Monetary Policy and Foreign Investment: The Costa Rican Case.
+\textit{Poster session at the Conferencia de Economistas Costa Rica} \\
+
+August 2024 &
+CIDI 15 - Supply Shocks, Monetary Policy and Foreign Investment: The Costa Rican Case.
+\textit{Department of Economic Research, Central Bank of Costa Rica}
+\end{SectionTable}
+
+% --- Section: Mentorship and service ---
+
+%\begin{SectionTable}{\headingfont Mentorship and service}
+%Month Year -- Present &
+%\textbf{Title of organization you are in (Name of your role)} \newline
+%Description of your responsibilities. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. Phasellus at purus et lib ero lacinia dictum. \\
+
+%Month Year -- Month Year &
+%\textbf{Title of organization you were in (Name of your role)} \newline
+%Description of your responsibilities. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. Phasellus at purus et lib ero lacinia dictum. \\
+%\end{SectionTable}
+
+% --- Section: Professional society memberships ---
+
+%\begin{SectionTable}{\headingfont Professional memberships}
+%Year -- Present &
+%Name of professional society \newline
+%\textit{Short description or conferences you attended.} \\
+
+%Year -- Present &
+%Name of professional society \newline
+%\textit{Short description or conferences you attended.} \\
+%\end{SectionTable}
+
+\begin{SectionTable}{\headingfont Technical Skills}
+& \textbf{Programming languages \% Software} \newline
+Proficient in R, Stata, Python, \LaTeX, Git, Dynare  \newline
+Familiar with MATLAB \\
+
+& \textbf{Agentic AI} \newline
+Proficient in Claude Code, Codex, Gemini CLI, and Antigravity. Experienced in developing custom skills and specialized agents for automated economic research workflows. \\
+
+& \textbf{Languages} \newline
+English (fluent, TOEFL 117/120), Spanish (native)
+\end{SectionTable}
+
+% --- Section: Other interests/hobbies ---
+
+%\begin{SectionTable}{\headingfont Other interests}
+%& Some of your hobbies, etc.
+%\end{SectionTable}
+
+% --- End of CV! ---
+
+\end{document}
+
+
+
+
+
