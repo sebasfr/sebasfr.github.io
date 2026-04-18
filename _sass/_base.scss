@@ -252,7 +252,7 @@ ul.task-list input[type="checkbox"] {
 
 @media (min-width: 576px) {
   .profile {
-    width: 30%;
+    width: 24%;
 
     .address {
       p {
@@ -472,7 +472,12 @@ ul.task-list input[type="checkbox"] {
   }
 
   .contact-note {
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: var(--type-meta);
+    letter-spacing: 0.01em;
+    color: var(--global-text-color-light);
+    text-transform: uppercase;
+    margin-top: 0.75rem;
   }
 }
 

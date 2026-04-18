@@ -354,4 +354,14 @@ html.js-motion body.home main.page-turn--enter {
 // -----------------------------------------------------------------------------
 .home-social {
   padding: clamp(1rem, 2vw, 2rem) 0 0;
+
+  .contact-note {
+    font-family: var(--font-mono);
+    font-size: var(--type-meta);
+    letter-spacing: 0.04em;
+    color: var(--global-text-color-light);
+    text-transform: uppercase;
+    margin: 0.75rem 0 0;
+    text-align: center;
+  }
 }

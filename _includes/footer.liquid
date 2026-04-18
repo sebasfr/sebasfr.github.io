@@ -8,8 +8,6 @@
       <ul class="footer-secondary-list">
         <li><a href="{{ '/news/' | relative_url }}" class="u-underline">news</a></li>
         <li><a href="{{ '/books/' | relative_url }}" class="u-underline">books</a></li>
-        <li><a href="{{ '/profiles/' | relative_url }}" class="u-underline">profiles</a></li>
-        <li><a href="{{ '/repositories/' | relative_url }}" class="u-underline">repositories</a></li>
       </ul>
     </nav>
 
@@ -18,14 +16,6 @@
       {% include social.liquid %}
     </div>
 
-    <p class="footer-colophon mono">
-      Set in Fraunces &amp; JetBrains Mono.
-      Last updated {{ site.time | date: "%B %Y" }}.
-      &copy; {{ site.time | date: '%Y' }} {{ site.first_name }} {{ site.last_name }}.
-      {% if site.impressum_path %}
-        <a href="{{ site.url }}{{ site.baseurl }}{{ site.impressum_path }}">Impressum</a>.
-      {% endif %}
-    </p>
   </div>
 
   {% if site.newsletter.enabled %}
