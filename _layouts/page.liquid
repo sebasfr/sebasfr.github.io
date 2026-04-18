@@ -15,11 +15,11 @@ layout: default
     {% endif %}
     <div class="page-head-body">
       {% if page.rail_numeral %}
-        <p class="page-head-supertitle">{{ page.rail_numeral }} &mdash; {{ page.title | upcase }}</p>
+        <p class="page-head-supertitle anim-clip-reveal">{{ page.rail_numeral }} &mdash; {{ page.title | upcase }}</p>
       {% endif %}
-      <h1 class="post-title page-head-title">{{ page.title }}</h1>
+      <h1 class="post-title page-head-title anim-letter-mask">{{ page.title }}</h1>
       {% if page.description %}
-        <p class="post-description">{{ page.description }}</p>
+        <p class="post-description anim-fade-rise">{{ page.description }}</p>
       {% endif %}
     </div>
   </header>

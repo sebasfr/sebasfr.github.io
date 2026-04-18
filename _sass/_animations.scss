@@ -1,0 +1,131 @@
+/*******************************************************************************
+ * Page-head animations.
+ *
+ * A1 .anim-letter-mask   per-glyph clip-path curtain (page H1 + hero name)
+ * A2 .anim-axis-morph    Fraunces axis morph on italic accent (Safari-safe)
+ * A3 .anim-clip-reveal   left-to-right clip-path wipe (mono caps supertitle)
+ * A4 .anim-fade-rise     opacity + translateY rise (sentence-style dek)
+ *
+ * Scoped under `html.js-motion` so JS-off users land on the final state with
+ * no FOUC. `prefers-reduced-motion: reduce` skips the animation.
+ ******************************************************************************/
+
+/* ============================================================================
+ * A1 — Letter-mask reveal
+ * ========================================================================= */
+html.js-motion .anim-letter-mask {
+  .anim-char {
+    display: inline-block;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(0.12em);
+    animation: letter-reveal var(--motion-duration-letter)
+               var(--motion-ease-stamp) both;
+    animation-delay: calc(var(--i, 0) * 32ms + 400ms);
+    will-change: clip-path, transform;
+  }
+
+  .anim-char.is-space {
+    animation: none;
+    clip-path: none;
+    transform: none;
+  }
+}
+
+@keyframes letter-reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion .anim-letter-mask .anim-char {
+    clip-path: none;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ============================================================================
+ * A2 — Axis morph (Fraunces) with Safari-safe fallback
+ * ========================================================================= */
+html.js-motion .anim-axis-morph {
+  opacity: 0;
+  transform: translateY(0.25em);
+  animation: axis-morph-base var(--motion-duration-axis)
+             var(--motion-ease-out) 480ms both;
+}
+
+@keyframes axis-morph-base {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html.js-motion .anim-axis-morph[data-fvs-ok="1"] {
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 0;
+  animation:
+    axis-morph-base var(--motion-duration-axis) var(--motion-ease-out) 480ms both,
+    axis-morph-fvs  var(--motion-duration-axis) var(--motion-ease-out) 480ms both;
+}
+
+@keyframes axis-morph-fvs {
+  to { font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion .anim-axis-morph,
+  html.js-motion .anim-axis-morph[data-fvs-ok="1"] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  }
+}
+
+/* ============================================================================
+ * A3 — Clip reveal (left-to-right wipe for mono caps supertitle)
+ * Pure CSS, fires on element mount; no JS-driven .is-animated toggle.
+ * ========================================================================= */
+html.js-motion .anim-clip-reveal {
+  clip-path: inset(0 100% 0 0);
+  animation: clip-reveal var(--motion-duration-axis)
+             var(--motion-ease-out) 200ms both;
+}
+
+@keyframes clip-reveal {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion .anim-clip-reveal {
+    clip-path: none;
+    animation: none;
+  }
+}
+
+/* ============================================================================
+ * A4 — Fade rise (single-block opacity + translateY for sentence dek)
+ * ========================================================================= */
+html.js-motion .anim-fade-rise {
+  opacity: 0;
+  transform: translateY(0.4em);
+  animation: fade-rise var(--motion-duration-axis)
+             var(--motion-ease-out) 800ms both;
+}
+
+@keyframes fade-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion .anim-fade-rise {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

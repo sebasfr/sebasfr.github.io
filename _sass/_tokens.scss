@@ -29,8 +29,11 @@
   --motion-duration-fast: 180ms;
   --motion-duration-normal: 300ms;
   --motion-duration-page-turn: 600ms;
+  --motion-duration-letter: 420ms;
+  --motion-duration-axis: 600ms;
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-page-turn: cubic-bezier(0.76, 0, 0.24, 1);
+  --motion-ease-stamp: cubic-bezier(0.16, 1.1, 0.3, 1);
 }
 
 html[data-theme="dark"] {
@@ -46,5 +49,7 @@ html[data-theme="dark"] {
     --motion-duration-fast: 0ms;
     --motion-duration-normal: 0ms;
     --motion-duration-page-turn: 0ms;
+    --motion-duration-letter: 0ms;
+    --motion-duration-axis: 0ms;
   }
 }
