@@ -9,7 +9,7 @@ layout: default
 
 <div class="post brutalist-page research-page">
   <header class="post-header page-head">
-    <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "II" }}.</div>
+    <div class="drop-numeral anim-stamp" aria-hidden="true">{{ page.drop_numeral | default: "II" }}.</div>
     <div class="page-head-body">
       <p class="page-head-supertitle anim-clip-reveal">II &mdash; RESEARCH &middot; PAPERS &amp; WRITING</p>
       <h1 class="page-head-title anim-letter-mask">{{ page.title | default: "research" }}</h1>
@@ -17,7 +17,7 @@ layout: default
     </div>
   </header>
 
-  <article class="brutalist-article research-body">
+  <article class="brutalist-article research-body anim-content-sweep">
     {{ content }}
   </article>
 </div>

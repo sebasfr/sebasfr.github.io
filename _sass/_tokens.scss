@@ -26,11 +26,11 @@
   --footnote-rail-color: #{$vintage-light-text-light};
 
   // Motion
-  --motion-duration-fast: 180ms;
-  --motion-duration-normal: 300ms;
-  --motion-duration-page-turn: 600ms;
-  --motion-duration-letter: 420ms;
-  --motion-duration-axis: 600ms;
+  --motion-duration-fast: 225ms;
+  --motion-duration-normal: 375ms;
+  --motion-duration-page-turn: 750ms;
+  --motion-duration-letter: 525ms;
+  --motion-duration-axis: 750ms;
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-page-turn: cubic-bezier(0.76, 0, 0.24, 1);
   --motion-ease-stamp: cubic-bezier(0.16, 1.1, 0.3, 1);

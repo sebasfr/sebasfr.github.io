@@ -13,7 +13,7 @@ redirect_from:
 
 <!-- _pages/publications.md -->
 
-My research interests covers the fields of **Macroeconomics and International Economics**, more specifically, at the intersection of monetary, growth, and international economics. My current research focuses on the implementation of monetary policy in Costa Rica under the light of recent inflationary episodes. 
+My research interests covers the fields of **Quantitative Economics, Macroeconomics and Monetary Economics**, more specifically, at the intersection of monetary, growth, and international economics. My current research focuses on the implementation of monetary policy in Costa Rica under the light of recent inflationary episodes. 
 <!-- Bibsearch Feature -->
 
 <!-- {% include bib_search.liquid %} -->

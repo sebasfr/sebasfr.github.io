@@ -3,7 +3,7 @@ layout: default
 ---
 <div class="post brutalist-page cv-page">
   <header class="post-header page-head">
-    <div class="drop-numeral" aria-hidden="true">{{ page.drop_numeral | default: "III" }}.</div>
+    <div class="drop-numeral anim-stamp" aria-hidden="true">{{ page.drop_numeral | default: "III" }}.</div>
     <div class="page-head-body">
       <p class="page-head-supertitle anim-clip-reveal">
         III &mdash; CURRICULUM VITAE &middot; LAST UPDATED {{ site.time | date: "%b %Y" | upcase }}
@@ -13,7 +13,7 @@ layout: default
         <p class="page-head-dek anim-fade-rise">{{ page.description }}</p>
       {% endif %}
       {% if page.cv_pdf %}
-        <p class="cv-pdf-link">
+        <p class="cv-pdf-link anim-content-sweep">
           <a class="mono-link u-underline"
              {% if page.cv_pdf contains '://' %}
                href="{{ page.cv_pdf }}"
@@ -28,7 +28,7 @@ layout: default
     </div>
   </header>
 
-  <article class="brutalist-article cv-body">
+  <article class="brutalist-article cv-body anim-content-sweep">
     {% unless site.data.resume %}
       <div class="cv">
         {% for entry in site.data.cv %}
@@ -53,8 +53,10 @@ layout: default
             {% unless site.jsonresume contains data[0] %}{% continue %}{% endunless %}
           {% endif %}
           {% if data[0] == 'meta' or data[1].size == 0 %}{% continue %}{% endif %}
+          {% assign section_label = data[0] %}
+          {% if section_label == 'projects' %}{% assign section_label = 'research' %}{% endif %}
           <section class="cv-section" id="{{ data[0] }}">
-            <p class="section-supertitle">{{ data[0] | upcase }}</p>
+            <p class="section-supertitle">{{ section_label | upcase }}</p>
             <div class="cv-section-body">
               {% case data[0] %}
                 {% when 'basics' %}{% include resume/basics.liquid %}

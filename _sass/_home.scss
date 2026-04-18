@@ -48,14 +48,14 @@ html.js-motion body.home main.page-turn--enter {
 // Hero A — oversized wordmark
 // -----------------------------------------------------------------------------
 .hero--wordmark {
-  padding: clamp(2rem, 6vw, 6rem) 0 clamp(2rem, 4vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 4rem) 0 clamp(0.75rem, 1.5vw, 1.5rem);
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 @media (min-width: 900px) {
   .hero--wordmark {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
     align-items: end;
   }
 }
@@ -104,7 +104,7 @@ html.js-motion body.home main.page-turn--enter {
 }
 .hero-wordmark-photo {
   margin: 0;
-  max-width: 260px;
+  max-width: clamp(280px, 32vw, 440px);
   justify-self: start;
 }
 @media (min-width: 900px) {
@@ -190,7 +190,7 @@ html.js-motion body.home main.page-turn--enter {
 // Bio — drop cap
 // -----------------------------------------------------------------------------
 .home-bio {
-  padding: clamp(2rem, 4vw, 4rem) 0;
+  padding: clamp(1rem, 2vw, 2rem) 0;
   max-width: var(--measure);
 }
 .bio .section-supertitle {
@@ -224,7 +224,7 @@ html.js-motion body.home main.page-turn--enter {
 // FLAR feature
 // -----------------------------------------------------------------------------
 .flar-feature {
-  padding: clamp(2rem, 4vw, 4rem) 0;
+  padding: clamp(1rem, 2vw, 2rem) 0;
   max-width: var(--measure);
 }
 .flar-title {
@@ -258,7 +258,7 @@ html.js-motion body.home main.page-turn--enter {
 // -----------------------------------------------------------------------------
 // Dispatches (news)
 // -----------------------------------------------------------------------------
-.home-dispatches { padding: clamp(1.5rem, 3vw, 3rem) 0; }
+.home-dispatches { padding: clamp(0.75rem, 1.5vw, 1.5rem) 0; }
 .dispatch-list {
   list-style: none;
   padding: 0;
@@ -293,7 +293,7 @@ html.js-motion body.home main.page-turn--enter {
 // -----------------------------------------------------------------------------
 // Latest notes
 // -----------------------------------------------------------------------------
-.home-latest-notes { padding: clamp(1.5rem, 3vw, 3rem) 0; }
+.home-latest-notes { padding: clamp(0.75rem, 1.5vw, 1.5rem) 0; }
 .home-notes-list {
   list-style: none;
   padding: 0;
@@ -340,7 +340,7 @@ html.js-motion body.home main.page-turn--enter {
 // Latest research (home-embedded)
 // -----------------------------------------------------------------------------
 .home-latest-research {
-  padding: clamp(1.5rem, 3vw, 3rem) 0;
+  padding: clamp(0.75rem, 1.5vw, 1.5rem) 0;
 
   // jekyll-scholar output here is also styled via _research.scss;
   // we only compact the spacing for the home-embedded variant.
@@ -353,5 +353,5 @@ html.js-motion body.home main.page-turn--enter {
 // Home social
 // -----------------------------------------------------------------------------
 .home-social {
-  padding: clamp(1.5rem, 3vw, 3rem) 0 0;
+  padding: clamp(1rem, 2vw, 2rem) 0 0;
 }
