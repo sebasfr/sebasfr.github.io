@@ -35,10 +35,10 @@
 
     <div class="rail-footer">
       {% if site.enable_darkmode %}
-        <button id="light-toggle" class="rail-toggle" aria-label="Toggle color theme" type="button">
-          <span id="light-toggle-system" aria-hidden="true">◐</span>
-          <span id="light-toggle-dark" aria-hidden="true">●</span>
-          <span id="light-toggle-light" aria-hidden="true">○</span>
+        <button class="light-toggle rail-toggle" aria-label="Toggle color theme" type="button">
+          <span class="light-toggle-system" aria-hidden="true">◐</span>
+          <span class="light-toggle-dark" aria-hidden="true">●</span>
+          <span class="light-toggle-light" aria-hidden="true">○</span>
         </button>
       {% endif %}
       <p class="rail-meta mono">{{ site.first_name | upcase }} {{ site.last_name | upcase }}</p>

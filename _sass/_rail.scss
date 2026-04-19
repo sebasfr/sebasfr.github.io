@@ -261,6 +261,32 @@ html.drawer-open body {
   height: 40px;
   display: block;
 }
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--rail-border-color);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: var(--global-text-color);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.header-theme-toggle:hover { color: var(--global-theme-color); }
+.header-theme-toggle .light-toggle-system,
+.header-theme-toggle .light-toggle-dark,
+.header-theme-toggle .light-toggle-light {
+  padding: 0 !important;
+}
 
 // -----------------------------------------------------------------------------
 // SFR logo fill — light = oxblood, dark = lighter orange (matches wordmark

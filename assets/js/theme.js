@@ -284,10 +284,12 @@ let initTheme = () => {
 
   // Add event listener to the theme toggle button.
   document.addEventListener("DOMContentLoaded", function () {
-    const mode_toggle = document.getElementById("light-toggle");
+    const toggles = document.querySelectorAll(".light-toggle, #light-toggle");
 
-    mode_toggle.addEventListener("click", function () {
-      toggleThemeSetting();
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", function () {
+        toggleThemeSetting();
+      });
     });
   });
 

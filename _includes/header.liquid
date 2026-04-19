@@ -7,9 +7,18 @@
   <a class="header-wordmark" href="{{ '/' | relative_url }}" aria-label="Home">
     {% include sfr_logo.liquid %}
   </a>
-  <button type="button" id="drawer-toggle" class="drawer-toggle" aria-label="Open menu" aria-controls="mobile-drawer" aria-expanded="false">
-    <span class="drawer-toggle-bar" aria-hidden="true"></span>
-    <span class="drawer-toggle-bar" aria-hidden="true"></span>
-    <span class="drawer-toggle-bar" aria-hidden="true"></span>
-  </button>
+  <div class="header-actions">
+    {% if site.enable_darkmode %}
+      <button class="light-toggle header-theme-toggle" aria-label="Toggle color theme" type="button">
+        <span class="light-toggle-system" aria-hidden="true">◐</span>
+        <span class="light-toggle-dark" aria-hidden="true">●</span>
+        <span class="light-toggle-light" aria-hidden="true">○</span>
+      </button>
+    {% endif %}
+    <button type="button" id="drawer-toggle" class="drawer-toggle" aria-label="Open menu" aria-controls="mobile-drawer" aria-expanded="false">
+      <span class="drawer-toggle-bar" aria-hidden="true"></span>
+      <span class="drawer-toggle-bar" aria-hidden="true"></span>
+      <span class="drawer-toggle-bar" aria-hidden="true"></span>
+    </button>
+  </div>
 </header>
