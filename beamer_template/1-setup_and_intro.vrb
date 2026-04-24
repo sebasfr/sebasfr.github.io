@@ -1,0 +1,21 @@
+\frametitle{Verifying Installation}
+\begin{block}{Health Check}
+^^I^^I^^IUse the built-in diagnostic tool to verify your setup.
+^^I^^I\end{block}
+^^I^^I
+\begin{lstlisting}[language=bash]
+# Inside Claude Code, run:
+/doctor
+\end{lstlisting}
+
+^^I^^I\textbf{What \texttt{/doctor} Checks:}
+^^I^^I\begin{itemize}
+^^I^^I^^I\item Installation integrity
+^^I^^I^^I\item Active subscription status
+^^I^^I^^I\item System configuration
+^^I^^I^^I\item Common setup issues
+^^I^^I\end{itemize}
+^^I^^I
+^^I^^I\vspace{0.3cm}
+^^I^^I
+^^I^^I\alert{Healthy output shows green checkmarks for all items.}

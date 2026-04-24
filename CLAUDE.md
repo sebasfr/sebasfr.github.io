@@ -65,29 +65,56 @@ docker-compose up
 
 #### Custom Design System
 
-The site uses significant customizations over the default al-folio theme:
+The site was refactored from the default al-folio theme into a **neo-brutalist editorial/serif** design (see commit `61eb7b7`). Subsequent commits added page-head text animations, a refreshed CV, and a vintage-sharpened palette.
 
-**Typography** (`_sass/_base.scss`):
+**Design tokens** (`_sass/_tokens.scss`):
 
-- Global font is **Playfair Display** (serif), loaded from Google Fonts.
-- `Playfair Display SC` (small caps variant) is used for badges and tags.
-- Both variants are imported at the top of `_base.scss`.
+All typography, spacing, motion, and semantic color tokens are defined as CSS custom properties in `_tokens.scss`, layered on top of the palette in `_variables.scss` / `_themes.scss`. Consume these via `var(--font-serif)`, `var(--type-h1)`, `var(--motion-duration-normal)`, etc. — do not hardcode values.
+
+Key token groups:
+
+- **Type**: `--font-serif`, `--font-mono`, `--type-hero-wordmark`, `--type-drop-numeral`, `--type-h1/h2`, `--type-dek`, `--type-body`, `--type-meta`, `--measure`, `--rail-width`.
+- **Editorial semantics**: `--rule-color`, `--rail-bg-color`, `--rail-border-color`, `--mono-label-color`, `--footnote-rail-color` (each has a dark-mode override).
+- **Motion**: `--motion-duration-fast/normal/page-turn/letter/axis`, `--motion-ease-out/page-turn/stamp`. All durations collapse to `0ms` under `prefers-reduced-motion`.
+
+**Typography:**
+
+- Global serif is **Fraunces** (loaded via `_sass/_fonts.scss`), with Georgia / Times New Roman fallbacks — exposed as `--font-serif`.
+- Monospace is **JetBrains Mono** — exposed as `--font-mono`, used for meta labels, code, and drop-numerals.
+- Playfair Display is no longer used.
 
 **Color Themes** (`_sass/_variables.scss` + `_sass/_themes.scss`):
 
-Five named themes are defined in `_variables.scss`, each with full light and dark mode palettes:
+Five named palettes are defined in `_variables.scss` (`econometrician`, `journal`, `ledger`, `algo`, `vintage`), each with full light and dark variants.
 
-| Theme | Light accent | Dark accent | Aesthetic |
-| --- | --- | --- | --- |
-| `econometrician` | Economist Red `#e3120b` | Bright Red `#ff4d46` | Teal/data-focused |
-| `journal` | Black `#000000` | White `#ffffff` | Monochrome print |
-| `ledger` | Oxblood `#9e2a2b` | Coral `#ff8a80` | Warm financial |
-| `algo` | Electric Indigo `#4f46e5` | Soft Indigo `#818cf8` | FinTech/modern |
-| `vintage` | Burnt Orange `#c2410c` | Muted Orange `#fb923c` | Warm cream/beige |
+**Active theme: `vintage`** (burnt orange `#c2410c` light / muted orange `#fb923c` dark, warm cream/beige surfaces). `_themes.scss` maps `$vintage-*` SCSS variables to the global CSS custom properties for both `:root` (light) and `html[data-theme="dark"]`. To switch themes, replace all `$vintage-*` references in `_themes.scss` and `_tokens.scss` with the corresponding `$<theme>-*` variables.
 
-**Active theme: `vintage`** — `_themes.scss` maps the `vintage-*` SCSS variables to the global CSS custom properties (`--global-bg-color`, `--global-theme-color`, etc.) for both `:root` (light) and `html[data-theme="dark"]`.
+#### SCSS Partials
 
-To switch themes, replace all `$vintage-*` references in `_themes.scss` with the corresponding `$<theme-name>-*` variables. All theme palettes are already defined in `_variables.scss`.
+The stylesheet is split into focused partials under `_sass/`:
+
+| File | Purpose |
+| --- | --- |
+| `_tokens.scss` | Design tokens (type/space/motion/semantic colors) |
+| `_variables.scss` | Palette SCSS variables for all five themes |
+| `_themes.scss` | Maps active palette to `--global-*` custom properties |
+| `_fonts.scss` | `@font-face` declarations (Fraunces, JetBrains Mono) |
+| `_base.scss` | Global element styling |
+| `_layout.scss` / `_grid.scss` | Page layout + editorial grid |
+| `_rail.scss` | Sidebar rail (desktop) + mobile drawer styling |
+| `_home.scss` / `_cv.scss` / `_research.scss` / `_teaching.scss` / `_notes.scss` / `_post.scss` | Per-page/surface styles |
+| `_tabs.scss` / `_typograms.scss` / `_animations.scss` | Interaction + motion primitives |
+| `_distill.scss` | Distill-style article layout |
+
+#### Editorial Includes
+
+Custom Liquid components under `_includes/` drive the editorial surfaces:
+
+- `hero_masthead.liquid`, `hero_wordmark.liquid`, `post_supertitle.liquid` — page/article heads with animated type.
+- `sidebar_rail.liquid`, `mobile_drawer.liquid` — primary navigation (desktop rail + mobile drawer with theme toggle).
+- `sfr_logo.liquid` — site wordmark.
+- `dispatches.liquid`, `newsletter.liquid`, `latest_posts.liquid`, `selected_papers.liquid`, `flar_feature.liquid` — home-page content blocks.
+- `cv/` and `resume/` — CV/résumé partials used by the `cv` layout.
 
 ### Site Configuration
 
