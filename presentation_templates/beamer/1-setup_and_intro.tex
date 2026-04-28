@@ -1,5 +1,5 @@
 % !TeX program = xelatex
-\documentclass[10pt]{beamer}
+\documentclass[9pt]{beamer}
 
 % --- 1. THEME SELECTION SWITCH ---
 % Change this to \darkmodetrue for Dark Mode, \darkmodefalse for Light Mode
@@ -46,7 +46,8 @@
 \setbeamercolor{example text}{fg=ThemeHover}
 
 % --- 3. METROPOLIS CONFIGURATION ---
-% progressbar disabled — we draw our own thick rule under the frame title.
+% We render the progress bar manually inside our frametitle template
+% (see "Frame title" override below), so metropolis's built-in bar is off.
 \usetheme[progressbar=none, block=fill]{metropolis}
 \useoutertheme{metropolis}
 \useinnertheme{metropolis}
@@ -180,7 +181,7 @@ BoldItalicFont=*-BoldItalic
 \usefonttheme{serif}
 
 % Neo-brutalist display weight for frame titles + title slide.
-\setbeamerfont{frametitle}{family=\FrauncesDisplay, series=\bfseries, size=\normalsize}
+\setbeamerfont{frametitle}{family=\FrauncesDisplay, series=\bfseries, size=\large}
 \setbeamerfont{title}{family=\FrauncesDisplay, series=\bfseries, size=\normalsize}
 \setbeamerfont{subtitle}{family=\rmfamily, shape=\itshape, size=\small}
 \setbeamerfont{section title}{family=\FrauncesDisplay, series=\bfseries}
@@ -199,6 +200,11 @@ BoldItalicFont=*-BoldItalic
 \setbeamercolor{standout}{bg=ThemePrimary, fg=ThemeBg}
 \setbeamercolor{footline}{bg=ThemeBg, fg=ThemeTextLight}
 
+% NOTE: standout frames should be invoked as \begin{frame}[standout, plain].
+% The [plain] option suppresses headline/footline so the hero orange slab
+% fills the page. (Hooks via standout begin / addtobeamertemplate are not
+% reliable across metropolis versions due to internal scoping.)
+
 % Figure captions in mono (newsprint feel).
 \captionsetup{font={footnotesize,tt}, labelfont={bf,tt}, labelsep=colon}
 
@@ -213,7 +219,7 @@ BoldItalicFont=*-BoldItalic
        \MakeUppercase{\S\,\insertsectionnumber\ \textperiodcentered\ \insertsection}}\par%
     }%
     {\usebeamerfont{frametitle}\insertframetitle\strut}\par%
-    \vskip0.25ex%
+    \vskip-0.6ex%
     {\color{ThemePrimary}\rule{\dimexpr\paperwidth-3ex\relax}{1.4pt}}\par%
     \vskip0.2ex%
   \end{beamercolorbox}%
@@ -275,7 +281,8 @@ BoldItalicFont=*-BoldItalic
 }
 \setbeamertemplate{block example end}{\end{beamercolorbox}\vskip\smallskipamount}
 
-% Footline: mono line — SFR · <short title> · <n>
+% Footline: mono line — SFR · <short title> · <n>. Use [plain] on
+% standout frames to suppress this footline.
 \setbeamertemplate{footline}{%
   \leavevmode%
   \hbox{%
@@ -669,7 +676,8 @@ Claude Code is an assistant, not a replacement for your expertise. Always review
 
 	\end{frame}
 	
-	\begin{frame}[standout]
+	% [plain] suppresses the footline so the standout slab fills the page.
+	\begin{frame}[standout, plain]
 		\raggedright
 		{\FrauncesDisplay\bfseries\fontsize{48pt}{52pt}\selectfont Thank you.\par}
 		\vspace{0.45cm}

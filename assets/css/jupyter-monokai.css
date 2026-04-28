@@ -78,10 +78,39 @@ body > #header {
   z-index: 100;
 }
 
+
+.list_item > div {
+  padding-top: 6px;
+  padding-bottom: 2px;
+  padding-left: 0px;
+}
+
+.list_item input:not([type="checkbox"]) {
+  padding-right: 0px;
+  height: 1.75em;
+  width: 25%;
+  margin: 0px 0 0;
+  margin-top: 0px;
+}
+
 input[type="radio"],
 input[type="checkbox"] {
   margin-top: 1px;
   line-height: normal;
+}
+
+
+.list_item > div input {
+  margin-right: 7px;
+  margin-left: 12px;
+  vertical-align: baseline;
+  line-height: 22px;
+  position: relative;
+  top: -1px;
+}
+
+div.list_item:hover {
+  background-color: rgba(93, 92, 82, 0.1);
 }
 
 .breadcrumb > li {
@@ -499,6 +528,7 @@ h6,
 pre,
 code,
 form,
+fieldset,
 legend,
 input,
 button,
@@ -550,9 +580,30 @@ div.cell.text_cell.selected::before {
   border-color: #57564b !important;
 }
 
+div.prompt,
+.prompt {
+  font-family: monospace, monospace;
+  font-size: 9pt !important;
+  font-weight: normal;
+  color: #75715e;
+  line-height: 170%;
+  padding: 0px;
+  padding-top: 4px;
+  padding-left: 0px;
+  padding-right: 1px;
+  text-align: right !important;
+  min-width: 11.5ex !important;
+  width: 11.5ex !important;
+}
+
+div.cell.selected .prompt {
+  top: 0;
+}
+
 pre,
 code,
-kbd {
+kbd,
+samp {
   white-space: pre-wrap;
 }
 
