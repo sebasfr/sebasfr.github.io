@@ -1,0 +1,903 @@
+/*-- scss:defaults --*/
+
+// =============================================================================
+// SFR slide theme — neo-brutalist editorial port of sebasfr.github.io.
+// Title slide mirrors `hero_wordmark`; section pages use the post drop-numeral
+// pattern; content slides mirror `_layouts/post`; standout closer mirrors the
+// hero masthead. Re-paced for projection (16:9, large type, generous space).
+// =============================================================================
+
+// --- Web fonts: same stack as the site (--font-serif, --font-mono) ---
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:ital,wght@0,300..800;1,300..800&display=swap');
+
+// --- Vintage palette (light only — see _variables.scss $vintage-light-*) ---
+$vintage-bg:           #F8F5EC; // warm cream
+$vintage-text:         #433422; // deep espresso
+$vintage-text-light:   #8C7866; // muted mocha
+$vintage-primary:      #C2410C; // burnt orange
+$vintage-accent:       #B88B2A; // mustard ochre
+$vintage-hover:        #9A3412; // darker burnt orange
+$vintage-box-in:       #EFEBDB; // tan fill
+$vintage-box-out:      #E0D7C0; // tan border
+$vintage-divider:      rgba(67, 52, 34, 0.14);
+$vintage-rule:         #433422; // post hr / hero rule
+
+// --- reveal.js overrides ---
+$body-bg:                            $vintage-bg;
+$body-color:                         $vintage-text;
+$link-color:                         $vintage-primary;
+$link-color-hover:                   $vintage-hover;
+$selection-bg:                       $vintage-primary;
+$selection-color:                    $vintage-bg;
+
+$code-color:                         $vintage-hover;
+$code-block-bg:                      $vintage-box-in;
+$code-block-border-color:            $vintage-box-out;
+
+$font-family-sans-serif:             "Fraunces", Georgia, "Times New Roman", serif;
+$font-family-serif:                  "Fraunces", Georgia, "Times New Roman", serif;
+$font-family-monospace:              "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+$mainfont:                           "Fraunces", Georgia, serif;
+$monofont:                           "JetBrains Mono", monospace;
+
+$presentation-heading-font:          "Fraunces", Georgia, serif;
+$presentation-heading-font-weight:   700;
+$presentation-heading-color:         $vintage-text;
+$presentation-heading-text-transform: none;
+$presentation-heading-letter-spacing: -0.015em;
+$presentation-heading-line-height:   1.1;
+
+// Re-paced for projection
+$presentation-h1-font-size:          2.6em;
+$presentation-h2-font-size:          1.7em;
+$presentation-h3-font-size:          1.25em;
+$presentation-h4-font-size:          1.05em;
+$presentation-font-size-root:        38px;
+$presentation-line-height:           1.45;
+
+/*-- scss:rules --*/
+
+// =============================================================================
+// 0. Design tokens — ported from _tokens.scss, re-paced for projection
+// =============================================================================
+:root {
+  --font-serif: #{$mainfont};
+  --font-mono: #{$monofont};
+
+  --type-hero-wordmark: 8rem;
+  --type-drop-numeral: 17rem;
+  --type-h1: 4.2rem;
+  --type-h2: 3.4rem;
+  --type-h3: 2.2rem;
+  --type-dek: 2.3rem;
+  --type-body: 2.05rem;
+  --type-meta: 1.2rem;
+  --measure: 50ch;
+
+  --rule-color: #{$vintage-rule};
+  --mono-label-color: #{$vintage-text-light};
+  --footnote-rail-color: #{$vintage-text-light};
+  --rail-border-color: #{$vintage-divider};
+  --divider-color: #{$vintage-divider};
+
+  --primary: #{$vintage-primary};
+  --primary-hover: #{$vintage-hover};
+  --accent: #{$vintage-accent};
+  --text: #{$vintage-text};
+  --text-light: #{$vintage-text-light};
+  --bg: #{$vintage-bg};
+  --box-in: #{$vintage-box-in};
+  --box-out: #{$vintage-box-out};
+
+  --motion-duration-fast: 225ms;
+  --motion-duration-normal: 375ms;
+  --motion-duration-page-turn: 750ms;
+  --motion-duration-letter: 525ms;
+  --motion-duration-axis: 750ms;
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-page-turn: cubic-bezier(0.76, 0, 0.24, 1);
+  --motion-ease-stamp: cubic-bezier(0.16, 1.1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-page-turn: 0ms;
+    --motion-duration-letter: 0ms;
+    --motion-duration-axis: 0ms;
+  }
+}
+
+// =============================================================================
+// 1. Canvas, typography, baselines
+// =============================================================================
+.reveal {
+  font-family: var(--font-serif);
+  color: var(--text);
+  background: var(--bg);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+// Ensure padding doesn't expand slide width past reveal's intended dimensions.
+.reveal .slides section,
+.reveal .slides section *,
+.reveal .slides section *::before,
+.reveal .slides section *::after {
+  box-sizing: border-box;
+}
+
+.reveal .slides > section,
+.reveal .slides > section > section {
+  padding: 0;
+}
+
+.reveal p,
+.reveal li {
+  font-family: var(--font-serif);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: var(--type-body);
+}
+
+.reveal strong { color: var(--text); font-weight: 700; }
+.reveal em     { font-style: italic; }
+.reveal a {
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.18s ease;
+}
+.reveal a:hover {
+  border-bottom-color: var(--primary);
+  color: var(--primary-hover);
+}
+
+.reveal .alert {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.reveal hr {
+  border: 0;
+  border-top: 2px solid var(--rule-color);
+  margin: 1rem 0;
+  width: clamp(60px, 15vw, 140px);
+}
+
+// Selection
+::selection { background: var(--primary); color: var(--bg); }
+
+// =============================================================================
+// 2. Mono utility — used for all UPPERCASE labels, dates, kickers, captions
+// =============================================================================
+.reveal .mono,
+.reveal .mono-meta {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+}
+
+// =============================================================================
+// 3. TITLE SLIDE — hero_wordmark port
+// =============================================================================
+// Reveal puts title-slide content inside `.title-slide`. We want:
+//   • mono uppercase supertitle (kicker)
+//   • oversized Fraunces wordmark, italic burnt-orange accent on last segment
+//   • thin orange rule
+//   • mono role line
+//   • optional photo with caption
+// Quarto's auto-generated title block (#title-slide.quarto-title-block) is
+// suppressed via `title-slide-attributes: { data-visibility: hidden }` in YAML.
+// We render the title slide ourselves with `## {.title-slide-custom}`.
+// Quarto also adds `.title-slide` to any empty H1 (e.g., section-pages) — do
+// NOT style the bare `.title-slide` class here; scope to .quarto-title-block
+// only if needed.
+
+// Custom title slide built from raw HTML on a `.title-slide-custom` section.
+.reveal section.title-slide-custom {
+  padding: 0 clamp(2rem, 5vw, 6rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  height: 100%;
+  text-align: left;
+}
+// Hide the (empty) auto-generated H2 from `## {.title-slide-custom}`.
+.reveal section.title-slide-custom > h2:empty,
+.reveal section.title-slide-custom > h2:first-child {
+  display: none;
+}
+
+.reveal .hero-supertitle {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.12em;
+  color: var(--mono-label-color);
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+
+.reveal .hero-wordmark-name {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-weight: 800;
+  font-size: var(--type-hero-wordmark);
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  margin: 0;
+  color: var(--text);
+  display: block;
+}
+// Pandoc wraps inline content in <p>; flatten its margin/line-height.
+.reveal .hero-wordmark-name p {
+  margin: 0;
+  line-height: inherit;
+  font-size: inherit;
+}
+.reveal .hero-wordmark-first,
+.reveal .hero-wordmark-last { display: block; }
+.reveal .hero-wordmark-last {
+  color: var(--primary);
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+}
+
+.reveal .hero-rule {
+  border: 0;
+  border-top: 2px solid var(--rule-color);
+  margin: clamp(1rem, 2vw, 1.6rem) 0 1rem;
+  width: clamp(60px, 15vw, 140px);
+}
+
+.reveal .hero-wordmark-role {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  margin: 0;
+  max-width: 48ch;
+}
+
+// Wordmark / SFR logo (used on title + standout)
+.reveal .sfr-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: absolute;
+  top: 1.4rem;
+  right: 1.6rem;
+  z-index: 5;
+}
+.reveal .sfr-wordmark .sfr-logo {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+.reveal .sfr-wordmark .sfr-wordmark-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+// =============================================================================
+// 4. CONTENT SLIDES — _layouts/post port
+// =============================================================================
+// Pattern:
+//   .post-meta (mono kicker)  →  H2 (Fraunces 700)  →  .dek (italic dek)
+//                              →  body (drop-cap optional)
+//                              →  margin column for .aside / .callout-margin
+// Content slides are vertical sub-slides under section-page stacks, so they
+// live at .reveal .slides > section > section (depth 2). No `>` combinator —
+// match any descendant section that isn't a special slide type.
+.reveal .slides section.slide:not(.title-slide):not(.title-slide-custom):not(.section-page):not(.standout):not(.stack) {
+  padding: clamp(2rem, 4vw, 3.6rem) clamp(2.5rem, 5vw, 5rem);
+  display: block;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Mono supertitle ("§ N · SECTION") — the user prepends as a paragraph with
+// .post-meta or .kicker class via `[§ 2 · APPLICATIONS]{.kicker}`.
+.reveal .post-meta,
+.reveal .kicker {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+  margin: 0 0 0.4rem;
+  display: block;
+}
+
+// H2 — frame title
+.reveal .slides h2 {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-weight: 700;
+  font-size: var(--type-h2);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+  padding: 0;
+  border: 0;
+  text-transform: none;
+}
+
+// Italic dek immediately below the H2 (use `.dek` class)
+.reveal .dek {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+  font-weight: 400;
+  font-size: var(--type-dek);
+  line-height: 1.3;
+  color: var(--text-light);
+  margin: 0 0 1.2rem;
+  max-width: 48ch;
+}
+
+// The thick orange post-style rule — applied to H2 by default for editorial
+// signature, but contained so dek can sit between H2 and rule when desired.
+.reveal .slides h2 + hr,
+.reveal .slides .post-rule {
+  border: 0;
+  border-top: 2.4pt solid var(--primary);
+  margin: 0.4rem 0 1.2rem;
+  width: 100%;
+  max-width: var(--measure);
+}
+
+// Body content area — applies inside any non-special slide.
+.reveal .post-body,
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) p,
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) ul,
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) ol {
+  font-family: var(--font-serif);
+  font-size: var(--type-body);
+  line-height: 1.55;
+  color: var(--text);
+  max-width: var(--measure);
+}
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) > p,
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) > ul,
+.reveal .slides section.slide:not(.section-page):not(.standout):not(.title-slide-custom) > ol {
+  margin: 0.4rem 0;
+}
+
+.reveal .slides ul,
+.reveal .slides ol {
+  padding-left: 1.4em;
+  margin: 0.4rem 0 0.6rem;
+}
+.reveal .slides li {
+  margin: 0.32em 0;
+  padding-left: 0.2em;
+}
+.reveal .slides ul li::marker { color: var(--primary); }
+.reveal .slides ol li::marker { color: var(--primary); font-family: var(--font-mono); }
+
+// Drop cap on first paragraph of a `.drop-cap` section (opt-in)
+.reveal section.drop-cap > p:first-of-type::first-letter {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-size: 4.4em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.05em 0.16em 0 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+// Blockquote — orange rail, italic
+.reveal blockquote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  border-left: 3pt solid var(--primary);
+  padding: 0.2rem 0 0.2rem 1rem;
+  margin: 0.6rem 0;
+  color: var(--text);
+  background: transparent;
+  max-width: var(--measure);
+}
+
+// =============================================================================
+// 5. CALLOUTS / blocks — flat with primary top rule (post + brutalist hybrid)
+// =============================================================================
+// Quarto default theme paints callout backgrounds with high specificity, so
+// every variant gets an explicit transparent override.
+.reveal .callout,
+.reveal .callout.callout-note,
+.reveal .callout.callout-tip,
+.reveal .callout.callout-warning,
+.reveal .callout.callout-important,
+.reveal .callout.callout-caution {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-top: 1.6pt solid var(--primary) !important;
+  border-radius: 0 !important;
+  padding: 0.5rem 0 0.4rem !important;
+  margin: 0.6rem 0 0.8rem !important;
+  box-shadow: none !important;
+  font-size: var(--type-body);
+  max-width: var(--measure);
+}
+// Inner wrappers — Quarto paints separate backgrounds on every nested div
+// (.callout-body, .callout-title, .callout-content, etc).
+.reveal .callout > .callout-body,
+.reveal .callout > .callout-body-container,
+.reveal .callout-body,
+.reveal .callout-body-container,
+.reveal .callout-title,
+.reveal .callout-title-container,
+.reveal .callout-content,
+.reveal .callout-icon-container,
+.reveal .callout-header {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+.reveal .callout-header,
+.reveal .callout-header p,
+.reveal .callout-header strong,
+.reveal .callout-title-container,
+.reveal .callout-title,
+.reveal .callout-title p,
+.reveal .callout-title strong {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 1rem;
+  color: var(--primary) !important;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  background: transparent !important;
+}
+.reveal .callout-icon-container { display: none; }
+.reveal .callout-body,
+.reveal .callout-body-container {
+  font-family: var(--font-serif);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  color: var(--text);
+  padding: 0;
+}
+.reveal .callout p { margin: 0.2rem 0; font-size: var(--type-body); }
+
+// Variants
+.reveal .callout.callout-warning,
+.reveal .callout.callout-important {
+  border-top-color: var(--accent) !important;
+}
+.reveal .callout.callout-warning .callout-header,
+.reveal .callout.callout-warning .callout-title,
+.reveal .callout.callout-important .callout-header,
+.reveal .callout.callout-important .callout-title {
+  color: var(--accent);
+}
+
+.reveal .callout.callout-tip,
+.reveal .callout.callout-note {
+  border-top-color: var(--primary-hover) !important;
+}
+.reveal .callout.callout-tip .callout-header,
+.reveal .callout.callout-tip .callout-title,
+.reveal .callout.callout-note .callout-header,
+.reveal .callout.callout-note .callout-title {
+  color: var(--primary-hover);
+}
+
+// =============================================================================
+// 6. CODE BLOCKS — tan paper, mono, no border-radius, primary inline accent
+// =============================================================================
+.reveal pre,
+.reveal pre code {
+  font-family: var(--font-mono);
+  background: var(--box-in);
+  color: var(--text);
+  border: 1px solid var(--box-out);
+  border-radius: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.7rem 1rem;
+  max-width: var(--measure);
+}
+.reveal code {
+  font-family: var(--font-mono);
+  color: var(--primary-hover);
+  background: transparent;
+  padding: 0 0.1em;
+}
+
+// =============================================================================
+// 7. TABLES — editorial ledger lines
+// =============================================================================
+.reveal table {
+  font-family: var(--font-serif);
+  border-collapse: collapse;
+  font-size: 1.05rem;
+  margin: 0.4rem 0;
+}
+.reveal table th {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: var(--mono-label-color);
+  font-weight: 600;
+  border-bottom: 1.6pt solid var(--primary);
+  border-top: 0;
+  padding: 0.45em 0.9em 0.45em 0;
+  text-align: left;
+}
+.reveal table td {
+  border-bottom: 0.5pt solid var(--box-out);
+  padding: 0.5em 0.9em 0.5em 0;
+}
+
+// =============================================================================
+// 8. SECTION DIVIDER — drop-numeral pattern
+// =============================================================================
+// Use: `# {.section-page data-section-number="2"}` with three explicit wraps:
+//   ::: {.section-numeral-wrap} [2]{.section-numeral .anim-stamp} :::
+//   ::: {.section-kicker-wrap}  [**§ 2 · CHAPTER**]{.kicker} :::
+//   ::: {.section-title-wrap}   [Title]{.anim-letter-mask} :::
+//
+// Each wrapper is absolutely positioned so it owns its slot regardless of
+// reveal.js's per-slide centering or auto-generated empty H1.
+
+// Section-page: don't !important `display` or `position` — reveal.js needs
+// to control those for slide-state navigation. Just set in-slide layout.
+.reveal .slides section.section-page {
+  padding: 0;
+  text-align: right;
+  overflow: hidden;
+}
+
+// Kill auto-generated empty H1/H2 from `## {.section-page}`.
+.reveal .slides section.section-page > h1,
+.reveal .slides section.section-page > h2 {
+  display: none;
+}
+
+// Numeral wrap — pinned left-center, big serif numeral with stamp animation.
+.reveal .slides section.section-page .section-numeral-wrap {
+  position: absolute;
+  left: clamp(2rem, 5vw, 6rem);
+  top: 50%;
+  transform: translateY(-55%);
+  margin: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.reveal .slides section.section-page .section-numeral-wrap > p { margin: 0; }
+.reveal .slides section.section-page .section-numeral {
+  display: block;
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  font-weight: 900;
+  font-size: var(--type-drop-numeral);
+  line-height: 0.85;
+  color: var(--primary);
+}
+
+// Kicker wrap — pinned top-right.
+.reveal .slides section.section-page .section-kicker-wrap {
+  position: absolute;
+  top: clamp(2rem, 5vw, 4rem);
+  right: clamp(2rem, 5vw, 6rem);
+  margin: 0;
+  z-index: 3;
+  text-align: right;
+  max-width: 60ch;
+}
+.reveal .slides section.section-page .section-kicker-wrap > p { margin: 0; }
+.reveal .slides section.section-page .kicker {
+  display: block;
+  text-align: right;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+}
+.reveal .slides section.section-page .kicker strong { font-weight: 700; }
+
+// Title wrap — vertically centered, right-aligned, on the right column.
+.reveal .slides section.section-page .section-title-wrap {
+  position: absolute;
+  top: 50%;
+  right: clamp(2rem, 5vw, 6rem);
+  transform: translateY(-50%);
+  margin: 0;
+  z-index: 2;
+  text-align: right;
+  max-width: 60%;
+}
+.reveal .slides section.section-page .section-title-wrap > p { margin: 0; }
+.reveal .slides section.section-page .section-title-wrap .anim-letter-mask {
+  display: block;
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-align: right;
+}
+
+// Bottom-right primary rule signature.
+.reveal .slides section.section-page::after {
+  content: "";
+  position: absolute;
+  right: clamp(2rem, 5vw, 6rem);
+  bottom: clamp(2rem, 5vw, 4rem);
+  width: clamp(120px, 25vw, 320px);
+  height: 2.4pt;
+  background: var(--primary);
+  z-index: 2;
+}
+
+// =============================================================================
+// 9. STANDOUT — closer slide, hero masthead style on burnt-orange canvas
+// =============================================================================
+// Use: `## Thank you. {.standout}`
+.reveal section.standout {
+  background: var(--primary);
+  color: var(--bg);
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  padding: 0 clamp(2rem, 5vw, 6rem);
+  height: 100%;
+  text-align: left;
+  position: relative;
+}
+.reveal section.standout h2 {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-weight: 800;
+  font-size: clamp(5.5rem, 12vw, 11rem);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--bg);
+  margin: 0 0 1.4rem;
+  border: 0;
+  text-transform: none;
+}
+.reveal section.standout p,
+.reveal section.standout li,
+.reveal section.standout a {
+  color: var(--bg);
+  font-size: 1.4rem;
+}
+.reveal section.standout a {
+  border-bottom-color: var(--bg);
+}
+.reveal section.standout .standout-meta {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bg);
+  opacity: 0.85;
+  margin: 0;
+}
+
+// When the standout is the current slide, paint the entire reveal viewport
+// burnt-orange and hide reveal's progress bar / slide number / controls so
+// no light-coloured strips peek through above or below the slide.
+.reveal:has(section.standout.present),
+.reveal-viewport:has(section.standout.present),
+body:has(section.standout.present) {
+  background: var(--primary) !important;
+}
+.reveal:has(section.standout.present) .progress,
+.reveal:has(section.standout.present) .slide-number,
+.reveal:has(section.standout.present) .controls,
+.reveal:has(section.standout.present) .backgrounds {
+  display: none !important;
+}
+.reveal section.standout .sfr-wordmark .sfr-logo .sfr-logo-disk {
+  fill: var(--bg);
+  stroke: var(--bg);
+}
+.reveal section.standout .sfr-wordmark .sfr-logo .sfr-logo-mark {
+  fill: var(--primary);
+}
+.reveal section.standout .sfr-wordmark .sfr-wordmark-text { color: var(--bg); }
+
+// =============================================================================
+// 10. SLIDE NUMBER + PROGRESS — mono, muted, post footer feel
+// =============================================================================
+.reveal .slide-number,
+.reveal .slide-number a {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--mono-label-color);
+  background: transparent;
+  text-transform: uppercase;
+}
+.reveal .progress {
+  color: var(--primary);
+  background: rgba(67, 52, 34, 0.12);
+  height: 3px;
+}
+// Hide slide number / progress on standout for clean canvas.
+.reveal section.standout ~ .slide-number,
+.reveal section.title-slide-custom ~ .slide-number {
+  /* reveal positions these globally; per-slide hide handled via JS below if needed */
+}
+
+// =============================================================================
+// 11. FIGURES + CAPTIONS — mono caption, post style
+// =============================================================================
+.reveal figure {
+  margin: 0.6rem 0;
+  max-width: 100%;
+}
+.reveal figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+.reveal figure figcaption,
+.reveal .figure-caption,
+.reveal figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+  text-align: left;
+  margin-top: 0.4rem;
+}
+
+// =============================================================================
+// 12. CITATIONS / FOOTNOTES — mono refs, footnote rail
+// =============================================================================
+.reveal .citation,
+.reveal a.footnote-ref,
+.reveal sup[id^="fnref"] a {
+  color: var(--primary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 600;
+  border-bottom: 0;
+}
+.reveal .footnotes,
+.reveal #refs {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--footnote-rail-color);
+  border-left: 1px solid var(--rail-border-color);
+  padding-left: 1.2rem;
+  margin-top: 1.5rem;
+  max-width: var(--measure);
+}
+.reveal .footnotes ol,
+.reveal #refs > div {
+  padding-left: 1rem;
+}
+
+// =============================================================================
+// 13. ANIMATIONS — ported from _animations.scss, scoped to .reveal
+// =============================================================================
+// A1 — Letter-mask reveal
+html.js-motion .reveal .anim-letter-mask {
+  .anim-char {
+    display: inline-block;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(0.12em);
+    animation: sfr-letter-reveal var(--motion-duration-letter)
+               var(--motion-ease-stamp) both;
+    animation-delay: calc(var(--i, 0) * 40ms + 375ms);
+    will-change: clip-path, transform;
+  }
+  .anim-char.is-space {
+    animation: none;
+    clip-path: none;
+    transform: none;
+  }
+}
+@keyframes sfr-letter-reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+// A2 — Axis morph (Fraunces) with Safari-safe fallback
+html.js-motion .reveal .anim-axis-morph {
+  opacity: 0;
+  transform: translateY(0.25em);
+  animation: sfr-axis-morph-base var(--motion-duration-axis)
+             var(--motion-ease-out) 600ms both;
+}
+@keyframes sfr-axis-morph-base {
+  to { opacity: 1; transform: none; }
+}
+html.js-motion .reveal .anim-axis-morph[data-fvs-ok="1"] {
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 0;
+  animation:
+    sfr-axis-morph-base var(--motion-duration-axis) var(--motion-ease-out) 600ms both,
+    sfr-axis-morph-fvs  var(--motion-duration-axis) var(--motion-ease-out) 600ms both;
+}
+@keyframes sfr-axis-morph-fvs {
+  to { font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1; }
+}
+
+// A3 — Clip reveal
+html.js-motion .reveal .anim-clip-reveal {
+  clip-path: inset(0 100% 0 0);
+  animation: sfr-clip-reveal var(--motion-duration-axis)
+             var(--motion-ease-out) 375ms both;
+}
+@keyframes sfr-clip-reveal { to { clip-path: inset(0 0 0 0); } }
+
+// A4 — Fade rise
+html.js-motion .reveal .anim-fade-rise {
+  opacity: 0;
+  transform: translateY(0.4em);
+  animation: sfr-fade-rise var(--motion-duration-axis)
+             var(--motion-ease-out) 600ms both;
+}
+@keyframes sfr-fade-rise {
+  to { opacity: 1; transform: none; }
+}
+
+// A5 — Content sweep (left-to-right page-turn on body)
+html.js-motion .reveal .anim-content-sweep {
+  clip-path: inset(0 100% 0 0);
+  animation: sfr-content-sweep var(--motion-duration-page-turn)
+             var(--motion-ease-page-turn) 500ms forwards;
+}
+@keyframes sfr-content-sweep { to { clip-path: inset(0 0 0 0); } }
+
+// A6 — Drop-numeral stamp
+html.js-motion .reveal .anim-stamp {
+  opacity: 0;
+  transform: translateY(-10px) scale(1.4) rotate(-6deg);
+  transform-origin: 50% 60%;
+  animation: sfr-numeral-stamp 350ms cubic-bezier(0.2, 0.85, 0.2, 1) 200ms both;
+  will-change: transform, opacity;
+}
+@keyframes sfr-numeral-stamp {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion .reveal .anim-letter-mask .anim-char,
+  html.js-motion .reveal .anim-axis-morph,
+  html.js-motion .reveal .anim-axis-morph[data-fvs-ok="1"],
+  html.js-motion .reveal .anim-clip-reveal,
+  html.js-motion .reveal .anim-fade-rise,
+  html.js-motion .reveal .anim-content-sweep,
+  html.js-motion .reveal .anim-stamp {
+    clip-path: none;
+    opacity: 1;
+    transform: none;
+    animation: none;
+    font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  }
+}
+
