@@ -1,0 +1,55 @@
+---
+layout: default
+---
+{%- assign courses = site.courses
+  | where_exp: "c", "c.chapter == nil"
+  | sort: "code" -%}
+
+<div class="post brutalist-page notes-page">
+  <header class="post-header page-head">
+    <div class="drop-numeral anim-stamp" aria-hidden="true">{{ page.drop_numeral | default: "IV" }}.</div>
+    <div class="page-head-body">
+      <p class="page-head-supertitle anim-clip-reveal">IV &mdash; NOTES &middot; CLASS NOTES, COURSE BY COURSE</p>
+      <h1 class="page-head-title anim-letter-mask">{{ page.title | default: "notes" }}</h1>
+      {% if page.description %}
+        <p class="page-head-dek anim-fade-rise">{{ page.description }}</p>
+      {% endif %}
+    </div>
+  </header>
+
+  <article class="brutalist-article notes-body anim-content-sweep">
+    {% if courses.size == 0 %}
+      <p class="mono">No notes published yet.</p>
+    {% else %}
+      <ol class="notes-list course-index">
+        {% for course in courses %}
+          {%- assign chapter_count = site.courses
+            | where: "course", course.course
+            | where_exp: "c", "c.chapter"
+            | size -%}
+          <li class="notes-row course-index-row">
+            <p class="notes-row-date mono">{{ course.code | default: course.course | upcase }}</p>
+            <div class="notes-row-body">
+              <h2 class="notes-row-title">
+                <a class="u-underline" href="{{ course.url | relative_url }}">{{ course.title }}</a>
+              </h2>
+              {% if course.title_es %}
+                <p class="notes-row-dek" lang="es"><em>{{ course.title_es }}</em></p>
+              {% endif %}
+              {% if course.description %}
+                <p class="notes-row-dek">{{ course.description | markdownify | strip_html | strip }}</p>
+              {% endif %}
+              <p class="notes-row-meta mono">
+                {{ chapter_count }} CHAPTER{% if chapter_count != 1 %}S{% endif %}
+                {% if course.instructor %}
+                  &middot; {{ course.instructor | upcase }}
+                {% endif %}
+                &middot; NOTES IN SPANISH
+              </p>
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    {% endif %}
+  </article>
+</div>

@@ -47,8 +47,15 @@
       var frag = document.createDocumentFragment();
       for (var j = 0; j < chars.length; j++) {
         var ch = chars[j];
+        // Emit whitespace as a plain text node — wrapping a single space in
+        // an inline-block span causes the content to collapse to zero width
+        // because adjacent inline-blocks don't preserve interstitial spaces.
+        if (/\s/.test(ch)) {
+          frag.appendChild(document.createTextNode(ch));
+          continue;
+        }
         var span = document.createElement("span");
-        span.className = "anim-char" + (/\s/.test(ch) ? " is-space" : "");
+        span.className = "anim-char";
         span.setAttribute("aria-hidden", "true");
         span.style.setProperty("--i", counter++);
         span.textContent = ch;

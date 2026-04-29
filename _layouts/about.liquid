@@ -39,29 +39,34 @@ layout: default
   {% endif %}
 
   {% if page.latest_posts and page.latest_posts.enabled %}
-    <section class="home-latest-notes reveal-on-scroll">
-      <hr class="section-rule">
-      <div class="section-heading">
-        <p class="section-supertitle">LATEST NOTES</p>
-        <a class="section-link u-underline" href="{{ '/notes/' | relative_url }}">→ all notes</a>
-      </div>
-      <ol class="home-notes-list">
-        {% assign recent_posts = site.posts | slice: 0, 3 %}
-        {% for post in recent_posts %}
-          <li class="home-note-item">
-            <p class="home-note-date mono">{{ post.date | date: "%Y.%m.%d" }}</p>
-            <div class="home-note-body">
-              <h3 class="home-note-title">
-                <a class="u-underline" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-              </h3>
-              {% if post.description %}
-                <p class="home-note-dek">{{ post.description }}</p>
-              {% endif %}
-            </div>
-          </li>
-        {% endfor %}
-      </ol>
-    </section>
+    {%- assign course_homes = site.courses
+      | where_exp: "c", "c.chapter == nil"
+      | sort: "code" -%}
+    {% if course_homes.size > 0 %}
+      <section class="home-latest-notes reveal-on-scroll">
+        <hr class="section-rule">
+        <div class="section-heading">
+          <p class="section-supertitle">RECENT NOTES</p>
+          <a class="section-link u-underline" href="{{ '/notes/' | relative_url }}">→ all notes</a>
+        </div>
+        <ol class="home-notes-list">
+          {% assign limit = page.latest_posts.limit | default: 3 %}
+          {% for course in course_homes limit: limit %}
+            <li class="home-note-item">
+              <p class="home-note-date mono">{{ course.code | default: course.course | upcase }}</p>
+              <div class="home-note-body">
+                <h3 class="home-note-title">
+                  <a class="u-underline" href="{{ course.url | relative_url }}">{{ course.title }}</a>
+                </h3>
+                {% if course.description %}
+                  <p class="home-note-dek">{{ course.description | markdownify | strip_html | strip }}</p>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+    {% endif %}
   {% endif %}
 
   {% if page.social %}

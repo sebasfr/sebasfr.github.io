@@ -1,0 +1,66 @@
+---
+layout: default
+---
+{%- assign chapters = site.courses
+  | where: "course", page.course
+  | where_exp: "c", "c.chapter"
+  | sort: "chapter" -%}
+
+<div class="post brutalist-page course-home">
+  <header class="post-header page-head">
+    <div class="page-head-body">
+      <p class="page-head-supertitle anim-clip-reveal mono">
+        IV &mdash; NOTES &middot; {{ page.code | default: page.course | upcase }}
+      </p>
+      <h1 class="page-head-title anim-letter-mask">{{ page.title }}</h1>
+      {% if page.title_es %}
+        <p class="page-head-dek anim-fade-rise" lang="es"><em>{{ page.title_es }}</em></p>
+      {% endif %}
+    </div>
+  </header>
+
+  <article class="brutalist-article anim-content-sweep">
+    <dl class="course-meta mono">
+      {% if page.instructor %}
+        <div class="course-meta-row">
+          <dt>Instructor</dt>
+          <dd>{{ page.instructor }}</dd>
+        </div>
+      {% endif %}
+      {% if page.institution %}
+        <div class="course-meta-row">
+          <dt>Institution</dt>
+          <dd>{{ page.institution }}</dd>
+        </div>
+      {% endif %}
+      <div class="course-meta-row">
+        <dt>Notes language</dt>
+        <dd>Spanish</dd>
+      </div>
+      <div class="course-meta-row">
+        <dt>Chapters</dt>
+        <dd>{{ chapters | size }}</dd>
+      </div>
+    </dl>
+
+    <div class="course-description">
+      {{ content }}
+    </div>
+
+    <hr class="section-rule">
+    <p class="section-supertitle mono">CONTENTS</p>
+
+    <ol class="course-toc">
+      {% for chapter in chapters %}
+        <li class="course-toc-row">
+          <span class="course-toc-num mono">{{ chapter.chapter | prepend: '00' | slice: -2, 2 }}</span>
+          <a class="course-toc-title u-underline" href="{{ chapter.url | relative_url }}" lang="es">{{ chapter.title }}</a>
+        </li>
+      {% endfor %}
+    </ol>
+
+    <p class="course-disclaimer mono">
+      Personal notes &middot; May contain errors &middot; Not affiliated with the instructor
+    </p>
+  </article>
+</div>

@@ -16,7 +16,7 @@
   </head>
 
   <!-- Body -->
-  <body class="{% if page.url == '/' %}home {% endif %}{% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
+  <body class="{% if page.url == '/' %}home {% endif %}{% if page.layout %}layout-{{ page.layout }} {% endif %}{% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
     <!-- Site grid: left rail (>=900px) + content -->
     <div class="site-grid">
       {% include sidebar_rail.liquid %}
