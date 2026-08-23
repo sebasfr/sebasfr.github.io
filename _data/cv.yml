@@ -15,16 +15,22 @@
 - title: Research Interests
   type: list
   contents:
-    - Macroeconomics&#58; Monetary Economics, International Economics
+    - Quantitative Economics, Macroeconomics, Monetary Economics
 
 - title: Education
   type: time_table
   contents:
-    - title: B.A. (Honors) in Economics
-      institution: University of Costa Rica (UCR) &mdash; San José, Costa Rica
+    - title: Einaudi Institute for Economics and Finance (EIEF) and LUISS
+      institution: RoME Master in Economics
+      location: Rome, Italy
+      year: 2026 - Present
+
+    - title: University of Costa Rica (UCR)
+      institution: B.A. (Honors) in Economics
+      location: San José, Costa Rica
       year: 2022 - 2026
       description:
-        - Enrolled in B.A. in Mathematics.
+        - Completed coursework toward a B.A. in Mathematics.
         - "GPA: 9.6 / 10.0."
 
 - title: Working Experience
@@ -50,14 +56,14 @@
       year: Aug 2024 - Mar 2025
       description:
         - Assisted in the construction of a novel dataset leveraging meeting-frequency data on monetary policy rate decisions for 50+ emerging economies, displaying empirical relationships hitherto unobservable in monthly or quarterly frequency data.
-        - This new data will contribute in the development of precise monetary policy shock measures for emerging markets.
+        - This new data will contribute to the development of precise monetary policy shock measures for emerging markets.
 
 - title: Teaching Experience
   type: time_table
   contents:
     - title: Lecturer, Department of Economics (UCR)
       institution: University of Costa Rica
-      year: Mar 2026 - Present
+      year: Mar 2026 - Jul 2026
       description:
         - Lead Instructor for XE0156 (Introductory Economics for non-majors).
         - Facilitator for EC1100 (Introductory Economics) practice and discussion sessions.
@@ -72,6 +78,9 @@
 - title: Honors and Awards
   type: time_table
   contents:
+    - year: 2025
+      items:
+        - Highest GPA, Department of Economics (UCR)
     - year: 2024
       items:
         - 1st Place Award, Latin American Reserve Fund Research Contest ($5000)
