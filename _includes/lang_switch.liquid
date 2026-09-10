@@ -1,0 +1,61 @@
+{%- comment -%}
+  Bilingual toggle for the notes section.
+
+  Renders both languages every time: the current one is inert and marked
+  aria-current, the other is a link to its counterpart page. Nothing renders if
+  no counterpart exists, so a chapter that has not been translated yet simply
+  shows no switcher rather than a dead link.
+
+  Usage:
+    {% include lang_switch.liquid %}
+      Resolves the counterpart from site.courses by (course, chapter, lang).
+      Works on both `chapter` and `course-home` layouts.
+
+    {% include lang_switch.liquid en_url="/notes/" es_url="/notes/es/" current="en" %}
+      Explicit form, for pages outside the courses collection (the /notes/ index).
+{%- endcomment -%}
+
+{%- assign ls_current = include.current | default: page.lang | default: 'en' -%}
+{%- assign ls_en_url = include.en_url -%}
+{%- assign ls_es_url = include.es_url -%}
+
+{%- unless ls_en_url and ls_es_url -%}
+  {%- assign ls_siblings = site.courses | where: 'course', page.course -%}
+  {%- if page.chapter -%}
+    {%- assign ls_siblings = ls_siblings | where: 'chapter', page.chapter -%}
+  {%- else -%}
+    {%- assign ls_siblings = ls_siblings | where_exp: 'c', 'c.chapter == nil' -%}
+  {%- endif -%}
+  {%- assign ls_en_doc = ls_siblings | where: 'lang', 'en' | first -%}
+  {%- assign ls_es_doc = ls_siblings | where: 'lang', 'es' | first -%}
+  {%- if ls_en_doc %}{% assign ls_en_url = ls_en_doc.url %}{% endif -%}
+  {%- if ls_es_doc %}{% assign ls_es_url = ls_es_doc.url %}{% endif -%}
+{%- endunless -%}
+
+{%- if ls_en_url and ls_es_url -%}
+  {%- assign ls_t = site.data.i18n[ls_current] -%}
+  <div class="lang-switch mono" role="group" aria-label="{{ ls_t.switch_aria }}">
+    <span class="lang-switch-label" aria-hidden="true">{{ ls_t.switch_label }}</span>
+    {%- assign ls_codes = 'en,es' | split: ',' -%}
+    {%- for ls_code in ls_codes -%}
+      {%- assign ls_meta = site.data.i18n[ls_code] -%}
+      {%- if ls_code == 'en' -%}{%- assign ls_href = ls_en_url -%}{%- else -%}{%- assign ls_href = ls_es_url -%}{%- endif -%}
+      {%- if ls_code == ls_current -%}
+        <span class="lang-switch-opt is-current" aria-current="true" lang="{{ ls_meta.html_lang }}">
+          {{ ls_meta.name_short -}}
+          <span class="sr-only"> &mdash; {{ ls_meta.name }}</span>
+        </span>
+      {%- else -%}
+        <a
+          class="lang-switch-opt"
+          href="{{ ls_href | relative_url }}"
+          lang="{{ ls_meta.html_lang }}"
+          hreflang="{{ ls_meta.html_lang }}"
+        >
+          {{ ls_meta.name_short -}}
+          <span class="sr-only"> &mdash; {{ ls_meta.name }}</span>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}

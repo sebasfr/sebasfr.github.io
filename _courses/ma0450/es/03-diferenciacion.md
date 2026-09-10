@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-09-08
+permalink: /notes/ma0450/es/03-diferenciacion/
+redirect_from:
+  - /notes/ma0450/03-diferenciacion/
 ---
 
 {% raw %}
@@ -247,6 +250,7 @@ por lo tanto $$D_{f}(a,b)(h,k) = 2ah+3k =\begin{pmatrix}2a & 3\end{pmatrix} \beg
 
  ### Teorema (Unicidad del diferencial)
 Si $$f$$ es diferenciable en $$a$$, su diferencial es único.
+
 ***Prueba:*** Suponga que existen $$T, S: \mathbb{R}^n \to \mathbb{R}^{m}$$ lineales tales que cumplen definición. Entonces se cumple que 
 
 
@@ -270,6 +274,7 @@ por lo que $$T(x) = S(x)$$ para todo $$x \in \mathbb{R}^n\setminus \{ 0 \}$$ (la
 
 ### Teorema (Diferenciabilidad implica continuidad)
 Si $$f$$ es diferenciable en $$a$$, entonces es continua en $$a$$. Entonces, $$f$$ es continua en $$a$$.
+
 ***Prueba:*** Sea $$\varepsilon>0$$. Por diferenciabilidad existe $$\delta_{1}>0$$ tal que si $$\lVert h \rVert < \delta_{1}$$ entonces 
 
 
@@ -309,6 +314,7 @@ Si $$\vec{u} = e_{j}$$, entonces $$D_{\vec{u}}f(a) = \frac{\partial f(a)}{\parti
 
 ### Teorema (Diferenciabilidad y derivada direccional)
 Sea $$f:D \subseteq \mathbb{R}^n\to \mathbb{R}$$, $$a \in D$$ abierto. Si $$f$$ es diferenciable en $$a$$, entonces $$D_{\vec{u}}f(a)$$ existe para todo $$\vec{u} \in \mathbb{R}^n$$, y $$D_{\vec{u}}f(a) = D_{f}(a)(u)$$.
+
 ***Prueba:*** Note que 
 
 
@@ -324,6 +330,7 @@ de donde se concluye el resultado.
 
 #### Corolario
 Bajo la misma hipótesis, $$\frac{\partial f}{\partial x_{1}}, \dots, \frac{\partial f}{\partial x_{xn}}$$ existen y $$D_{f}(a)(y) = \sum_{i=1}^{n} \frac{\partial f(a)}{\partial x_{i}} y_{i}$$ con $$y = (y_{1}, \dots, y_{n})$$.
+
 ***Prueba:*** La existencia de las derivadas parciales existen por el teorema anterior, tomando $$u$$ como cada uno de los vectores canónicos. Además, 
 
 
@@ -758,22 +765,10 @@ Dada $$f:A \subseteq \mathbb{R}^n \to \mathbb{R}$$, con $$A$$ abierto y $$x_{0} 
 
 ### Definición (Matrices def. y semidef. positiva y negativa)
 Sea $$A \in \mathbb{R}^{n \times n}$$ una matriz simétrica. Decimos que $$A$$ es:
-1. definida positiva si para todo $0 \neq x \in \mathbb{R}^n
-
-$$
-, x^{T}Ax > 0$;
-2. semidefinida positiva si para todo $0 \neq x \in \mathbb{R}^n
-$$
-
-, x^{T}Ax \geq 0$;
-3. definida negativa si para todo $0 \neq x \in \mathbb{R}^n
-
-$$
-, x^{T}Ax < 0$;
-4. semidefinida positiva si para todo $0 \neq x \in \mathbb{R}^n
-$$
-
-, x^{T}Ax \leq 0$;
+1. definida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax > 0$$;
+2. semidefinida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \geq 0$$;
+3. definida negativa si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax < 0$$;
+4. semidefinida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \leq 0$$;
 5. indefinida si existen $$0 \neq x_{1},x_{2} \in \mathbb{R}^n$$ tales que $$x_{1}^{T}Ax_{1}>0$$ y $$x_{2}^{T} A x_{2} < 0$$.
 
 ### Teorema (Criterio del Hessiano)

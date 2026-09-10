@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-06-03
+permalink: /notes/ma0350/es/09-integrales-impropias/
+redirect_from:
+  - /notes/ma0350/09-integrales-impropias/
 ---
 
 {% raw %}
@@ -179,6 +182,7 @@ Sean $$f:[a,\infty) \to \mathbb{R}$$ y $$g:[a,+\infty] \to \mathbb{R}$$ tales qu
 2. En caso de que $$\lim_{ n \to \infty } \frac{f(x)}{g(x)} = \infty$$, tenemos que 
 1. $$\int_{a}^{\infty} g(x) \, dx$$ converge si  $$\int_{a}^{\infty} f(x) \, dx$$ converge.
 2. $$\int_{a}^{\infty} f(x) \, dx$$ diverge si  $$\int_{a}^{\infty} g(x) \, dx$$ diverge.
+
 ***Prueba:*** Asuma que $$\lim_{ n \to \infty } \frac{f(x)}{g(x)} = \ell \neq 0$$. Dado $$\varepsilon>0$$, existe $$M>0$$ tal que para todo $$x \geq M$$, 
 
 

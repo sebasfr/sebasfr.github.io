@@ -1,0 +1,99 @@
+/*******************************************************************************
+ * Bilingual toggle for the notes section (_includes/lang_switch.liquid).
+ *
+ * A hairline segmented control in mono caps: both languages are always shown,
+ * the active one inverted into the theme colour so the current state reads at a
+ * glance rather than by elimination.
+ ******************************************************************************/
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 0 auto;
+}
+
+.lang-switch-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mono-label-color);
+  white-space: nowrap;
+
+  // The label is decoration — the group's aria-label already names the control.
+  // Drop it on narrow screens where the two codes have to carry the meaning.
+  @media (max-width: 599.98px) {
+    display: none;
+  }
+}
+
+.lang-switch-opt {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  padding: 0.35em 0.6em;
+  border: 1px solid var(--rule-color);
+  color: var(--mono-label-color);
+  text-decoration: none;
+  background: transparent;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease-out),
+    color var(--motion-duration-fast) var(--motion-ease-out),
+    border-color var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+// Butt the two segments against each other into one control.
+.lang-switch-opt + .lang-switch-opt {
+  margin-left: -1px;
+}
+
+a.lang-switch-opt:hover,
+a.lang-switch-opt:focus-visible {
+  color: var(--global-bg-color);
+  background: var(--global-theme-color);
+  border-color: var(--global-theme-color);
+  text-decoration: none;
+  position: relative; // lift the hovered border over its neighbour's
+  z-index: 1;
+}
+
+.lang-switch-opt.is-current {
+  color: var(--global-bg-color);
+  background: var(--global-text-color);
+  border-color: var(--global-text-color);
+  cursor: default;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Head rows that pair a supertitle with the switcher ------------------ */
+
+// Used by page-head (course home, notes index) and post-head (chapter). The
+// supertitle keeps its own bottom margin; the row only handles the split.
+.page-head-meta,
+.post-head-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem clamp(1rem, 3vw, 2.5rem);
+  flex-wrap: wrap;
+}
+
+// Both supertitles ship a bottom margin of their own; collapse it inside the
+// row so the switcher lines up with the text rather than floating above it.
+.page-head-meta > .page-head-supertitle,
+.post-head-meta > .section-supertitle {
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.page-head-meta {
+  margin-bottom: 0.75rem;
+}
+.post-head-meta {
+  margin-bottom: 1rem;
+}

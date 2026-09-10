@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-08-11
+permalink: /notes/ma0450/es/01-topologia-en-rn/
+redirect_from:
+  - /notes/ma0450/01-topologia-en-rn/
 ---
 
 {% raw %}
@@ -334,6 +337,7 @@ $$
 
 #### Ejemplo 
 Dados $$a \in \mathbb{R}^{n}$$, $$r>0$$, $$\partial B_{r}(a) = \{ x \in \mathbb{R}^{n}: \lVert x-a = r\rVert \}$$.
+
 ***Prueba:*** "$$\supseteq$$" Sea $$x \in \mathbb{R}^{n}$$ tal que $$\lVert x-a \rVert=r$$. Veamos que $$x \in \partial B_{r}(a)$$. Sea $$\delta>0$$.
 1. Encontramos $$z \in B_{\delta}(x) \cap (B_{\delta}(a))^{C}$$. Tome $$\bar{z} = \bar{a} + \left( 1 + \frac{\delta}{2r} \right) (\bar{x}-\bar{a})$$. Entonces, 
 
@@ -380,6 +384,7 @@ La clausura (cerradura) de un conjunto $$A$$ es $$\bar{A} = A \cup \partial A$$.
 
 ### Lema (Complemento de la clausura y puntos interiores del complemento)
 $$(\bar{A})^{C} = (A^{C})^{0}$$  y $$\overline{(A^{c})} = (A^{0})^{C}$$
+
 ***Prueba:*** "$$\subseteq$$" Sea $$x \in (\bar{A})^{C}$$. Entonces $$x \in (A \cup \partial A)^{C}$$, es decir, $$x \not\in A$$ y $$x \not\in \partial A$$.  Como $$x \not\in \partial A$$, por definición tenemos que existe $$\delta>0$$ tal que $$B_{\delta}(x) \cap A = \emptyset$$ o $$B_{\delta}(x) \cap A^{c} = \emptyset$$. Nótese que lo segundo es imposible, pues $$x \in A^{c}$$ y $$x \in B_{\delta}(x)$$. Luego, 
 
 
@@ -519,14 +524,17 @@ con $$M = \max \{ n_{1}, \dots, n_{m} \}$$, una contradicción.
 
 #### Ejemplo 
 $$[a,b]$$ es compacto. 
+
 ***Prueba:***  Sea $$\{ U_{\alpha} \}_{\alpha \in J}$$ un cubrimiento de abiertos de $$[a,b]$$, es decir, $$[a,b] \subseteq \bigcup_{\alpha \in J} U_{\alpha}$$. Por contradicción, suponga que no existe un subcubrimiento finito. Defina $$I_{1} = [a,b]$$. Considere $$\{ [a, \frac{a+b}{2}], [\frac{a+b}{2}, b] \}$$ partición de $$[a,b]$$. Al menos uno de estos subintervalos no tiene un subcubrimiento finito (si ambos lo tuvieran, tendría un subcubrimiento finito para $$[a,b]$$). Llame a este subintervalo $$I_{2} \supseteq I_{1}$$. Recursivamente, defina $$\{ I_{j} \}_{j=1}^{\infty}$$ tales que $$I_{1} \supseteq I_{2} \supseteq I_{3} \supseteq \cdots$$ son cerrados y $$I_{j}$$ no tiene un subcubrimiento finito para todo $$j$$. Por el teorema de intervalos encajados, existe $$x \in \bigcap_{j=1}^{\infty} \subseteq [a,b] \subseteq \bigcup_{\alpha \in J} U_{\alpha}$$.  Luego, existe algún $$\alpha \in J$$ tal que $$x \in U_{\alpha}$$. Además, como $$U_{\alpha}$$ es abierto, existe $$\delta>0$$ tal que $$B_{\delta}(x) \subseteq U_{\alpha}$$. Además, note que $$\lvert I_{j} \rvert \underset{j \rightarrow \infty}{\longrightarrow} 0$$. Así, existe $$I_{N} \subseteq B_{\delta}(x) \subseteq U_{\alpha}$$, i.e, $$I_{N}$$ tiene un subcubrimiento finito, una contradicción pues asumimos que los $$\{ I_{j} \}_{j=1}^{\infty}$$ no tenían. 
 #### Ejemplo (Conjunto finito es compacto)
 Todo conjunto finito $$A = \{ x_{1},\dots,x_{n} \}$$ es compacto.
+
 ***Prueba:*** Sea $$\{ U_{\alpha} \}_{\alpha \in I}$$ un cubrimiento abierto de $$A$$, i,.e., $$A \subseteq \bigcup_{\alpha \in I} U_{\alpha}$$. Para $$j \in \{ 1,\dots,n \}$$, como $$x_{j} \in A \subseteq \bigcup_{\alpha \in I} U_{\alpha}$$, entonces existe $$\alpha_{j} \in I$$ tal que $$x_{j} \in U_{\alpha_{j}}$$. Tome el subcubrimiento finito $$\{ U_{\alpha_{1}}, \dots, U_{\alpha_{n}} \}$$. Así, $$A \subseteq \bigcup_{j=1}^{n} U_{\alpha_{j}}$$.
 ![conjunto finito es compacto](/assets/img/courses/ma0450/conjunto%20finito%20es%20compacto.svg)
 
 ### Lema (Subconjunto cerrado de compacto es compacto) 
 Si $$K$$ es compacto y $$F \subseteq K$$ con $$F$$ cerrado. Entonces, $$F$$ es compacto. 
+
 ***Prueba:*** Sea $$\{ U_{\alpha} \}_{\alpha \in I}$$ abiertos tales que $$F \subseteq \bigcup_{\alpha \in I} U_{\alpha}$$. Como $$K \subseteq F \cup F^{C}$$, entonces $$\left(\bigcup_{\alpha \in I} U_{\alpha}\right) \cup F^{C}$$ es un cubrimiento de abiertos para $$K$$. Como $$K$$ es compacto, entonces existe un subcubrimiento finito $$\{U_{\alpha_{1}}, \dots, U_{\alpha_{n}}\}$$ tal que 
 
 
@@ -543,6 +551,7 @@ La prueba es similar al caso $$[a,b]$$.
 
 ### Teorema (Compacto si y solo si cerrado y acotado) 
 En $$\mathbb{R}^{n}$$, $$K$$ es compacto si y solo si es cerrado y acotado.
+
 ***Prueba:*** ($$\implies$$): Suponga que $$K$$ es compacto. Como $$K \subseteq \bigcup_{x \in  K} B_{1}(x)$$ es un cubrimiento abierto de $$K$$, existen $$x_{1},\dots,x_{m}$$ tales que 
 
 
@@ -629,6 +638,7 @@ Sean $$(x_{k})_{k \in \mathbb{N}}$$ y $$(y_{k})_{k \in \mathbb{N}}$$ sucesiones 
 2. $$c x_{k} \underset{k  \rightarrow \infty}{\longrightarrow} cx$$,
 3. $$\bar{x}_{n} \cdot \bar{y}_{n} \underset{k \rightarrow \infty}{\longrightarrow} \bar{x} \cdot \bar{y}$$,
 4. Si $$(c_{k})_{k \in \mathbb{N}} \subseteq \mathbb{R}$$ y $$c_{k} \underset{k \rightarrow \infty}{\longrightarrow} c$$, entonces $$c_{k} x_{k} \underset{k \rightarrow \infty}{\longrightarrow} c x$$.
+
 ***Prueba:*** Ejercicio.
 
 ### Definición (Sucesión de Cauchy)

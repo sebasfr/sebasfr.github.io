@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-06-17
+permalink: /notes/ma0350/es/11-convergencia-de-funciones/
+redirect_from:
+  - /notes/ma0350/11-convergencia-de-funciones/
 ---
 
 {% raw %}

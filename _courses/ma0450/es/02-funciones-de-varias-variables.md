@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-08-25
+permalink: /notes/ma0450/es/02-funciones-de-varias-variables/
+redirect_from:
+  - /notes/ma0450/02-funciones-de-varias-variables/
 ---
 
 {% raw %}
@@ -67,6 +70,7 @@ $$f:D \subseteq \mathbb{R}^{n} \to \mathbb{R}^{m}$$ continua en $$D$$ si es cont
 
 #### Ejemplo 
 Considere $$f:\mathbb{R}^{2}\to \mathbb{R}$$ con $$f(x,y) = x^{2}+y^{2}$$. $$f$$ es continua en $$\mathbb{R}^{2}$$.
+
 ***Prueba:*** Sean $$(a,b) \in \mathbb{R}^{2}$$ y $$\varepsilon>0$$. Tome $$\delta = \min \left\{  1, \frac{\varepsilon}{1+2 \lvert  a \rvert}, \frac{\varepsilon}{1+2 \lvert  b \rvert} \right\}$$. Suponga que $$\lVert (x,y) - (a,b) \rVert < \delta$$. Esto implica que $$\lvert x-a \rvert < \delta$$ y que $$\lvert y-b \rvert < \delta$$, pues en general $$\lvert x_{j} \rvert \leq \lVert x \rVert_{\infty} \leq \lVert x \rVert_{2}$$. Así, 
 
 
@@ -82,6 +86,7 @@ $$
 
 ### Teorema (Continuidad por puntos)
 Sea $$f:D \subseteq \mathbb{R}^n \to \mathbb{R}^{m}$$, con $$D$$ vecindario de $$a$$. Entonces, $$f = (f_{1},\dots,f_{m})$$ es continua en $$a$$ si y solo si $$f_{j}:D \to \mathbb{R}$$ son continuas en $$a$$ para todo $$j \in \{ 1,\dots,m \}$$.
+
 ***Prueba:*** La idea es similar a la utilizada en el ejemplo anterior, observando que 
 
 
@@ -93,6 +98,7 @@ $$
 
 ### Teorema (Criterio secuencial de continuidad)
 Cf. convergencia de sucesiones (MA0350). Sea $$f:D \subseteq \mathbb{R}^n \to \mathbb{R}^{m}$$ una función, con $$D$$ vecindario de $$a$$. Entonces, $$f$$ es continua en $$a$$ si y solo si para toda sucesión $$(x_{k})_{k \in \mathbb{N}} \subseteq D$$, con $$x_{k} \underset{k \rightarrow \infty}{\longrightarrow} a$$, se tiene que $$f(x_{k}) \underset{k \rightarrow \infty}{\longrightarrow} f(a)$$.
+
 ***Prueba:*** ($$\implies$$): Suponga que $$f$$ es continua en $$a$$ y sea $$(x_{k})_{k \in \mathbb{N}}$$ una sucesión en $$D$$ tal que $$x_{k} \underset{k \rightarrow \infty}{\longrightarrow}a$$. Hay que mostrar que $$f(x_{k}) \underset{k \rightarrow \infty}{\longrightarrow} f(a)$$. Dado $$\varepsilon>0$$ note que: 
 1. como $$f$$ es continua en $$a$$, existe $$\delta >0$$ tal que si $$\lVert x-a \rVert < \delta$$ entonces $$\lVert f(x)-f(a) \rVert < \varepsilon$$;
 2. como $$x_{k} \underset{k \rightarrow \infty}{\longrightarrow} a$$, existe $$N \in \mathbb{N}$$ tal que para todo $$k \geq N$$, $$\lVert x_{k}-a \rVert < \delta$$.
@@ -155,6 +161,7 @@ Sea $$D \subseteq \mathbb{R}^n$$ vecindario de $$a$$ y $$f,g: D \to \mathbb{R}^{
 4. Si $$f(a) \neq \bar{0}$$, existe $$U$$ abierto alrededor de $$a$$ tal que $$f(x) \neq \bar{0}$$ para todo $$x \in U$$.
 5. Si $$g:\mathbb{R}^n \to \mathbb{R}$$, $$g(a) \neq 0$$, entonces $$(\frac{f_{1}}{g}, \dots, \frac{f_{m}}{g})$$ es continua en $$a$$.
 6. 
+
 ***Prueba:*** Ejercicio, se puede desarrollar con sucesiones.
 
 ### Teorema (Composición y continuidad)
@@ -164,6 +171,7 @@ Sea $$D \subseteq \mathbb{R}^n$$ vecindario de $$a$$, $$f:D \to E \subseteq \mat
 
 ### Teorema (Continuidad y compacidad)
 Sea $$f:K \subseteq \mathbb{R}^{n} \to \mathbb{R}^{m}$$ continua y $$K$$ compacto. Entonces $$f(k)$$ es compacto
+
 ***Prueba:*** Sea $$\{ U_{\alpha} \}_{\alpha \in I}$$ un cubrimiento por abiertos de $$f(K)$$. Así, $$f(K) \subseteq \bigcup_{\alpha \in I} U_{\alpha}$$. Como para todo $$\alpha \in I$$, $$U_{\alpha}$$ es abierto, entonces $$V_{\alpha} = f^{-1}(U_{\alpha})$$ es abierto. Así, $$K \subseteq \bigcup_{\alpha \in I} V_{\alpha}$$.
 Como $$K$$ es compacto, y $$\{ V_{\alpha} \}_{\alpha \in I}$$ es un cubrimiento por abiertos, existen $$V_{\alpha_{1}}, \dots, V_{\alpha_{m}}$$ tal que $$K \subseteq \bigcup_{j=1}^{m} V_{\alpha_{j}}$$. Entonces, $$f(K) \subseteq f\left( \bigcup_{i=1}^{m} V_{\alpha_{i}} \right) = \bigcup_{i=1}^{m} f(V_{\alpha_{i}}) = \bigcup_{i=1}^{m} U_{\alpha}$$, por lo que $$f(K)$$ es compacto.
 

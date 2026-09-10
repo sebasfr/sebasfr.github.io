@@ -7,6 +7,9 @@ slug: 02-subsucesiones
 toc:
   sidebar: right
 lang: es
+permalink: /notes/ma0350/es/02-subsucesiones/
+redirect_from:
+  - /notes/ma0350/02-subsucesiones/
 ---
 
 {% raw %}
@@ -36,6 +39,7 @@ Sea $$w_{n} = \cos(n\pi) = (-1)^{n}$$. Entonces $$w_{2n} \underset{n \rightarrow
 ### Teorema (Bolzano-Weirerstrass):
 
 Sea $$\{x_{n}\}_{n=1}^\infty$$ una sucesión acotada. Entonces existe una subsucesión $$\{x_{k_{n}}\}_{n=1}^{\infty}$$ que converge.
+
 ***Prueba:*** Suponga que $$a \leq x_{n} \leq b$$ para todo $$n \in \mathbb{N}$$. Sean 
 
 

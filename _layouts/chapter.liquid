@@ -1,20 +1,17 @@
 ---
 layout: default
 ---
-{%- assign course_doc = site.courses
-  | where_exp: "c", "c.course == page.course"
-  | where_exp: "c", "c.chapter == nil"
-  | first -%}
-{%- assign sibling_chapters = site.courses
-  | where: "course", page.course
-  | where_exp: "c", "c.chapter"
-  | sort: "chapter" -%}
-{%- assign current_index = nil -%}
+{%- assign lang = page.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[lang] -%}
+{%- assign course_docs = site.courses | where_exp: 'c', 'c.course == page.course' | where: 'lang', lang -%}
+{%- assign course_doc = course_docs | where_exp: 'c', 'c.chapter == nil' | first -%}
+{%- assign sibling_chapters = course_docs | where_exp: 'c', 'c.chapter' | sort: 'chapter' -%}
+{%- assign current_index = null -%}
 {%- for c in sibling_chapters -%}
   {%- if c.url == page.url -%}{%- assign current_index = forloop.index0 -%}{%- endif -%}
 {%- endfor -%}
-{%- assign prev_chapter = nil -%}
-{%- assign next_chapter = nil -%}
+{%- assign prev_chapter = null -%}
+{%- assign next_chapter = null -%}
 {%- if current_index -%}
   {%- if current_index > 0 -%}
     {%- assign prev_index = current_index | minus: 1 -%}
@@ -27,16 +24,23 @@ layout: default
   {%- endif -%}
 {%- endif -%}
 
-<article class="post-article chapter-article" lang="{{ page.lang | default: site.lang | default: 'en' }}">
-  <nav class="chapter-breadcrumb mono" aria-label="Breadcrumb">
+<article class="post-article chapter-article" lang="{{ t.html_lang }}">
+  <nav class="chapter-breadcrumb mono" aria-label="{{ t.breadcrumb_label }}">
     <ol>
-      <li><a href="{{ '/notes/' | relative_url }}">Notes</a></li>
+      {%- if lang == 'es' -%}
+        {%- assign notes_root = '/notes/es/' -%}
+      {%- else -%}
+        {%- assign notes_root = '/notes/' -%}
+      {%- endif -%}
+      <li>
+        <a href="{{ notes_root | relative_url }}">{{ t.breadcrumb_root }}</a>
+      </li>
       <li>&rsaquo;</li>
       <li>
         {% if course_doc %}
           <a href="{{ course_doc.url | relative_url }}">{{ course_doc.code | default: page.course | upcase }} &middot; {{ course_doc.title }}</a>
         {% else %}
-          <a href="{{ '/notes/' | append: page.course | append: '/' | relative_url }}">{{ page.course | upcase }}</a>
+          <span>{{ page.course | upcase }}</span>
         {% endif %}
       </li>
       <li>&rsaquo;</li>
@@ -47,32 +51,34 @@ layout: default
   </nav>
 
   <header class="post-head">
-    <p class="section-supertitle mono">
-      CHAPTER {{ page.chapter | prepend: '00' | slice: -2, 2 }}
-      {% if course_doc %} &middot; {{ course_doc.code | default: page.course | upcase }}{% endif %}
-    </p>
-    <h1 class="post-article-title" lang="es">{{ page.title }}</h1>
+    <div class="post-head-meta">
+      <p class="section-supertitle mono">
+        {{ t.chapter_label }}
+        {{ page.chapter | prepend: '00' | slice: -2, 2 }}
+        {% if course_doc %} &middot; {{ course_doc.code | default: page.course | upcase }}{% endif %}
+      </p>
+      {% include lang_switch.liquid %}
+    </div>
+    <h1 class="post-article-title">{{ page.title }}</h1>
   </header>
 
   <div class="post-body chapter-body no-drop-cap" id="markdown-content">
     {{ content }}
   </div>
 
-  <nav class="chapter-pager mono" aria-label="Chapter navigation">
+  <nav class="chapter-pager mono" aria-label="{{ t.chapter_nav_label }}">
     <div class="chapter-pager-prev">
       {% if prev_chapter %}
         <a href="{{ prev_chapter.url | relative_url }}">
-          <span class="chapter-pager-label">&larr; Previous</span>
-          <span class="chapter-pager-title" lang="es">
-            {{ prev_chapter.chapter | prepend: '00' | slice: -2, 2 }} &middot; {{ prev_chapter.title }}
-          </span>
+          <span class="chapter-pager-label">&larr; {{ t.nav_prev }}</span>
+          <span class="chapter-pager-title"> {{ prev_chapter.chapter | prepend: '00' | slice: -2, 2 }} &middot; {{ prev_chapter.title }} </span>
         </a>
       {% endif %}
     </div>
     <div class="chapter-pager-up">
       {% if course_doc %}
         <a href="{{ course_doc.url | relative_url }}">
-          <span class="chapter-pager-label">&uarr; Contents</span>
+          <span class="chapter-pager-label">&uarr; {{ t.nav_up }}</span>
           <span class="chapter-pager-title">{{ course_doc.code | default: page.course | upcase }}</span>
         </a>
       {% endif %}
@@ -80,10 +86,8 @@ layout: default
     <div class="chapter-pager-next">
       {% if next_chapter %}
         <a href="{{ next_chapter.url | relative_url }}">
-          <span class="chapter-pager-label">Next &rarr;</span>
-          <span class="chapter-pager-title" lang="es">
-            {{ next_chapter.chapter | prepend: '00' | slice: -2, 2 }} &middot; {{ next_chapter.title }}
-          </span>
+          <span class="chapter-pager-label">{{ t.nav_next }} &rarr;</span>
+          <span class="chapter-pager-title"> {{ next_chapter.chapter | prepend: '00' | slice: -2, 2 }} &middot; {{ next_chapter.title }} </span>
         </a>
       {% endif %}
     </div>

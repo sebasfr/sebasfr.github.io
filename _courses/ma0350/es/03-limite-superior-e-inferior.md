@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2020-03-25
+permalink: /notes/ma0350/es/03-limite-superior-e-inferior/
+redirect_from:
+  - /notes/ma0350/03-limite-superior-e-inferior/
 ---
 
 {% raw %}

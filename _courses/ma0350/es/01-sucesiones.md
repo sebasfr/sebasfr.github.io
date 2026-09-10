@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-03-11
+permalink: /notes/ma0350/es/01-sucesiones/
+redirect_from:
+  - /notes/ma0350/01-sucesiones/
 ---
 
 {% raw %}
@@ -167,6 +170,7 @@ Tome $$M = \max \{\lvert x_{1} \rvert\ , \lvert x_{2} \rvert,\dots,\lvert x_{N} 
 #### Corolario 
 
 Sea $$\{x_{n}\}_{n=1}^\infty$$ una sucesión no acotada. Entonces $$\{x_{n}\}_{n=1}^\infty$$ es divergente. 
+
 ***Prueba:*** Se sigue directamente de la contrapositiva del teorema.
 
 #### Ejemplo 
@@ -436,6 +440,7 @@ $$
 Por lo tanto, $$x_{n} \underset{n \rightarrow \infty}{\longrightarrow} \frac{1}{2}$$. 
 ### Teorema (Convergencia de la permutación)
 Sea $$\phi: \mathbb{N} \to\mathbb{N}$$ biyectiva y se $$\{a_{n}\}_{n=0}^\infty$$ tal que $$\sum_{n=0}^\infty \lvert a_{n} \rvert$$ converge. Entonces $$\sum_{n=0}^\infty a_{\phi(n)}$$ converge y además $$\sum_{n=0}^\infty a_{\phi_{n}} = \sum_{n=0}^\infty a_{n}$$. 
+
 ***Prueba:*** Defina 
 
 

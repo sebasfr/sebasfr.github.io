@@ -7,6 +7,9 @@ slug: 04-integracion-en-rn
 toc:
   sidebar: right
 lang: es
+permalink: /notes/ma0450/es/04-integracion-en-rn/
+redirect_from:
+  - /notes/ma0450/04-integracion-en-rn/
 ---
 
 {% raw %}

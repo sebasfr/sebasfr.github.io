@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-05-20
+permalink: /notes/ma0350/es/07-tecnicas-de-integracion/
+redirect_from:
+  - /notes/ma0350/07-tecnicas-de-integracion/
 ---
 
 {% raw %}

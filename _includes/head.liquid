@@ -1,6 +1,9 @@
 <!-- Metadata, OpenGraph and Schema.org -->
 {% include metadata.liquid %}
 
+<!-- hreflang alternates for the bilingual notes section -->
+{% include lang_alternates.liquid %}
+
 <!-- Motion gate: adds .js-motion to <html> only if JS is on AND user has not
      requested reduced motion. CSS hooks initial motion states off this class,
      which means no FOUC when JS is off or reduced-motion is requested. -->

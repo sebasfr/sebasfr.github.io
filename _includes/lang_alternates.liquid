@@ -1,0 +1,45 @@
+{%- comment -%}
+  hreflang alternates for the bilingual notes section.
+
+  Emits rel="alternate" for each language plus an x-default pointing at the
+  English page, so search engines serve the right variant and do not treat the
+  two translations as duplicates. Silent on monolingual pages.
+
+  Pair resolution mirrors _includes/lang_switch.liquid: `page.alternate` wins
+  (used by the /notes/ index pages), otherwise the counterpart is looked up in
+  site.courses by (course, chapter, lang).
+{%- endcomment -%}
+
+{%- if page.lang -%}
+  {%- assign la_en_url = null -%}
+  {%- assign la_es_url = null -%}
+
+  {%- if page.alternate -%}
+    {%- if page.lang == 'en' -%}
+      {%- assign la_en_url = page.url -%}
+      {%- assign la_es_url = page.alternate -%}
+    {%- else -%}
+      {%- assign la_es_url = page.url -%}
+      {%- assign la_en_url = page.alternate -%}
+    {%- endif -%}
+  {%- elsif page.course -%}
+    {%- assign la_siblings = site.courses | where: 'course', page.course -%}
+    {%- if page.chapter -%}
+      {%- assign la_siblings = la_siblings | where: 'chapter', page.chapter -%}
+    {%- else -%}
+      {%- assign la_siblings = la_siblings | where_exp: 'c', 'c.chapter == nil' -%}
+    {%- endif -%}
+    {%- assign la_en_doc = la_siblings | where: 'lang', 'en' | first -%}
+    {%- assign la_es_doc = la_siblings | where: 'lang', 'es' | first -%}
+    {%- if la_en_doc %}{% assign la_en_url = la_en_doc.url %}{% endif -%}
+    {%- if la_es_doc %}{% assign la_es_url = la_es_doc.url %}{% endif -%}
+  {%- endif -%}
+
+  {%- if la_en_url and la_es_url -%}
+    {%- assign la_en_abs = la_en_url | absolute_url -%}
+    {%- assign la_es_abs = la_es_url | absolute_url -%}
+    <link rel="alternate" hreflang="en" href="{{ la_en_abs }}">
+    <link rel="alternate" hreflang="es" href="{{ la_es_abs }}">
+    <link rel="alternate" hreflang="x-default" href="{{ la_en_abs }}">
+  {%- endif -%}
+{%- endif -%}

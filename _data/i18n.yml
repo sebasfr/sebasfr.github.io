@@ -1,0 +1,64 @@
+# UI strings for the bilingual notes section (/notes/).
+# Consumed by _layouts/{notes-index,course-home,chapter}.liquid and
+# _includes/lang_switch.liquid via `site.data.i18n[lang]`.
+#
+# Only the notes section is bilingual; the rest of the site is English-only.
+
+en:
+  code: en
+  html_lang: en
+  # Endonyms — a language switcher names each language in that language.
+  name: English
+  name_short: EN
+  # /notes/ index
+  notes_title: notes
+  notes_supertitle: "IV &mdash; NOTES &middot; CLASS NOTES, COURSE BY COURSE"
+  notes_description: "Class notes from courses I have taken, shared as-is."
+  notes_empty: "No notes published yet."
+  chapters_one: "CHAPTER"
+  chapters_other: "CHAPTERS"
+  # Course home
+  instructor: "Instructor"
+  institution: "Institution"
+  language: "Language"
+  chapters: "Chapters"
+  contents: "CONTENTS"
+  disclaimer: "Personal notes &middot; May contain errors &middot; Not affiliated with the instructor"
+  # Chapter
+  breadcrumb_root: "Notes"
+  chapter_label: "CHAPTER"
+  nav_prev: "Previous"
+  nav_next: "Next"
+  nav_up: "Contents"
+  chapter_nav_label: "Chapter navigation"
+  breadcrumb_label: "Breadcrumb"
+  # Language switcher
+  switch_label: "Language"
+  switch_aria: "Choose a language for these notes"
+
+es:
+  code: es
+  html_lang: es
+  name: Español
+  name_short: ES
+  notes_title: apuntes
+  notes_supertitle: "IV &mdash; APUNTES &middot; NOTAS DE CLASE, CURSO POR CURSO"
+  notes_description: "Apuntes de clase de cursos que he llevado, compartidos tal cual."
+  notes_empty: "Todavía no hay apuntes publicados."
+  chapters_one: "CAPÍTULO"
+  chapters_other: "CAPÍTULOS"
+  instructor: "Profesor"
+  institution: "Institución"
+  language: "Idioma"
+  chapters: "Capítulos"
+  contents: "CONTENIDO"
+  disclaimer: "Apuntes personales &middot; Pueden contener errores &middot; Sin afiliación con el profesor"
+  breadcrumb_root: "Apuntes"
+  chapter_label: "CAPÍTULO"
+  nav_prev: "Anterior"
+  nav_next: "Siguiente"
+  nav_up: "Contenido"
+  chapter_nav_label: "Navegación de capítulos"
+  breadcrumb_label: "Ruta de navegación"
+  switch_label: "Idioma"
+  switch_aria: "Elija un idioma para estos apuntes"

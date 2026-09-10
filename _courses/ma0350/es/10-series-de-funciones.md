@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-06-24
+permalink: /notes/ma0350/es/10-series-de-funciones/
+redirect_from:
+  - /notes/ma0350/10-series-de-funciones/
 ---
 
 {% raw %}

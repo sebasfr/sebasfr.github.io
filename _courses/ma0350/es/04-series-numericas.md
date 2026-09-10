@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-03-25
+permalink: /notes/ma0350/es/04-series-numericas/
+redirect_from:
+  - /notes/ma0350/04-series-numericas/
 ---
 
 {% raw %}

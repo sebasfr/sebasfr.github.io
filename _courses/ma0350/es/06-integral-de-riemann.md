@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 5/6/25
+permalink: /notes/ma0350/es/06-integral-de-riemann/
+redirect_from:
+  - /notes/ma0350/06-integral-de-riemann/
 ---
 
 {% raw %}
@@ -32,6 +35,7 @@ para todo $$P_{2} \supseteq P_{\varepsilon_{2}}$$, $$b_{i} \leq \eta_{i} \leq b_
 
 ### Teorema (Suma de integrales)
 Sea $$f:[a,b] \to \mathbb{R}$$ acotada y $$a<c<b$$. Asuma que $$f$$ es Riemann integrable en $$[a,c]$$ y en $$[c,b]$$. Entonces es Riemann integrable en $$[a,b]$$. Además $$\int_{a}^{b} f(x)\, dx = \int_{a}^{c} f(x)  \, dx + \int_{c}^{b} f(x) \, dx.$$
+
 ***Prueba:*** Dado $$\varepsilon>0$$, sabemos que existen $$I_{1}$$ e $$I_{2}$$, $$P_{\varepsilon_{1}}$$ y $$P_{\varepsilon_{2}}$$ que satisfacen que:
 1. $$P_{\varepsilon_{1}} = \{ a_{0}=a < a_{1}<...<a_{n} = c \}$$ es una partición de $$[a,c]$$.
 2. $$P_{\varepsilon_{2}} = \{ d_{0}=c < d_{1}<...<d_{n} = b \}$$ es una partición de $$[c,b]$$.

@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-04-01
+permalink: /notes/ma0350/es/05-criterios-de-convergencia-de-series/
+redirect_from:
+  - /notes/ma0350/05-criterios-de-convergencia-de-series/
 ---
 
 {% raw %}
@@ -299,6 +302,7 @@ $$
 
 
 - Si $$\lim_{ n \to \infty }  \sqrt[n]{ \lvert x_{n} \rvert  } = l < 1$$, entonces $$\sum_{n=0}^\infty \lvert x_{n} \rvert$$ converge.
+
 ***Prueba:*** Sea $$\varepsilon > 0$$ tal que $$0 < l+\varepsilon < 1$$. Entonces existe $$N \in \mathbb{N}$$ tal que para todo $$n \geq \mathbb{N}$$ 
 
 
@@ -336,6 +340,7 @@ $$
 Si $$\lim_{ n \to \infty }   \frac{\lvert x_{n+1} \rvert}{\lvert x_{n} \rvert} = l < 1$$, entonces $$\sum_{n=0}^\infty \lvert x_{n} \rvert$$ converge.
 
 Si $$\lim_{ n \to \infty } \frac{\lvert x_{n+1} \rvert}{\lvert x_{n} \rvert} = l >1$$, entonces $$\sum_{n=0}^\infty \lvert x_{n} \rvert = +\infty$$ .
+
 ***Prueba:*** Sea $$\varepsilon > 0$$ tal que $$l-\varepsilon > 1$$. Entonces existe $$N \in \mathbb{N}$$ tal que para todo $$n \geq \mathbb{N}$$ 
 
 
@@ -370,6 +375,7 @@ Luego, $$\sum_{n=0}^\infty x_{n}$$ converge.
 ### Teorema (Convergencia absoluta):
 
 Sea $$\{x_{n}\}_{n=1}^\infty$$ una sucesión. Si $$\sum_{n=1}^\infty \lvert x_{n} \rvert$$ converge, entonces $$\sum_{n=1}^\infty x_{n}$$ converge.
+
 ***Prueba:*** Sea $$\{x_{n}\}_{n=1}^\infty$$ una sucesión. Entonces 
 
 
@@ -451,6 +457,7 @@ Sean $$\{x_{n}\}_{n=1}^\infty$$ y $$\{y_{n}\}_{n=1}^\infty$$ tales que
 2. $$\lim_{ n \to \infty } x_{n} = 0$$,
 3. existe $$M \in \mathbb{R}$$ tal que para todo $$n \in \mathbb{N}$$, $$\lvert  \sum_{k=1}^n y_{k} \rvert \leq M$$ para todo $$n  \in \mathbb{N}$$.
 Entonces, $$\sum_{n=1}^\infty x_{n}y_{n}$$ converge.
+
 ***Prueba:*** Sea $$k \leq l$$, entonces 
 
 

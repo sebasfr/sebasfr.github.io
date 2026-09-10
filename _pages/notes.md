@@ -1,6 +1,8 @@
 ---
 layout: notes-index
+alternate: /notes/es/
 permalink: /notes/
+lang: en
 title: notes
 description: Class notes from courses I have taken, shared as-is.
 nav: true

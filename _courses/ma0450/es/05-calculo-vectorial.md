@@ -7,6 +7,9 @@ slug: 05-calculo-vectorial
 toc:
   sidebar: right
 lang: es
+permalink: /notes/ma0450/es/05-calculo-vectorial/
+redirect_from:
+  - /notes/ma0450/05-calculo-vectorial/
 ---
 
 {% raw %}

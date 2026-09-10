@@ -8,6 +8,9 @@ toc:
   sidebar: right
 lang: es
 fecha: 2025-05-27
+permalink: /notes/ma0350/es/08-aplicaciones-de-la-integral-de-riemann/
+redirect_from:
+  - /notes/ma0350/08-aplicaciones-de-la-integral-de-riemann/
 ---
 
 {% raw %}
@@ -16,6 +19,7 @@ En estas notas se presentan aplicaciones de la integral de Riemann
 
 #### Ejemplo 
 Hallar el área comprendida entre las curvas $$f(x) = 2x$$ + $$g(x) = x^{3}$$. 
+
 ***Solución:*** Primero, debemos graficar las funciones. En particular, debemos hallar los límites de integración. Para ello, igualamos ambas funciones:
 ![Pasted image 20250527143919](/assets/img/courses/ma0350/Pasted%20image%2020250527143919.png)
 Note que $$x^{3} = 2x \iff x= \pm \sqrt{ 2 } \quad \lor \quad x=0$$. Luego, el área entre las curvas viene dada por 
