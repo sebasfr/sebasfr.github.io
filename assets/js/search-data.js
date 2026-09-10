@@ -49,6 +49,66 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
+            },},{id: "courses-sequences",
+          title: 'Sequences',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/01-sequences/";
+            },},{id: "courses-subsequences",
+          title: 'Subsequences',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/02-subsequences/";
+            },},{id: "courses-limit-superior-and-limit-inferior",
+          title: 'Limit Superior and Limit Inferior',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/03-limit-superior-and-inferior/";
+            },},{id: "courses-numerical-series",
+          title: 'Numerical Series',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/04-numerical-series/";
+            },},{id: "courses-convergence-tests-for-series",
+          title: 'Convergence Tests for Series',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/05-convergence-tests-for-series/";
+            },},{id: "courses-the-riemann-integral",
+          title: 'The Riemann Integral',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/06-the-riemann-integral/";
+            },},{id: "courses-integration-techniques",
+          title: 'Integration Techniques',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/07-integration-techniques/";
+            },},{id: "courses-applications-of-the-riemann-integral",
+          title: 'Applications of the Riemann Integral',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/08-applications-of-the-riemann-integral/";
+            },},{id: "courses-improper-integrals",
+          title: 'Improper Integrals',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/09-improper-integrals/";
+            },},{id: "courses-series-of-functions",
+          title: 'Series of Functions',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/10-series-of-functions/";
+            },},{id: "courses-convergence-of-functions",
+          title: 'Convergence of Functions',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/11-convergence-of-functions/";
+            },},{id: "courses-important-topics-and-examples",
+          title: 'Important Topics and Examples',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/12-important-topics-and-examples/";
             },},{id: "courses-single-variable-real-analysis",
           title: 'Single Variable Real Analysis',
           description: "Class notes from a one-semester course on the analysis of real-valued functions of a single real variable.",
@@ -58,92 +118,127 @@ ninja.data = [{
           title: 'Sucesiones',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/01-sucesiones/";
+              window.location.href = "/notes/ma0350/es/01-sucesiones/";
             },},{id: "courses-subsucesiones",
           title: 'Subsucesiones',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/02-subsucesiones/";
+              window.location.href = "/notes/ma0350/es/02-subsucesiones/";
             },},{id: "courses-límite-superior-e-inferior",
           title: 'Límite superior e inferior',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/03-limite-superior-e-inferior/";
+              window.location.href = "/notes/ma0350/es/03-limite-superior-e-inferior/";
             },},{id: "courses-series-numéricas",
           title: 'Series numéricas',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/04-series-numericas/";
+              window.location.href = "/notes/ma0350/es/04-series-numericas/";
             },},{id: "courses-criterios-de-convergencia-de-series",
           title: 'Criterios de convergencia de series',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/05-criterios-de-convergencia-de-series/";
+              window.location.href = "/notes/ma0350/es/05-criterios-de-convergencia-de-series/";
             },},{id: "courses-integral-de-riemann",
           title: 'Integral de Riemann',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/06-integral-de-riemann/";
+              window.location.href = "/notes/ma0350/es/06-integral-de-riemann/";
             },},{id: "courses-técnicas-de-integración",
           title: 'Técnicas de integración',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/07-tecnicas-de-integracion/";
+              window.location.href = "/notes/ma0350/es/07-tecnicas-de-integracion/";
             },},{id: "courses-aplicaciones-de-la-integral-de-riemann",
           title: 'Aplicaciones de la integral de Riemann',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/08-aplicaciones-de-la-integral-de-riemann/";
+              window.location.href = "/notes/ma0350/es/08-aplicaciones-de-la-integral-de-riemann/";
             },},{id: "courses-integrales-impropias",
           title: 'Integrales impropias',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/09-integrales-impropias/";
+              window.location.href = "/notes/ma0350/es/09-integrales-impropias/";
             },},{id: "courses-series-de-funciones",
           title: 'Series de funciones',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/10-series-de-funciones/";
+              window.location.href = "/notes/ma0350/es/10-series-de-funciones/";
             },},{id: "courses-convergencia-de-funciones",
           title: 'Convergencia de funciones',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/11-convergencia-de-funciones/";
+              window.location.href = "/notes/ma0350/es/11-convergencia-de-funciones/";
             },},{id: "courses-tópicos-importantes-y-ejemplos",
           title: 'Tópicos importantes y ejemplos',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0350/12-topicos-importantes-y-ejemplos/";
+              window.location.href = "/notes/ma0350/es/12-topicos-importantes-y-ejemplos/";
+            },},{id: "courses-cálculo-en-una-variable-2",
+          title: 'Cálculo en una Variable 2',
+          description: "Apuntes de un curso semestral sobre el análisis de funciones reales de una variable real.",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0350/es/";
+            },},{id: "courses-topology-of-rn",
+          title: 'Topology of Rn',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/01-topology-of-rn/";
+            },},{id: "courses-functions-of-several-variables",
+          title: 'Functions of Several Variables',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/02-functions-of-several-variables/";
+            },},{id: "courses-differentiation",
+          title: 'Differentiation',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/03-differentiation/";
+            },},{id: "courses-integration-in-rn",
+          title: 'Integration in Rn',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/04-integration-in-rn/";
+            },},{id: "courses-vector-calculus",
+          title: 'Vector Calculus',
+          description: "",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/05-vector-calculus/";
             },},{id: "courses-multivariate-real-analysis",
           title: 'Multivariate Real Analysis',
-          description: "Class notes from a one-semester course on real analysis in $\mathbb{R}^n$, generalising single-variable analysis to several variables.",
+          description: "Class notes from a one-semester course on real analysis in n dimensions, generalising single-variable analysis to several variables.",
           section: "Courses",handler: () => {
               window.location.href = "/notes/ma0450/";
             },},{id: "courses-topología-en-rn",
           title: 'Topología en Rn',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0450/01-topologia-en-rn/";
+              window.location.href = "/notes/ma0450/es/01-topologia-en-rn/";
             },},{id: "courses-funciones-de-varias-variables",
           title: 'Funciones de varias variables',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0450/02-funciones-de-varias-variables/";
+              window.location.href = "/notes/ma0450/es/02-funciones-de-varias-variables/";
             },},{id: "courses-diferenciación",
           title: 'Diferenciación',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0450/03-diferenciacion/";
+              window.location.href = "/notes/ma0450/es/03-diferenciacion/";
             },},{id: "courses-integración-en-rn",
           title: 'Integración en Rn',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0450/04-integracion-en-rn/";
+              window.location.href = "/notes/ma0450/es/04-integracion-en-rn/";
             },},{id: "courses-cálculo-vectorial",
           title: 'Cálculo vectorial',
           description: "",
           section: "Courses",handler: () => {
-              window.location.href = "/notes/ma0450/05-calculo-vectorial/";
+              window.location.href = "/notes/ma0450/es/05-calculo-vectorial/";
+            },},{id: "courses-cálculo-en-varias-variables",
+          title: 'Cálculo en varias variables',
+          description: "Apuntes de un curso semestral sobre el análisis real en n dimensiones, que generaliza el análisis de una variable a varias variables.",
+          section: "Courses",handler: () => {
+              window.location.href = "/notes/ma0450/es/";
             },},{id: "news-launching-my-personal-academic-website",
           title: 'Launching my personal academic website',
           description: "",
