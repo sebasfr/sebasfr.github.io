@@ -766,7 +766,7 @@ Let $$A \in \mathbb{R}^{n \times n}$$ be a symmetric matrix. We say that $$A$$ i
 1. positive definite if for every $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax > 0$$;
 2. positive semidefinite if for every $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \geq 0$$;
 3. negative definite if for every $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax < 0$$;
-4. positive semidefinite if for every $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \leq 0$$;
+4. negative semidefinite if for every $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \leq 0$$;
 5. indefinite if there exist $$0 \neq x_{1},x_{2} \in \mathbb{R}^n$$ such that $$x_{1}^{T}Ax_{1}>0$$ and $$x_{2}^{T} A x_{2} < 0$$.
 
 ### Theorem (Hessian test)

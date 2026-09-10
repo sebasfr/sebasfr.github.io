@@ -768,7 +768,7 @@ Sea $$A \in \mathbb{R}^{n \times n}$$ una matriz simétrica. Decimos que $$A$$ e
 1. definida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax > 0$$;
 2. semidefinida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \geq 0$$;
 3. definida negativa si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax < 0$$;
-4. semidefinida positiva si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \leq 0$$;
+4. semidefinida negativa si para todo $$0 \neq x \in \mathbb{R}^n$$, $$x^{T}Ax \leq 0$$;
 5. indefinida si existen $$0 \neq x_{1},x_{2} \in \mathbb{R}^n$$ tales que $$x_{1}^{T}Ax_{1}>0$$ y $$x_{2}^{T} A x_{2} < 0$$.
 
 ### Teorema (Criterio del Hessiano)
