@@ -58,7 +58,11 @@
 } /* Generic.Emph */
 .highlight .gr {
   color: #d22323;
-} /* Generic.Error */ /* Generic.Heading */
+} /* Generic.Error */
+.highlight .gh {
+  color: #ffffff;
+  font-weight: bold;
+} /* Generic.Heading */
 .highlight .gi {
   color: #589819;
 } /* Generic.Inserted */
@@ -78,7 +82,11 @@
 } /* Generic.Subheading */
 .highlight .gt {
   color: #d22323;
-} /* Generic.Traceback */ /* Keyword.Constant */ /* Keyword.Declaration */
+} /* Generic.Traceback */ /* Keyword.Constant */
+.highlight .kd {
+  color: #6ab825;
+  font-weight: bold;
+} /* Keyword.Declaration */
 .highlight .kn {
   color: #6ab825;
   font-weight: bold;

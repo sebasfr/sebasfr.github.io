@@ -29,6 +29,13 @@ FRONT_MATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
 # check still catches a stray edit to the formula around it.
 TEXT_ARG_RE = re.compile(r"\\(?:text|textrm|textit|textbf|mbox)\{[^{}]*\}")
 
+# An operator whose name is spelled out of Spanish words is content too: "mcd"
+# is máximo común divisor, and an English reader expects "gcd". Only the pairs
+# listed here count as equivalent, so a real notation change — Ker against Im,
+# say — still fails the comparison.
+TRANSLATED_OPERATORS = {"mcd": "gcd", "MCD": "GCD"}
+OPERATOR_RE = re.compile(r"\\operatorname\{([A-Za-z]+)\}")
+
 
 def body(path: Path) -> str:
     return FRONT_MATTER_RE.sub("", path.read_text(encoding="utf-8"))
@@ -39,8 +46,18 @@ def inline_math(text: str) -> list[str]:
     return INLINE_RE.findall(DISPLAY_RE.sub("\n", text))
 
 
+def canonical_operator(match: re.Match) -> str:
+    """Collapse a translated operator name onto its Spanish spelling."""
+    name = match.group(1)
+    for es_name, en_name in TRANSLATED_OPERATORS.items():
+        if name in (es_name, en_name):
+            return r"\operatorname{<%s>}" % es_name
+    return match.group(0)
+
+
 def normalise(fragment: str) -> str:
-    return TEXT_ARG_RE.sub("<text>", fragment)
+    fragment = TEXT_ARG_RE.sub("<text>", fragment)
+    return OPERATOR_RE.sub(canonical_operator, fragment)
 
 
 def compare(name: str, es: list[str], en: list[str], errors: list[str], label: str) -> None:

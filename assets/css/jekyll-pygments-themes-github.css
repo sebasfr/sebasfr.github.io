@@ -43,7 +43,10 @@
 } /* Generic.Emph */
 .highlight .gr {
   color: #aa0000;
-} /* Generic.Error */ /* Generic.Heading */
+} /* Generic.Error */
+.highlight .gh {
+  color: #999999;
+} /* Generic.Heading */
 .highlight .gi {
   color: #000000;
   background-color: #ddffdd;
@@ -62,7 +65,11 @@
 } /* Generic.Subheading */
 .highlight .gt {
   color: #aa0000;
-} /* Generic.Traceback */ /* Keyword.Constant */ /* Keyword.Declaration */
+} /* Generic.Traceback */ /* Keyword.Constant */
+.highlight .kd {
+  color: #000000;
+  font-weight: bold;
+} /* Keyword.Declaration */
 .highlight .kn {
   color: #000000;
   font-weight: bold;

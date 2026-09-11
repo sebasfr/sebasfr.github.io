@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="250" viewBox="0 0 640 250"
+     role="img" aria-label="A smooth curve with an inscribed polygonal path through six sample points">
+  <style>
+    .curve { fill: none; stroke: #1a1a1a; stroke-width: 2; }
+    .chord { fill: none; stroke: #c2410c; stroke-width: 1.6; }
+    .node  { fill: #1a1a1a; }
+    .lbl   { font-family: Georgia, "Times New Roman", serif; font-size: 15px;
+             font-style: italic; fill: #1a1a1a; }
+  </style>
+
+  <!-- the curve itself -->
+  <path class="curve" d="M60,210
+    C77.3,187.3 129.3,83.5 164,74
+    C198.7,64.6 233.3,157.1 268,153.3
+    C302.7,149.5 337.3,57 372,51.3
+    C406.7,45.6 441.3,121.2 476,119.3
+    C510.7,117.4 562.7,53.2 580,40"/>
+
+  <!-- the inscribed polygonal path whose lengths the total variation supremises -->
+  <path class="chord" d="M60,210 L164,74 L268,153.3 L372,51.3 L476,119.3 L580,40"/>
+
+  <circle class="node" cx="60"  cy="210"   r="3"/>
+  <circle class="node" cx="164" cy="74"    r="3"/>
+  <circle class="node" cx="268" cy="153.3" r="3"/>
+  <circle class="node" cx="372" cy="51.3"  r="3"/>
+  <circle class="node" cx="476" cy="119.3" r="3"/>
+  <circle class="node" cx="580" cy="40"    r="3"/>
+
+  <text class="lbl" x="60"  y="232" text-anchor="middle">γ(a)</text>
+  <text class="lbl" x="268" y="175" text-anchor="middle">γ(t₂)</text>
+  <text class="lbl" x="592" y="36"  text-anchor="start">γ(b)</text>
+</svg>
