@@ -12,4 +12,4 @@ I have published a set of personal class notes from two advanced calculus course
 
 * **[Multivariate Real Analysis (MA-0450)](/notes/ma0450/)** — *Cálculo en varias variables*, taught by Dr. Juan Gabriel Calvo Alpízar. Five chapters covering the topology of $$\mathbb{R}^n$$, differentiation in several variables, multiple integration, and an introduction to vector calculus.
 
-The notes themselves are in Spanish and shared as-is. They may contain errors and are not affiliated with the instructors.
+The notes are available in Spanish and English, and shared as-is. They may contain errors and are not affiliated with the instructors.

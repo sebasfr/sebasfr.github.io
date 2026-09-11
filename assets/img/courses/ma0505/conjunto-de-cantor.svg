@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="200" viewBox="0 0 640 200"
+     role="img" aria-label="The first four stages of the Cantor set construction, each removing the open middle third of every remaining interval">
+  <style>
+    .bar { stroke: #c2410c; stroke-width: 11; stroke-linecap: butt; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+  </style>
+
+  <!-- C0 : [0,1] -->
+  <text class="lbl" x="72" y="35" text-anchor="end">C₀</text>
+  <line class="bar" x1="90" y1="30" x2="610" y2="30"/>
+
+  <!-- C1 : two intervals of length 1/3 -->
+  <text class="lbl" x="72" y="80" text-anchor="end">C₁</text>
+  <line class="bar" x1="90"    y1="75" x2="263.3" y2="75"/>
+  <line class="bar" x1="436.7" y1="75" x2="610"   y2="75"/>
+
+  <!-- C2 : four intervals of length 1/9 -->
+  <text class="lbl" x="72" y="125" text-anchor="end">C₂</text>
+  <line class="bar" x1="90"    y1="120" x2="147.8" y2="120"/>
+  <line class="bar" x1="205.6" y1="120" x2="263.3" y2="120"/>
+  <line class="bar" x1="436.7" y1="120" x2="494.4" y2="120"/>
+  <line class="bar" x1="552.2" y1="120" x2="610"   y2="120"/>
+
+  <!-- C3 : eight intervals of length 1/27 -->
+  <text class="lbl" x="72" y="170" text-anchor="end">C₃</text>
+  <line class="bar" x1="90"    y1="165" x2="109.3" y2="165"/>
+  <line class="bar" x1="128.5" y1="165" x2="147.8" y2="165"/>
+  <line class="bar" x1="205.6" y1="165" x2="224.8" y2="165"/>
+  <line class="bar" x1="244.1" y1="165" x2="263.3" y2="165"/>
+  <line class="bar" x1="436.7" y1="165" x2="455.9" y2="165"/>
+  <line class="bar" x1="475.2" y1="165" x2="494.4" y2="165"/>
+  <line class="bar" x1="552.2" y1="165" x2="571.5" y2="165"/>
+  <line class="bar" x1="590.7" y1="165" x2="610"   y2="165"/>
+</svg>

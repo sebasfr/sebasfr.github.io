@@ -13,3 +13,12 @@ vendor
 .idea
 .claude
 __pycache__/
+
+# LaTeX build products, next to the course note sources in _courses/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc

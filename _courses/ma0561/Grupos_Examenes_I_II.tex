@@ -1,0 +1,2594 @@
+% =============================================================================
+%  Grupos y Anillos --- Notas del Examen II
+%  Compilar con: pdflatex (dos veces, para que el indice recoja cada resultado)
+%  Plantilla basada en las notas de Analisis I del mismo autor.
+% =============================================================================
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% --- Fuentes: usa XCharter+newtxmath si estan instaladas; si no, degrada ---
+\IfFileExists{XCharter.sty}{%
+  \usepackage{XCharter}%
+  \IfFileExists{newtxmath.sty}{\usepackage[libertine,charter]{newtxmath}}{}%
+}{%
+  \IfFileExists{charter.sty}{\usepackage{charter}}{\usepackage{lmodern}}%
+}
+% --- Idioma: usa babel-spanish si esta disponible; si no, ingles o nada ---
+\IfFileExists{babel.sty}{%
+  \IfFileExists{spanish.ldf}{\usepackage[spanish,es-noshorthands]{babel}}{%
+    \IfFileExists{english.ldf}{\usepackage[english]{babel}}{}}%
+}{}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit}
+\usepackage{eso-pic}
+\usepackage{etoolbox}
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={Grupos y Anillos --- Notas del Examen II},
+  pdfauthor={Sebastián Fernández Rivera}
+}
+
+\AtBeginDocument{%
+  \renewcommand{\contentsname}{\'Indice}%
+  \renewcommand{\refname}{Referencias}%
+  \renewcommand{\proofname}{\textbf{Prueba}}%
+}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+\allowdisplaybreaks
+
+\newcounter{result}[subsection]
+\renewcommand{\theresult}{\thesubsection.\arabic{result}}
+
+\newenvironment{namedres}[2]{%
+  \refstepcounter{result}\phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+\newenvironment{namedstd}[2]{%
+  \refstepcounter{result}\phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+\newenvironment{namedresx}[1]{%
+  \refstepcounter{result}\phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1}%
+  \par\medskip\noindent\textbf{#1 \theresult.}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+\newenvironment{namedstdx}[1]{%
+  \refstepcounter{result}\phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1}%
+  \par\medskip\noindent\textbf{#1 \theresult.}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+
+% -----------------------------------------------------------------------------
+%  Cajas del Anexo (estilo de las notas de Análisis I)
+% -----------------------------------------------------------------------------
+\newtcolorbox{equivbox}[2]{%
+  enhanced,
+  breakable,
+  colback=#1!6!white,
+  colframe=#1!72!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#2},% las llaves protegen comas en el título del parser de pgfkeys
+  arc=4pt,
+  boxrule=0.8pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  before skip=4pt, after skip=8pt,
+}
+
+\newtcolorbox{strategybox}[1]{%
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=blue!50!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#1},
+  arc=3pt,
+  boxrule=0.6pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt,
+}
+
+% Encabezado compacto para los sub-grupos de un Anexo
+\newcommand{\anexogroup}[1]{%
+  \par\addvspace{0.7\baselineskip}%
+  \noindent{\bfseries\large #1}\par\nobreak
+  \addcontentsline{toc}{subsection}{#1}%
+  \vspace{4pt}\nopagebreak
+}
+
+\newcommand{\hlu}[1]{\underline{#1}}
+
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Imm}{Im}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\mcd}{mcd}
+\DeclareMathOperator{\MCD}{MCD}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{Grupos y Anillos --- Examen II}}
+\fancyfoot[C]{\small Página \thepage{} de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+\definecolor{sec1col}{HTML}{1F77B4}
+\definecolor{sec2col}{HTML}{2CA02C}
+\definecolor{sec3col}{HTML}{D62728}
+\definecolor{sec4col}{HTML}{9467BD}
+\definecolor{sec5col}{HTML}{FF7F0E}
+\definecolor{sec6col}{HTML}{8C564B}
+\definecolor{sec7col}{HTML}{17BECF}
+\definecolor{sec8col}{HTML}{BCBD22}
+\definecolor{sec9col}{HTML}{E377C2}
+
+\newcounter{thumbsec}
+\pretocmd{\section}{\stepcounter{thumbsec}}{}{}
+\newif\ifdrawthumb
+\drawthumbfalse
+
+\newcommand{\drawthumbtab}{%
+  \ifdrawthumb
+  \ifnum\value{thumbsec}>0
+    \ifnum\value{thumbsec}<10
+      \begin{tikzpicture}[remember picture, overlay]%
+        \pgfmathsetmacro{\toppadcm}{4.0}%
+        \pgfmathsetmacro{\tabHcm}{1.6}%
+        \pgfmathsetmacro{\ypos}{-\toppadcm - (\value{thumbsec} - 1) * \tabHcm}%
+        \ifodd\value{page}%
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north east)
+            rectangle ++(-0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=-0.35cm, yshift=\ypos cm - 0.6cm]current page.north east)
+            {\arabic{thumbsec}};
+        \else%
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north west)
+            rectangle ++(0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=0.35cm, yshift=\ypos cm - 0.6cm]current page.north west)
+            {\arabic{thumbsec}};
+        \fi%
+      \end{tikzpicture}%
+    \fi
+  \fi
+  \fi
+}
+\AddToShipoutPictureFG{\drawthumbtab}
+
+\begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+\vspace*{1.5cm}
+{\scshape\Large Universidad de Costa Rica\par}
+\vspace{0.3cm}
+{\scshape\large Escuela de Matem\'atica\par}
+\vspace{1.2cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{0.6cm}
+{\Huge\bfseries Grupos y Anillos\par}
+\vspace{0.5cm}
+{\Large\itshape Notas del Examen II\par}
+\vspace{0.4cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{1.4cm}
+{\Large\bfseries Teor\'ia de Grupos\par}
+\vspace{2.2cm}
+\begin{tabular}{rl}
+\textbf{Autor:}                & Sebasti\'{a}n Fern\'{a}ndez Rivera \\[4pt]
+\textbf{Curso:}                & Grupos y Anillos \\[4pt]
+\textbf{Documento:}            & Notas para el II Examen Parcial \\[4pt]
+\textbf{Resultados numerados:} & 170$+$ \\[4pt]
+\textbf{Fecha:}                & \today
+\end{tabular}
+\vfill
+\begin{minipage}{0.85\textwidth}
+\centering\itshape
+Este documento re\'{u}ne las definiciones, teoremas, proposiciones, lemas, corolarios,
+ejemplos, notas, ejercicios y notaciones del curso. Cada resultado est\'{a} numerado de
+la forma \texttt{seccion.subseccion.resultado} y aparece en el \'{\i}ndice con su
+p\'{a}gina para una consulta r\'{a}pida durante el examen.
+\end{minipage}
+\vspace{1cm}
+{\color{blue!50!black}\rule{0.5\textwidth}{0.6pt}}
+\end{titlepage}
+
+\thispagestyle{empty}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+\setcounter{thumbsec}{0}
+\drawthumbtrue
+
+
+% ======================================================================
+\section{Grupos}
+% ======================================================================
+
+\subsection{Definiciones elementales}
+
+\begin{namedstd}{Definición}{Operación binaria}
+Sea $G$ un conjunto no vacío. Una operación binaria es una aplicación $G \times G \to G$ con $(g_{1},g_{2}) \mapsto g_{3}$.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Grupo}
+Un grupo $G$ es un conjunto no vacío junto con una operación binaria $\ast: G \times G \to G$ tal que:
+\begin{enumerate}[label=(\arabic*)]
+\item $\ast$ es asociativa:
+\[
+\forall g_{1},g_{2},g_{3} \in G \quad  (g_{1} \ast g_{2}) \ast g_{3} = g_{1} \ast (g_{2} \ast g_{3});
+\]
+\item existe un elemento neutro $e \in G$ tal que $e \ast g = g\ast e = g$ para todo $g \in G$. Muchas veces, escribimos $1_{G}$ para denotar el elemento neutro del grupo $G$;
+\item existe un inverso para todo elemento, esto es,
+\[
+\forall g \in G  \quad \exists h \in G  \quad (g \ast h = h \ast g = e).
+\]
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Grupo Abeliano}
+Si $(G, \ast)$ es un grupo que además cumple que para todos $g_{1},g_{2} \in G$, $g_{1} \ast g_{2} = g_{2} \ast g_{1}$, decimos que $G$ es \hlu{conmutativo} o \hlu{abeliano}.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Monoide}
+Un monoide es una estructura más general, dotada por un conjunto, una operación binaria asociativa con elemento neutro, pero en donde no necesariamente todo elemento tiene un inverso.
+\end{namedstd}
+
+\subsection{Propiedades de los grupos}
+
+\begin{namedres}{Proposición}{Unicidad del neutro}
+Si $e, e'$ son dos elementos neutros, $e' = e' \ast e = e$.
+
+\end{namedres}
+\begin{namedres}{Proposición}{Unicidad del inverso}
+Sea $g \in G$ y sean $h, h'$ inversos de $g$. Entonces
+\[
+h' = e \ast h' = (h \ast g) \ast h' = h \ast (g \ast h') = h \ast e = h.
+\]
+\end{namedres}
+\begin{namedstd}{Notación}{Inverso}
+Si $(G, \ast)$ es un grupo y $g \in G$, denotamos por $g^{-1}$ al inverso de $g$.
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Propiedades del inverso}
+\begin{enumerate}[label=(\arabic*)]
+\item $(g^{-1})^{-1} = g$ para todo $g \in G$
+\item $(g \ast h)^{-1} = h ^{-1} \ast g ^{-1}$ para todos $g,h \in G$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Leyes de cancelación}
+Si $g, h_{1}, h_{2} \in G$, entonces
+\begin{enumerate}[label=(\arabic*)]
+\item $g \ast h_{1} = g \ast h_{2} \implies h_{1}=h_{2}$,
+\item $h_{1} \ast g = h_{2} \ast g \implies h_{1} = h_{2}$.
+\end{enumerate}
+
+\end{namedres}
+
+\subsection{Ejemplos de grupos}
+
+Algunos ejemplos son muy importantes dentro de la estructura
+
+\begin{namedstd}{Ejemplo}{Grupo trivial}
+Sea $G = \{  e \}$ tal que $e \ast e = e$. $(G, \ast)$ es un grupo y es llamado grupo trivial.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos aditivos}
+$(\mathbb{Z}, + )$ es un grupo con elemento neutro $0$ y en donde el inverso de $z \in Z$ es $-z$. $(\mathbb{N}, +)$ no es grupo pero sí es monoide, pero $(\mathbb{N}^{\ast},+)$ no es monoide. $(\mathbb{R},+), (\mathbb{Q},+), (\mathbb{C}, +), (\mathbb{Z},+)$ son todos grupos abelianos.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos multiplicativos}
+$(\mathbb{R}^{\ast}, \cdot), (\mathbb{Q}^{\ast}, \cdot), (\mathbb{C}^{\ast}, \cdot)$ son grupos abelianos con neutro $1$ y donde el inverso de $x$ es $\frac{1}{x}$. En general, si $\mathbb{F}$ es un cuerpo, $(\mathbb{F}^{\ast}, \cdot)$ es un grupo. $(\mathbb{Z}^{\ast}, \cdot)$ no es un grupo porque no todo elemento posee un inverso.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos lineales}
+Sea $n \in \mathbb{N}^{\ast}$ y $\mathbb{F}$ un cuerpo. Definimos
+\[
+GL_{n}(\mathbb{F}) = \{\text{matrices }n \times n \text{ invertibles con entradas en }\mathbb{F} \}.
+\]
+$(GL_{n}(\mathbb{F}), \cdot)$, donde $\cdot$ es la multiplicación estándar de matrices. A este grupo se le llama el grupo lineal sobre $\mathbb{F}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos sobre congruencias}
+Sea $m>0$ y considere $\mathbb{Z}_{m} = \mathbb{Z}/{\equiv_{m}}$ ($\mathbb{Z}$ cocientado en la relación de congruencia módulo $m$), i.e., $\mathbb{Z}_{m} = \{ [0], [1],\dots, [m-1] \}$. Defina la operación $\hat{+}$ en $\mathbb{Z}_{m}$ tal que $[a]\hat{+}[b] = [a+b]$ (hay que mostrar que está bien definida). $(\mathbb{Z}_{m}, \hat{+})$ es un grupo con elemento neutro $[0]$. Si $[n] \in \mathbb{Z}_{m}$, el inverso es $[-n]$. Consideremos el ejemplo con $m=2$.
+
+
+Para $\mathbb{Z}_{2}$, tenemos $\mathbb{Z}_{2} = \{ [0]. [1] \}$. Observe la tabla de operaciones
+
+\begin{center}
+\begin{tabular}{|c|c|c|}\hline
+$\hat{+}$ & $[0]$ & $[1]$ \\ \hline
+$[0]$ & $[0]$ & $[1]$ \\ \hline
+$[1]$ & $[1]$ & $[0]$ \\ \hline
+\end{tabular}
+\end{center}
+
+Definamos ahora sobre $\mathbb{Z}_{m}^{\ast} = \mathbb{Z}_{m} \setminus \{ [0] \}$. Definamos la operación $\hat{\cdot}$ como
+\[
+[a] \hat{\cdot} [b] = [a \cdot b]
+\]
+Queremos construir un grupo multiplicativo con esta nueva operación. ¿Para cuales casos de $m$ está esto bien definido y existen inversos? Para $m$ compuesto, la multiplicación no está bien definida en $\mathbb{Z}_{m}^{\ast}$ porque puedo tomar elementos de ciertas clases de equivalencia cuyo producto tiene resultado $[0]$.
+
+Para primos, la operación está bien definidos. Sea $n$ primo y asuma que existen $[a], [b] \in \mathbb{Z}_{n}^{\ast}$ tales que $[a] \hat{\cdot} [b] = [a \cdot b] = [0]$. Esto implica que $n \mid a \cdot b$, pero como $n$ es primo, $n \mid a$ o $n \mid b$, de modo que $[a] = [0]$ o $[b]=[0]$, una contradicción pues $[0] \not\in \mathbb{Z}_{n}^{\ast}$.
+
+Probaremos que $(\mathbb{Z}_{n}^{\ast}, \hat{\cdot})$ es un grupo para $n$ primo.  Note que $\mathbb{Z}_{n}^{\ast} = \{ [1],\dots,[n-1] \}$. Sea $r \in \{ 1,\dots,n-1 \}$. Como $n$ es primo, tenemos que $\MCD(r,n) = 1$. Luego, existen enteros $q,s$ tales que $qr+sn = 1$. Esto implica que
+\[
+[q \cdot r] = [1] \implies [q] \hat{\cdot} [r] = [1].
+\]
+Podemos suponer que $q \in \{ 1,\dots,n-1 \}$, pues de lo contrario tomamos el representante de su clase de equivalencia. Así, $[q]$ es el inverso de $[r]$. Así, $(\mathbb{Z}_{n}^{\ast}. \hat{\cdot})$ tiene inversos para todo elemento, y por tanto es un grupo (las otras propiedades son triviales).
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Cuerpo $\Z_p$}
+Es fácil verificar que si $p$ es primo $(\mathbb{Z}_{p}, \hat{+}, \hat{\cdot}, [0], [1])$ es un cuerpo.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos de simetrías de un cuadrado}
+Considere un cuadrado con sus vértices numerados. ¿De cuántas maneras puedo mover sus vértices para que el cuadrado siga manteniendo el mismo espacio? Puede hacer cuatro rotaciones ($0^{\circ}, 90^{\circ}, 180^{\circ}, 270^{\circ}$) en el sentido contrario a las agujas del reloj, ($r_{0},r_{90},r_{180},r_{270}$). Además, puedo hacer cuatro reflexiones: vertical ($s_{1}$), horizontal ($s_{2}$), diagonal comenzando abajo-izquierda ($s_{3}$) y diagonal comenzando arriba-izquierda ($s_{4}$).
+
+Llamamos $D_{4}= \{ r_{0},r_{90},r_{180},r_{270}, s_{1},s_{2},s_{3},s_{4} \}$. Definimos una operación $\circ$ en $D_{4}$, como la "composición de movimientos", p.e., $r_{90} \circ s_{2}$.
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{Grupo diédrico $D_4$}
+$(D_{4},\circ)$ es un grupo pero \textbf{no} es conmutativo.
+
+En general $D_{n}$ es el grupo de simetrías de un polígono regular de $n$ lados. Está compuesto por $r_{0},\dots,r_{n-1}$ rotaciones, donde $r_{k}$ rota la figura en un ángulo de $\frac{2\pi k}{n}$ y $s_{0}, \dots, s_{n-1}$ son $n$ reflexiones sobre las líneas $\theta = \frac{\pi k}{n}$. $D_{n}$ tiene $2n$ elemmentos, y se le llama el grupo diédrico o grupo diedral.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupo de permutaciones de $n$ elementos}
+Una permutación de $n$ elementos es una función biyectiva
+\[
+\begin{aligned}
+\sigma:\{ 1,\dots,n \} &\to \{ 1,\dots,n \}, \text{ tal que} \\
+1 &\mapsto \sigma(1)\\
+& \quad\vdots \\
+n &\mapsto \sigma(n).
+\end{aligned}
+\]
+Definimos $S_{n} = \{ \sigma: \sigma \text{ es una permutación de }n \text{ elementos}\}$. $S_{n}$ es un grupo bajo la composición de funciones (ejercicio).
+
+\end{namedstd}
+\begin{namedstd}{Notación}{Permutaciones}
+$\sigma: \begin{pmatrix}1 & 2 & 3 \\ 2 & 3 & 1\end{pmatrix}$ representa $\sigma:\{ 1,2,3 \} \to \{ 1,2,3 \}$, con $\sigma(1)=2, \sigma(2)=3,\sigma(3)=1$. Su inversa es $\sigma ^{-1}:\begin{pmatrix}1 & 2 & 3 \\ 3 & 1 & 2\end{pmatrix}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Producto de grupos}
+Sean $(G_{1}, \ast_{1})$ y $(G_{2}, \ast_{2})$ dos grupos. Considere el producto cartesiano $G_{1} \times G_{2}$. Defina la operación $\ast$ en $G_{1} \times G_{2}$ tal que
+\[
+(g_{1}, g_{2}) \ast (h_{1},h_{2}) := (g_{1} \ast_{1} h_{1}, g_{2} \ast_{2} h_{2}) \in G_{1} \times G_{2}.
+\]
+Entonces, $(G_{1} \times G_{2}, \ast)$ es un grupo con elemento neutro $(1_{G_{1}}, 1_{G_{2}})$. Si $(g_{1},g_{2}) \in G_{1} \times G_{2}$, entonces $(g_{1}, g_{2})^{-1} = (g_{1}^{-1}, g_{2}^{-1})$. Se puede generalizar para el producto de $n$ grupos.
+
+\end{namedstd}
+
+\subsection{Operaciones iteradas en grupos}
+
+Si $(G, \ast)$ es un grupo denotamos por $g^{n} = \underbrace{ g \ast g \ast \dots \ast g }_{ n \text{ veces} }$,, $g^{0} = 1_{G}$, $g^{-n}:= (g^{-1})^{n}$.
+\begin{namedres}{Proposición}{Propiedades de la potenciación}
+Sea $(G, \ast)$ un grupo, $g,h \in G$. Entonces
+\begin{enumerate}[label=(\arabic*)]
+\item $g^{-n} = (g^{n}) ^{-1}$
+\item $g^{n+m} = g^{n} \ast g^{m}$
+\item Si $g \ast h = h \ast g$, entonces $(g \ast h)^{m} = g^{m} \ast h^{m}$.
+\end{enumerate}
+
+\end{namedres}
+
+\subsection{Subgrupos}
+
+Sea $(G, \ast)$ un grupo y $H \subseteq G$. Decimos que $H$ es un subgrupo de $G$ si $(H, \ast \mid_{H})$ es un grupo. En ese caso escribirnos $H \leq G$
+
+\begin{namedstd}{Nota}{Verificación de subgrupo}
+Para verificar que $H \leq G$, basta ver (1) que $h_{1}\ast h_{2} \in H  \quad \forall h_{1}, h_{2} \in H$, (2) que $1_{G} \in H$ y que (3), si $h \in H$ entonces $h^{-1} \in H$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Caracterización de subgrupo}
+Se $\emptyset \neq H \subseteq G$. Entonces $H \leq G$ si y solo si
+\[
+\forall x,y \in H  \quad (x \ast y^{-1} \in H).
+\]
+\end{namedres}
+\begin{proof}
+$(\implies)$ es trivial. Probemos $(\impliedby)$. Si $x \in H$, entonces $x \ast x ^{-1} = 1_{G}  \in H$. Por otro lado, como $1_{G} \in H$, $1_{G} \ast x^{-1} = x^{-1} \in H$. Finalmente, si $x,y \in H$, como $y^{-1} \in H$, entonces $x \ast (y ^{-1}) ^{-1} = x \ast y \in H$. Por tanto, $H$ es subgrupo.
+
+\end{proof}
+\begin{namedres}{Lema}{Intersección de subgrupos es subgrupo}
+Sea $(G, \ast)$ y sea $\{ H_{i}:i \in I \}$ una familia de subgrupos de $G$. Entonces $H:=\bigcap_{i \in I} H_{i} \leq G_{i}$.
+
+\end{namedres}
+\begin{proof}
+Note que $H\neq \emptyset$, pues $1_{G} \in H_{i}$ para todo $i$. Sea $x,y \in H$. Como $x,y \in H_{i}$ para todo $i \in I$. Entonces $x \ast y^{-1} \in H_{i}$ para todo $i$. Luego, $x \ast y ^{-1} \in H$.
+
+\end{proof}
+\begin{namedstd}{Definición}{Grupo generado por un subconjunto}
+Sea $(G, \ast)$ un grupo y $S \subseteq G$. Defina
+\[
+\langle S \rangle := \bigcap \{ H:H\leq G  \quad \land  \quad S \subseteq H\}
+\]
+como el grupo generado por $S$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Generado es el grupo más pequeño que contiene al conjunto}
+$\langle S \rangle$ es el grupo más pequeño que contiene a $S$, i.e., si $K\leq G$ tal que $S \subseteq K$, entonces $\langle S \rangle \subseteq K$.
+\end{namedres}
+\begin{proof}
+Si $K \leq G$ y $S \subseteq K$, entonces $K \in \{ H \leq G : S \subseteq H \}$, por lo que $\bigcap \{ H:H\leq G  \quad \land  \quad S \subseteq H\} = \langle S \rangle \subseteq K$.
+
+
+\end{proof}
+\begin{namedres}{Teorema}{Caracterización del grupo generado}
+Si $(G, \ast)$ es un grupo y $S \neq \emptyset$, entonces
+\[
+\langle S \rangle = \{ x_{1}^{\alpha_{1}} \ast \dots \ast x_{n}^{\alpha_{n}}: n \in \mathbb{N}^{\ast}, x_{i} \in S, \alpha_{i} \in \{ -1,1\} \}.
+\]
+\end{namedres}
+\begin{proof}
+Sea $H = \{ x_{1}^{\alpha_{1}} \ast \dots \ast x_{n}^{\alpha_{n}}: n \in \mathbb{N}^{\ast}, x_{i} \in S, \alpha_{i} \in \{ -1,1\} \}$. Note que $H \neq \emptyset$. Sean $x,y \in H$. Entonces existen $k, \ell \in \mathbb{N}^{\ast}; \{ \alpha_{i} \}_{i=1}^{k}, \{ \beta_{i} \}_{i=1}^{\ell}$ con $\alpha_{i}, \beta_{i} \in \{ -1,1 \}$ para todo $i$, y $x_{1},\dots,x_{k},y_{1},\dots y_{\ell} \in S$ tales que
+\[
+x = x_{1}^{\alpha_{1}} \ast \dots \ast x_{k}^{\alpha_{k}}, y = y_{1}^{\beta_{1}}\dots y_{\ell}^{\beta_{\ell}}.
+\]
+Note que $x \ast y^{-1} = x_{1}^{\alpha_{1}} \ast \dots \ast x_{k}^{\alpha_{k}} \ast y_{1}^{-\beta_{1}}\dots y_{\ell}^{\beta_{-\ell}} \in H$. Así, $H \leq G$ y por tanto $\langle S \rangle \subseteq H$.
+Por otro lado, como $\langle S \rangle$ es un grupo, $H \subseteq \langle S \rangle$.
+
+\end{proof}
+\begin{namedstd}{Definición}{Grupo generado}
+SI $(G, \ast)$ es un grupo y $S \subseteq G$ tal que $\langle S \rangle = G$, decimos que $G$ es generado por $S$. Si $S$ es finito, decimos que $G$ es finitamente generado.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplos}{de grupos generados}
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $(G, \ast)$ un grupo. Entonces
+\[
+\begin{aligned}
+\langle \emptyset \rangle &= \bigcap \{ H: H\leq  G \} \\
+&= \{ 1_{G} \}.
+\end{aligned}
+\]
+\item Si $(G, \ast)$ es un grupo y $S \leq G$, $\langle S \rangle = \langle S \rangle$.
+\item Si $S = \{ i \} \subseteq (\mathbb{C}^{\ast}, \cdot)$, entonces $\langle S \rangle = \{ i,-1,1,-i \}$.
+\item Si $S = \{ 2 \} \subseteq (\mathbb{Z},+)$, $\langle S \rangle = \{ 2k:k \in \mathbb{Z} \}$.
+\item Si $S=\{ 12,-8 \} \subseteq (\mathbb{Z}, +)$, entonces $\langle S \rangle = \{ 12 a + (-8)b: a,b \in \mathbb{Z} \} = \{ 4k: k \in \mathbb{Z} \}$ .
+\item En general, si $a \in (G, \ast)$,
+\[
+\begin{aligned}
+\langle a \rangle &= \bigcap \{ H: H<a  \quad\land  \quad a \in H \}\\
+&= \{ a^{n}: n \in \mathbb{Z} \}.
+\end{aligned}
+\]
+\end{enumerate}
+
+\end{namedstd}
+
+\subsection{Grupos cíclicos}
+
+
+\begin{namedstd}{Definición}{Orden de un grupo y de un elemento}
+Sea $(G, \ast)$ un grupo. El orden de $G$ es la cantidad de elementos de $G$ y se denota por $\lvert  G \rvert$.
+\begin{enumerate}[label=(\arabic*)]
+\item Si existe $p$ primo tal que tal que $\lvert  G \rvert = p^{k}$ con $k \in \mathbb{N}$. decimos que $G$ es un $p$-grupo.
+\item Si $G$ es un grupo y $g \in G$. el orden de $g$ ($\lvert  g \rvert$) es el menor $n \in \mathbb{N}$ tal que $g^{n} = 1_{G}$. Si tal $n$ no extiste, decimos que tal $\lvert g \rvert = \infty$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Ejemplos}{Órdenes en $\Z_n$}
+\begin{enumerate}[label=(\arabic*)]
+\item $(\mathbb{Z}_{n}, +) = \{ [0],[1],\dots,[n-1] \}$, $\lvert \mathbb{Z}_{n} \rvert = n$.
+\item Considere $(\mathbb{Z}_{4}, +) = \{ [0], [1], [2], [3] \}$, $\lvert \mathbb{Z}_{4} \rvert = 4$. Note que
+\[
+[2] \neq [0] \quad \land  \quad [2]+[2] = [0],
+\]
+\end{enumerate}
+por lo que $\lvert [2] \rvert = 2$. De la misma manera, verificamos que $\lvert [1] \rvert = 4$ y $\langle [1] \rangle = \mathbb{Z}_{4}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Orden y divisibilidad}
+Sea $G$ un grupo y $g \in G$, $n \in \mathbb{Z}$. Entonces
+\[
+g^{n} = 1_{G} \iff \lvert g \rvert \mid n.
+\]
+\end{namedres}
+\begin{proof}
+Hagamos el caso de $n \in \mathbb{N}$.
+($\impliedby$): Si $\lvert g \rvert \mid n$, existe $k \in \mathbb{N}$ tal que $k \lvert g \rvert = n$. Entonces
+\[
+g^{n} = g^{k \lvert  g \rvert } = (g^{\lvert g \rvert })^{k} = (1_{G})^{k} = 1_{G}.
+\]
+$(\implies)$: Suponga que $g^{n} = 1_{G}$. Por minimalidad, $\lvert g \rvert \leq n$. Por algoritmo de la división, existen $q,r \in \mathbb{N}$ tales que $n = q \lvert g \rvert + r$ y $0 \leq r < \lvert g \rvert$. Entonces,
+\[
+1_{G} = g^{n} =g^{q \lvert g \rvert} \ast g^{r} = 1_{G} \ast g^{r} = g^{r},
+\]
+de donde concluimos que $r = 0$ por minimalidad de $\lvert g \rvert$, por tanto $\lvert g \rvert \mid n$.
+
+Para el caso general $n \in \mathbb{Z}$, basta ver que $g^{n} = 1_{G} \iff g^{-n} = 1_{G}$ y además $\lvert  g \rvert \mid n \iff \lvert g \rvert \mid -n$.
+
+\end{proof}
+\begin{namedstd}{Definición}{Grupo cíclico}
+Sea $G$ un grupo. $G$ es cíclico si existe $g \in G$ tal que $G = \langle g \rangle$.
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Grupos cíclicos}
+\begin{enumerate}[label=(\arabic*)]
+\item $(\mathbb{Z}, +) = \langle 1 \rangle = \langle -1 \rangle$. Tenemos que $\lvert \mathbb{Z} \rvert = \infty, \lvert 1 \rvert = \infty, \lvert 2 \rvert = \infty$.
+\item Considere $\mathbb{Z}_{5}$ con la multiplicación de clases de equivalencia (congruencia módulo 5) definida anteriormente. Definimos
+\[
+U(5) = \{ [x] \in \mathbb{Z}_{5}: \exists [y] \in \mathbb{Z}_{5}([x] \cdot [y]=[1]) \} = \mathbb{Z}^{\ast}_{5}
+\]
+\end{enumerate}
+¿$U(5)$ es un grupo cíclico? Sí, por ejemplo, $\lvert [2] \rvert = 4$. De la misma manera, su inverso $[3]$ también funciona para generar a $U(5)$. Pero $[4]$ no. Así, $\langle [2] \rangle, \langle [3] \rangle$.
+
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Unidades de $\mathbb{Z}_{m}$}
+Considere $\mathbb{Z}_{m}$. Defina
+\[
+U(m) = \{ [x] \in \mathbb{Z}_{m}: \exists [y] \in \mathbb{Z}_{m}([x] \cdot [y] = [1]) \}.
+\]
+Decimos que $[a]$ es una unidad de $\mathbb{Z}_{m}$ si $a \in U(m)$.
+
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{Caracterización de unidades}
+Muestre que $[a] \in U(m) \iff \MCD(a,m) = 1$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Generador de $\Z_m$}
+Sea $m \in \mathbb{N}^{\ast}$. Considere $(\mathbb{Z}_{m}, +)$. Sea $[a] \in \mathbb{Z}_{m}$. Sea $[a] \in \mathbb{Z}_{m}$. Entonces
+\[
+\langle [a] \rangle = \mathbb{Z}_{m} \iff \MCD(a,m) = 1.
+\]
+\end{namedres}
+\begin{proof}
+($\impliedby$): Suponga que $\MCD(a,m)=1$. Por el ejercicio anterior, existe $[a]^{-1} \in \mathbb{Z}_{m}$ tal que $[a] \cdot [a] ^{-1} = [1]$. Sea $[b] \in \mathbb{Z}_{m}$. Probaremos que $[b] \in \langle [a] \rangle$. Sea $k \in \mathbb{Z}$ tal que $[k]:=[b] \cdot [a^{-1}]$. Así.
+\begin{align*}
+[k]= [b] \cdot [a]^{-1} \implies [k] \cdot [a] = [b] \implies [a] + \dots + [a] = [b],
+\end{align*}
+de donde concluimos que $b \in \langle[a]\rangle$, y por tanto $\langle [a] \rangle = \mathbb{Z}_{m}$.
+La otra dirección se deja como ejercicio.
+
+\end{proof}
+\begin{namedstd}{Nota}{Cardinalidad de grupos cíclicos}
+Si $G$ es cíclico, entonces $G$ es numerable ($\lvert G \rvert \leq \lvert \mathbb{N} \rvert$). Por ser cíclico, existe $g \in G$ tal que $G = \langle g \rangle = \{ g^{n}:n \in \mathbb{Z} \}$. Considere la función $\Phi: \mathbb{Z} \to G$ tal que $n \mapsto g^{n}$. Como $g$ es cíclico, esta función es sobreyectiva. Así, $\lvert G \rvert \leq \lvert \mathbb{Z} \rvert$. Esto implica que cualquier grupo construido a partir de conjuntos no numerables, como $(\mathbb{R}, +)$, no puede ser cíclico.
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Grupos cíclicos y orden}
+Sea $G$ un grupo cíclico con $g \in G$ tal que $G = \langle g \rangle$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $\lvert g \rvert = \infty$, entonces $g^{i}=g^{j} \iff i=j$.
+\item Si $\lvert g \rvert=n \in \mathbb{N}$, entonces $\langle g \rangle = \{ e,g,\dots, g^{n-1}\}$. En este caso $g^{i} = g^{j} \iff n \mid i-j$. Esto implica que $\lvert G \rvert = \lvert g \rvert$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1), suponga que $\lvert g \rvert=\infty$. Luego para todo $n \in \mathbb{N}$, $g^{n} \neq e$. Suponga que existen $i,j$ distintos (con $i<j$ sin pérdida de generalidad) tales que $g^{i} = g^{j}$. Como $j-i>0$, tenemos que $e = g^{i} \ast g^{-i} =g^{j-i}$, una contradicción pues $g$ tiene orden infinito.
+Para (2), sabemos que $\langle g \rangle = \{ g^{n}: n \in \mathbb{Z} \}$, por lo que $\{ e,g,\dots, g^{n-1}\} \subseteq \langle g \rangle$. Ahora, sea $h \in \langle g \rangle$. Entonces, existe $k \in \mathbb{Z}$ tal que $h = g^{k}$. Por algoritmo de la división, existen $q,r \in \mathbb{Z}$ con $0\leq r\leq n-1$ tales que $k=nq+r$. Así, $h=g^{nq+r} = (g^{n})^{q} \ast g^{r}  = g^{r} \in \{ e,g,\dots, g^{n-1}\}$. Concluimos que $\langle  g \rangle = \{ e,g,\dots, g^{n-1}\}$.
+Ahora, dados $i,j \in \mathbb{Z}$, suponga que $g^{i} = g^{j} \implies g^{i-j} = e$, luego $\lvert g \rvert \Big\lvert i-j$. Por último, basta mostrar que si $0 \leq i<j<n$ entonces $g^{i} \neq g^{j}$. Note que $0<j-i<n$, por lo que si $g^{i} = g^{j}$, entonces $g^{j-i} = e$, lo que contradice la minimalidad del orden $n$.
+
+\end{proof}
+
+\subsection{Subgrupos de Grupos Cíclicos}
+
+
+\begin{namedres}{Lema}{Divisibilidad y subgrupo generado}
+Sea $G$ un grupo cíclico y $g \in G$ tal que $G = \langle g \rangle$. Si $k \mid \ell$, entonces $\langle g^{\ell} \rangle \subseteq \langle g^{k} \rangle$.
+\end{namedres}
+\begin{proof}
+Sea $x \in \langle g^{\ell} \rangle$. Existe $r \in \mathbb{Z}$ tal que $x=(g^{\ell})^{r}$. Además, como $k \mid \ell$, existe $t \in \mathbb{Z}$ tal que $tk = \ell$. Así, $x = (g^{tk})^{r} = (g^{k})^{tr} \in \langle g^{k} \rangle$.
+
+\end{proof}
+\begin{namedstd}{Ejercicio}{Orden de potencia}
+Si $g \in G$ con $\lvert g \rvert = rs$, con $r,s \in \mathbb{N}$, entonces $\lvert g^{r} \rvert = s$.
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Ordenes de subgrupos de grupos cíclicos}
+Sea $G$ grupo y $g \in G$ tal que $\lvert g \rvert = n$. Dado $k \in \mathbb{N}$, entonces
+\begin{enumerate}[label=(\arabic*)]
+\item $\langle g^{k} \rangle = \langle g^{\mcd(n,k)} \rangle$
+\item Si $c \mid n$, entonces $\lvert g^{c} \rvert  = \frac{n}{c}$.
+\end{enumerate}
+En particular, $\lvert g^{k} \rvert = \frac{n}{\mcd(n,k)}$.
+\end{namedres}
+\begin{proof}
+Para (1), Sea $d=\mcd(n,k)$. Es claro que $d \mid k \implies \langle g^{k} \rangle \subseteq \langle g^{d} \rangle$. Por otro lado, por lema de Bezout, existen $r,t \in \mathbb{Z}$ tales que $d = rn + tk$. Luego, $g^{d} = g^{rn} \ast g^{tk} = (g^{k})^{t},$ por lo que $g^{d} \in \langle g^{k} \rangle$ y por tanto $\langle g^{d} \rangle \subseteq \langle g^{k} \rangle$. Concluimos que $\langle g^{d} \rangle = \langle g^{k} \rangle$.
+
+Ahora, para (2), como $c \mid n$, existe $m \in \mathbb{Z}$ tal que $mc = n \implies m = \frac{n}{c} \in \mathbb{Z}$. Usando el ejercicio anterior, tenemos que $\lvert g \rvert = \frac{n}{c} \cdot c$ y por tanto $\lvert g^{c} \rvert = \frac{n}{c}$. Para el resultado particular, tome $c=d$ en (2) y use la propiedad (1).
+
+\end{proof}
+\begin{namedres}{Corolario}{orden de elementos en grupos cíclicos}
+Sea $G$ cíclico tal que $\lvert G \rvert = n$ y $h \in G$. Entonces, $\lvert h \rvert \Big\lvert n$.
+\end{namedres}
+\begin{proof}
+Sea $g \in G$ tal que $\langle g \rangle = G$. Como $h \in G$, existe $k \in \{ 0,\dots,n-1 \}$ tal que $h = g^{k}$. Así, $\lvert h \rvert = \lvert g^{k} \rvert = \frac{n}{\mcd(n,k)} \implies \lvert h \rvert \mcd(n,k) = n$, de donde se sigue la divisibilidad.
+
+\end{proof}
+\begin{namedres}{Teorema}{Igualdad de subgrupos}
+Sea $G$ un grupo y $g \in G$ tal que $\lvert g \rvert = n$. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $\mcd(k,n) = \mcd(\ell, n)$
+\item $\langle g^{k} \rangle = \langle g^{\ell} \rangle$.
+\item $\lvert g^{k} \rvert = \lvert g^{\ell} \rvert$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(2) \implies (3)$ es trivial. Para $(1) \implies (2)$, asuma que $\mcd(k,n) = \mcd(\ell, n)$. Note que
+\[
+\langle g^{k} \rangle = \langle g^{\mcd(n,k)} \rangle = \langle g^{\mcd(n,\ell)} \rangle = \langle g^{\ell} \rangle.
+\]
+Finalmente, para $(3) \implies (1)$, usando la proposición anterior, note que
+\[
+\lvert g^{k} \rvert = \lvert g^{\ell} \rvert \implies \frac{n}{\mcd(n,k)} = \frac{n}{\mcd(n, \ell)} \implies \mcd(n,k) = \mcd(n, \ell).
+\]
+
+\end{proof}
+\begin{namedres}{Corolario}{Elemento generador de un grupo cíclico}
+Sea $G = \langle g \rangle$ con $\lvert g \rvert=n$. Sea $k \in \mathbb{Z}$. Entonces $G = \langle g^{k} \rangle \iff \mcd(n,k) = 1$.
+\end{namedres}
+\begin{proof}
+Por el teorema anterior $\langle g^{k} \rangle = \langle g^{1} \rangle \iff \mcd(n,k)=\mcd(n,1)  = 1$.
+
+\end{proof}
+\begin{namedres}{Teorema}{Subgrupo de grupo cíclico es cíclico}
+Sea $G$ un grupo cíclico y $H \leq G$. Entonces $H$ es cíclico.
+\end{namedres}
+\begin{proof}
+Sea $g \in G$ tal que $G = \langle g \rangle$. Si $H$ es el subgrupo trivial, claramente es cíclico. Suponga que $H$ es no trivial. Sea $e \neq h \in H$. Como $h \in H \subseteq G = \langle g \rangle$, existe $0 \neq k \in \mathbb{Z}$ tal que $h = g^{k}$. Defina $A = \{ n \in \mathbb{N}^{\ast} : g^{n} \in H\}$. Note que $A \neq \emptyset$, pues si $k \geq 0$, $k \in A$, y en caso contrario $-k \in A$ (por ser $H$ un grupo, $h^{-1} \in H$). Luego, aplicando el principio del buen orden, $A$ tiene un elemento minimal $\ell$.  Probaremos que $H = \langle g^{\ell} \rangle$. Por un lado, como $\ell \in A$, $g^{\ell}\in H$ y por tanto $\langle g^{\ell} \rangle \subseteq H$. Ahora, tome $t \in H$. Existe $i \in \mathbb{Z}$ tal que $t = g^{i}$. Suponiendo que $i \neq 0$, por algoritmo de la división, existen $q,r \in \mathbb{Z}$  con $0\leq r<\ell$ tales que $i = q\ell+r \implies r = i-q\ell$. Así, $g^{r} = g^{i} \ast g^{-q \ell} \in H$. Si $r\neq0$, tenemos que $r \in A$, lo que contradice la minimalidad de $\ell$. Concluya que $r=0$. Así, $t = g^{i} = (g^{\ell})^{q}$, de donde tenemos que $t \in \langle g^{\ell} \rangle$, Concluimos que $H = \langle g^{\ell} \rangle$.
+
+\end{proof}
+\begin{namedstd}{Nota}{Hallazgo del generador}
+Por la prueba, sabemos como encontrar un generador de $H$ a partir de un generador de $G$,
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Lagrange para grupos cíclicos}
+Sea $G$ un grupo cíclico tal que $\lvert G \rvert = n$ y $H \leq G$. Entonces, $\lvert H \rvert \Big\lvert n$.
+\end{namedres}
+\begin{proof}
+Sea $g \in G$ tal que $\langle g \rangle=G$ y $H\leq G$. Luego, $H$ es cíclico y existe $k \in \mathbb{N}$ tal que $H = \langle g^{k} \rangle$. Sea $d = \mcd(n,k)$. Entonces,
+\[
+\lvert H \rvert  = \lvert \langle g^{k} \rangle  \rvert = \lvert g^{k} \rvert = \frac{n}{d}  \implies d \lvert H \rvert = n,
+\]
+de donde se sigue la divisibilidad.
+
+\end{proof}
+\begin{namedres}{Teorema}{Unicidad de ordenes en subgrupos}
+Sea $G$ un grupo cíclico con $\lvert G \rvert = n$ y sea $k \in \mathbb{N}$ tal que $k \mid n$. Entonces existe un único subgrupo $H$ de $G$ con $\lvert H \rvert = k$. Además, si $G = \langle g \rangle$ entonces $H = \langle g^{n/k} \rangle$
+\end{namedres}
+\begin{proof}
+Sea $\ell = \frac{n}{k} \in \mathbb{N}$ (pues $k \mid n$). Sea $H = \langle g^{\ell} \rangle$. Entonces, $\lvert H \rvert = \lvert \langle g^{\ell} \rangle  \rvert = \frac{n}{\mcd(n, \ell)}$. Ahora, como $n = k\ell$ entonces $\mcd(n, \ell) = \mcd(k\ell, \ell) = \ell \mcd(k,1) = \ell$. Así, $\lvert H \rvert = \frac{n}{\ell} = k$. La unicidad queda como ejercicio.
+
+\end{proof}
+
+\subsection{Grupo de permutaciones}
+
+
+Sea $n \in \mathbb{N}^{\ast}$. Defina
+\[
+S_{n} = \{ \sigma: \sigma \text{ es permutación de }\{ 1,\dots,n \} \}.
+\]
+Si $X$ es un conjunto cualquiera, $\sigma: X \to X$ biyectiva es una permutación.
+$S_{X} = \{ \sigma : \quad \sigma: X \to X \text{ permutación} \}$. Es fácil ver que si $\lvert X \rvert = n$, $S_{X} \cong S_{n}$, pues
+\[
+\begin{aligned}
+X &= \{ x_{1},\dots,x_{n} \}\\
+&\cong \{ 1,\dots,n \} 
+\end{aligned}.
+\]
+
+\begin{namedres}{Teorema}{Orden del grupo de permutaciones}
+Sea $n \in \mathbb{N}^{\ast}$. Entonces $\lvert S_{n} \rvert = n!$.
+\end{namedres}
+\begin{proof}
+Note que
+\[
+\begin{aligned}
+\sigma(1) &\text{ tiene } n \text{ posibilidades}\\
+\sigma(2) &\text{ tiene } n-1 \text{ posibilidades} \\
+& \qquad \qquad \vdots \\
+\sigma(n) &\text{ tiene } 1 \text{ posibilidad}.
+\end{aligned}
+\]
+
+\end{proof}
+\begin{namedstd}{Definición}{Mover y fijar un elemento}
+Sea $\alpha \in S_{n}$ y sea $k \in \{ 1, \dots, n \}$. Decimos que:
+\begin{enumerate}[label=(\arabic*)]
+\item "$\alpha$ mueve $k$" si $\alpha(k) \neq k$,
+\item "$\alpha$ fija $k$" si $\alpha(k) = k$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Notación}{Composición de permutaciones}
+Considere $\alpha:\{ 1,2,3\} \to \{ 1,2,3 \}$ y  $\beta:\{ 1,2,3\} \to \{ 1,2,3 \}$ tales que
+\[
+\alpha = \begin{pmatrix}
+1 & 2 & 3 \\
+2 & 1 & 3
+\end{pmatrix}, \quad  
+\beta = \begin{pmatrix}
+1 & 2 & 3 \\
+3 & 2 & 1
+\end{pmatrix}.
+\]
+Tenemos que
+\[
+\alpha \circ \beta = \begin{pmatrix}
+1 & 2 & 3 \\
+2 & 1 & 3
+\end{pmatrix} \circ \begin{pmatrix}
+1 & 2 & 3 \\
+3 & 2 & 1
+\end{pmatrix} = \begin{pmatrix}
+1 & 2 & 3 \\
+3 & 1 & 2
+\end{pmatrix},
+\]
+
+\[
+\beta \circ \alpha = \begin{pmatrix}
+1 & 2 & 3 \\
+3 & 2 & 1
+\end{pmatrix} \circ \begin{pmatrix}
+1 & 2 & 3 \\
+2 & 1 & 3
+\end{pmatrix} = \begin{pmatrix}
+1 & 2 & 3 \\
+2 & 3 & 1
+\end{pmatrix}.
+\]
+En general, dos permutaciones no tienen por qué conmutar.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{r-ciclo}
+Sea $n \in \mathbb{N}^\ast$ y $r \in \{ 1,\dots,n \}$. Decimos que $\alpha \in S_{n}$ es un $r$-ciclo. Si existen, $i_{1},\dots,i_{r} \in \{ 1,\dots,n \}$ distintos tales que
+\[
+\begin{aligned}
+\alpha(i_{1}) &= i_{2}\\
+\alpha(i_{2}) &= i_{3}\\
+\vdots\\
+\alpha(i_{r-1}) &= i_{r}\\
+\alpha(i_{r}) &= i_{1}.
+\end{aligned}
+\]
+Escribimos, $\begin{pmatrix}i_{1} & \cdots  & i_{r}\end{pmatrix}$. Note que si $\alpha = \begin{pmatrix} i_{1} & \cdots & i_{r}\end{pmatrix}$ y $j \not\in \{ i_{1},\dots,i_{r} \}$, entonces $\alpha(j) = j$.
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{$r$-ciclo en $S_4$}
+$\alpha=\begin{pmatrix}1 & 2 & 3 & 4 \\ 2 & 3 & 1 & 4\end{pmatrix} = \begin{pmatrix}1 & 2 & 3\end{pmatrix} \in S_{4}$.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Permutaciones disjuntas}
+Sean $\alpha,\beta \in S_{n}$/ Decimos que $\alpha$ y $\beta$ son disjuntas si todo elemento que es movido por $\alpha$ es fijado por $\beta$ y todo elemento que mueve $\beta$ es fijado por $\alpha$. Note que esta definición admite que haya elementos fijados por ambas,
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Transposición}
+Decimos que un $2$-ciclo es una transposición.
+\end{namedstd}
+\begin{namedstd}{Nota}{Notación cíclica}
+
+\[
+\begin{pmatrix}
+1 & 3 & 5
+\end{pmatrix} = \begin{pmatrix}
+5 & 1 & 3
+\end{pmatrix} = \begin{pmatrix}
+3 & 5 & 1
+\end{pmatrix}
+\]
+son el mismo ciclo.
+
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{$r$-ciclo y orden}
+Muestre que $\alpha \in S_{n}$ es un $r$-ciclo si y solo si $\lvert a \rvert = r$ (i.e., $\alpha^{r} = \mathrm{id}_{n}$).
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Inverso de un ciclo}
+Si $\alpha = \begin{pmatrix}1 & 3 & 5\end{pmatrix} \in S_{5}$, $\alpha ^{-1} = \begin{pmatrix}5 & 3 & 1\end{pmatrix}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Producto de transposiciones disjuntas}
+Considere $\alpha \in S_{4}$ con
+\[
+\alpha = \begin{pmatrix}
+1 & 2 & 3 & 4 \\
+2 & 1 & 4 & 3
+\end{pmatrix} = \underbrace{ \begin{pmatrix}
+1 & 2
+\end{pmatrix} }_{ \beta_{1} } \underbrace{ \begin{pmatrix}
+3 & 4
+\end{pmatrix} }_{ \beta_{2} },
+\]
+donde $\beta_{1}, \beta_{2} \in S_{1}$ son $2$-ciclos disjuntos.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Conmutatividad de permutaciones disjuntas}
+Sean $\alpha, \beta \in S_{n}$ disjuntas. Entonces $\alpha \circ \beta = \beta \circ \alpha$.
+\end{namedres}
+\begin{proof}
+Sea $i \in \{ 1,\dots, n \}$. Tenemos tres casos posibles.
+\textbf{Caso 1:} $\alpha$ mueve $i$. Sea $j = \alpha(i) \neq i$. Entonces, $\beta(i) = i$. Note además que $\alpha(j) \neq j$, pues de lo contrario, $\alpha(i) = j = \alpha(j)$ implica por inyectividad de $\alpha$ que $i = j$, una contradicción. Por tanto, $\beta(j) = j$. Así, tenemos que
+\[
+\begin{aligned}
+(\alpha \circ \beta)(i) &= \alpha(\beta(i)) = \alpha(i) = j \\ 
+(\beta \circ \alpha)(i) &= \beta(\alpha(i)) = \beta(j) = j.
+\end{aligned}
+\]
+\textbf{Caso 2:} $\beta$ mueve $i$. Este caso es análogo al anterior.
+\textbf{Caso 3:} $\alpha, \beta$ fijan a $i$: Note que $\alpha(i) = \beta(i) = i$. Luego
+\[
+\begin{aligned}
+(\alpha \circ \beta)(i) &= \alpha(\beta(i)) = \alpha(i) = i \\ 
+(\beta \circ \alpha)(i) &= \beta(\alpha(i)) = \beta(j) = i.
+\end{aligned}
+\]
+Concluya que permutaciones disjuntas conmutan.
+
+\end{proof}
+\begin{namedres}{Teorema}{Orbita finita}
+Sea $\alpha \in S_{n}$, $i \in \{ 1,\dots,n \}$ tal que $\alpha(i) \neq i$. Defina la sucesión $\{ i_{k} \}_{k \in \mathbb{N}^{\ast}}$ de manera que $i_{1} = i$, $i_{2} = \alpha(i_{1}) = \alpha(i), \dots,i_{k+1} = \alpha (i_{k})$ para todo $k \in \mathbb{N}^{\ast}$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item existe $k \in \{ 1,\dots,n \}$ tal que $i_{k+1} \in \{ i_{1},\dots, i_{k} \}$;
+\item si $r = \min \{ k \in \mathbb{N}^{\ast} : i_{k+1} \in \{ i_{1},\dots,i_{k} \} \} \implies i_{r+1} = i_{1}.$
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1), note que para todo $k \in \mathbb{N}^{\ast}$, $\{ i_{1},\dots,i_{k} \} \subseteq \{ 1,\dots,n \}$ y $\{ 1,\dots,n \}$ es finito, entonces el resultado se sigue directamente.
+Para (2), defina $r$ como en el enunciado. Tome $i_{j}:= i_{r+1} \in \{ i_{1},\dots,i_{r} \}$. Suponga por contradicción que $j>1 \implies j-1>0$. Note que $\alpha^{j-1}(i) = i_{j} = i_{r+1} = \alpha^{r}(i)$. Aplicando $\alpha ^{-1}$ $j-1$ veces, tenemos que
+\[
+i_{1} = i = \alpha^{r+1-j}(i),
+\]
+pero $r+1-j < r$, por lo que esto contradice la minimalidad de $r$. Por tanto $j = 1$.
+
+\end{proof}
+\begin{namedres}{Lema}{Igualdad de ciclos}
+Sean $\alpha, \beta \in S_{n}$ y sea $i \in \{ 1,\dots,n \}$. Si $\alpha, \beta$ mueven $i$ y para todo $k \in \mathbb{N}$, $\alpha^{k}(i) = \beta^{k}(i)$, entonces $\alpha = \beta$.
+
+\end{namedres}
+\begin{proof}
+ejercicio.
+\end{proof}
+\begin{namedres}{Teorema}{Factorización en ciclos disjuntos}
+Toda permutación en $S_{n}$ es producto de ciclos disjuntos. Además, si agregamos los $1$-ciclos la descomposición es única módulo el orden.
+
+\end{namedres}
+\begin{proof}
+Sea $\alpha \in S_{n}$. Proceda por inducción fuerte sobre el número $k$ de elementos que mueve $\alpha$. Si $k=0$, entonces $\alpha = \mathrm{id}_{n}$. Entonces, $\alpha = (1)(2) \cdots (n)$.
+Considere ahora el caso de $k>0$. Suponga que el teorema es cierto para $\{0,1,\dots,k-1\}$. Sea $i \in \{ 1,\dots,n \}$ tal que $\alpha(i) \neq i$. Defina $i_{k} \in \{ 1,\dots,n \}$ tal que $i_{1} = i$ y $i_{m+1} = \alpha(i_{m}) = \alpha^{m}(i)$ para $m \in \mathbb{N}^{\ast}$. Sea $r = \min \{ \ell \in \mathbb{N}: i_{\ell+1} \in \{ i_{1},\dots,i_{\ell} \} \} \leq n$. Por teorema anterior, $i_{r+1}=i_{1}$. Sea $\delta = \begin{pmatrix}i_{1} & \cdots  & i_{r}\end{pmatrix} \in S_{n}$ un $r$=ciclo.
+Si $r = n$ , $\delta$ es un $n$-ciclo y $\delta = \alpha$. Si $r<n$, defina $A := \{ 1,\dots,n \} \setminus \{ i_{1},\dots,i_{r} \}$. Note que $\alpha(A) = A$, pues todos estos puntos son fijados por $\alpha$. Además, $\delta$ fija todos los elementos de $A$ por construcción. Sea $\beta \in S_{n}$ tal que para todo $x \in A$, $\beta(x) = \alpha(x)$ y para todo $x \in \{ i_{1},\dots,i_{r} \}$, $\beta(x) = x$. Note que $\beta$ y $\delta$ son disjuntas. Además, $\alpha = \beta \circ \delta$. El número de elementos que $\beta$ mueve es menor que $k$. Luego, por hipótesis inductiva aplicada a $\beta$, $\beta$ es producto de ciclos disjuntos, y por tanto $\alpha = \beta \circ \delta$ también lo es.
+
+\end{proof}
+\begin{namedres}{Proposición}{Descomposición en transposiciones}
+Sea $n\geq 2$. Todo $\alpha \in S_{n}$ es producto de transposiciones.
+\end{namedres}
+\begin{proof}
+Basta mostrarlo si $\alpha$ es un ciclo. Sea $\alpha = \begin{pmatrix}a_{1} & \cdots & a_{n}\end{pmatrix}$ un ciclo. Proceda por inducción fuerte sobre $r$. Para $r=1$, note que $\alpha = (a)$. Luego, $\alpha$ es la identidad de $S_n$. Sea $b \in \{ 1,\dots,n \}$ tal que $b\neq a$  (sabemos que existe porque $n>2$). Luego, $\alpha = \begin{pmatrix} a & b\end{pmatrix} \begin{pmatrix}a & b\end{pmatrix} = \mathrm{id}_{S_{n}}$. Suponga como hipótesis inductiva que el teorema es cierto para cada $k$-ciclo con $k \leq r-1$.
+Probaremos que $\alpha = \begin{pmatrix}a_{1} & a_{3} & \cdots  & a_{r-1}\end{pmatrix} \begin{pmatrix}a_{1} & a_{2}\end{pmatrix}$. Sea $\beta = \begin{pmatrix}a_{1} & a_{3} & \cdots  & a_{r}\end{pmatrix} \begin{pmatrix}a_{1} & a_{2}\end{pmatrix}$. Note que
+\[
+\begin{aligned}
+\beta(a_{r}) = a_{1} &= \alpha(a_{r}) \\
+\beta(a_{1}) = a_{2} &=\alpha(a_{1})\\
+\beta(a_{2}) = a_{3} &= \alpha(a_{2})\\
+\beta(a_{k}) = a_{k+1} &= \alpha(a_{k}), \qquad 3\leq k\leq r-1.\\b
+\beta(b) = b &= \alpha(b), \qquad b \not\in \{ a_{1},\dots,a_{k} \}.
+\end{aligned}
+\]
+Luego $\alpha = \beta$. Aplicamos H.I. en $\begin{pmatrix}a_{1} & a_{3} & \cdots a_{r}\end{pmatrix}$.
+
+\end{proof}
+\begin{namedstd}{Nota}{Forma estándar}
+$\alpha = \begin{pmatrix} x_{1} & \cdots & x_{m}\end{pmatrix} = \begin{pmatrix}x_{1} & x_{m}\end{pmatrix} \begin{pmatrix}x_{1} & x_{m-1}\end{pmatrix} \cdots \begin{pmatrix}x_{1} & x_{2}\end{pmatrix}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Factorización en transposiciones}
+Considere
+\[
+\begin{aligned}
+\alpha &=\begin{pmatrix}
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ 
+6 & 2 & 7 & 9 & 8 & 3 & 1 & 5 & 4 \\
+\end{pmatrix} \\
+&= \begin{pmatrix}
+1 & 6 & 3 & 7
+\end{pmatrix} \begin{pmatrix}
+2
+\end{pmatrix} \begin{pmatrix}
+4 & 9
+\end{pmatrix} \begin{pmatrix}
+8 & 5
+\end{pmatrix} \qquad \text{factorización en ciclos} \\
+&= \begin{pmatrix}
+1 & 3 & 7
+\end{pmatrix} \begin{pmatrix}
+1 & 6
+\end{pmatrix} \begin{pmatrix}
+1 & 2
+\end{pmatrix} \begin{pmatrix}
+1 & 2
+\end{pmatrix} \begin{pmatrix}
+4 & 9
+\end{pmatrix} \begin{pmatrix}
+5 & 8
+\end{pmatrix} \\
+&=\begin{pmatrix}
+1 & 7
+\end{pmatrix} \begin{pmatrix}
+1 & 3
+\end{pmatrix} \begin{pmatrix}
+1 & 6
+\end{pmatrix} \begin{pmatrix}
+1 & 2
+\end{pmatrix} \begin{pmatrix}
+1 & 2
+\end{pmatrix} \begin{pmatrix}
+4 & 9
+\end{pmatrix} \begin{pmatrix}
+5 & 8
+\end{pmatrix} \qquad \text{descomposición en transposiciones}.
+\end{aligned}
+\]
+
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Signo}
+Sea $n \in \mathbb{N}$, $\alpha \in S_{n}$. Si $\alpha = \beta_{1} \cdots \beta_{k}$ es una factorización completa en ciclos disjuntos. Defina $\sgn(\sigma) = (-1)^{n-k}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Signo y transposiciones}
+Sea $\alpha \in S_{n}$ y $\tau$ una transposición. Entonces, $\sgn(\tau\alpha) = -\sgn(\alpha)$.
+\end{namedres}
+\begin{proof}
+Ejercicio
+
+\end{proof}
+\begin{namedres}{Teorema}{Signo separa producto}
+Sea $\alpha, \beta \in S_{n}$. Entonces $\sgn(\alpha\beta) = \sgn(\alpha) \sgn(\beta)$.
+\end{namedres}
+\begin{proof}
+Ejercicio, inducción sobre el número de transposiciones.
+
+\end{proof}
+\begin{namedstd}{Definición}{Paridad de la permutación}
+Decimos que $\alpha \in S_{n}$ es par si $\alpha$ se puede descomponer como el producto de un número par de transposiciones. En caso contrario $\alpha$ es impar.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Paridad y signo}
+Sea $\alpha \in S_{n}$. $\alpha$ es impar si y solo si $\sgn( \alpha ) = - 1$.
+
+\end{namedres}
+\begin{namedstd}{Definición}{Grupo alternante}
+$A_{n}:= \{ \sigma \in S_{n}: \sigma \text{ es par} \}$ es un grupo. Además. $\lvert A_{n} \rvert = \frac{n!}{2}$.
+
+\end{namedstd}
+
+\subsection{Centro y centralizador}
+
+
+\begin{namedstd}{Definición}{centro de $G$}
+Sea $(G, \ast)$ un grupo. Defina
+\[
+Z(G) = \{ g \in G: \forall h \in G (gh = hg)\} 
+\]
+\end{namedstd}
+\begin{namedstd}{Nota}{Propiedades del centro}
+\begin{enumerate}[label=(\arabic*)]
+\item $e \in Z(G)$,
+\item $G$ es abeliano si y solo si  $Z(G) = G$.
+\item Si $g \in Z(G)$, entonces para todo $h \in G$, $h = g \ast h \ast g^{-1}$.
+\end{enumerate}
+
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Centro es subgrupo}
+Si $G$ es un grupo, entonces $Z(G) \leq G$ y $Z(G)$ es conmutativo.
+
+\end{namedres}
+\begin{namedstd}{Definición}{Centralizador}
+Sea $G$ un grupo y $a \in G$. Defina el centralizador como
+\[
+C(a):= \{ g \in G: a \ast g = g \ast a \}
+\]
+
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{Centralizador es subgrupo}
+$C(a) \leq G$.
+
+Se puede probar que $Z(G) = \bigcap_{a \in G} C(a)$.
+\end{namedstd}
+
+% ======================================================================
+\section{Homomorfismos de Grupos y Subgrupos Normales}
+% ======================================================================
+
+\subsection{Definiciones elementales}
+
+\begin{namedstd}{Definición}{Homomorfismo de grupos}
+Sean $(G,\ast_{G}), (H,\ast_{H})$ grupos. Un homomorfismo de grupos entre $G$ y $H$ es una función $f:G\to H$ tal que
+\[
+\forall a,b, \in G  \quad \Big( f(a \ast_{G} b) = f(a) \ast_{h} f(b)\Big).
+\]
+
+\end{namedstd}
+\begin{namedstd}{Ejemplos}{Homomorfismos básicos}
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G$ un grupo y $f:G\to G$ tal que $f(x) = 1_{G}$ para todo $x \in G$. Note que
+\[
+f(x \ast y) = 1_{G} = 1_{G} \ast 1_{G} = f(x) \ast f(g)
+\]
+\item Considere $f:(\mathbb{R},+) \to (\mathbb{R}^{\ast}, \cdot)$ tal que $f(x) = e^{x}$. Note que
+\[
+f(x+y) = e^{x+y} = e^{x}
+ \cdot e^{y} = f(x) \cdot f(y).
+\]
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Propiedades de los homomorfismos}
+Sean $(G,\ast_{G}), (H,\ast_{H})$ grupos y $f:G\to H$ un homomorfismo. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $f(1_{G}) = 1_{H}$,
+\item $\forall g \in G  \quad \Big( f(g^{-1}) = \big(f(g)\big)^{-1}\Big)$,
+\item $\forall n \in \mathbb{Z} \quad \Big(f(g^{n}) = \big(f(g)\big)^{n}\Big)$
+\item Si $g \in G$ y $\lvert g \rvert = n$, entonces $\lvert f(g) \rvert \Big\lvert n$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1), note que
+\[
+f(1_{G}) = f(1_{G} \ast_{G} 1_{G}) = f(1_{G}) \ast_{H} f(1_{G}),
+\]
+de donde concluimos que $f(1_{G}) = 1_{H}$.
+Para (2), note que
+\[
+g \ast_{G} g^{-1} = 1_{G} \implies f(g) \ast_{H} f(g^{-1}) = 1_{H} \implies f(g^{-1}) = \big(f(g)\big)^{-1}.
+\]
+Para (3), en el caso $n\geq 0$, procedemos por inducción. El caso base $n=0$ se probó en (1). Suponga como hipótesis inductiva que $f(g^{n})=\big(f(g)\big)^{n}$ para algún $n \in \mathbb{N}$. Note que
+\[
+\begin{aligned}
+f(g^{n+1}) = f(g^{n} \ast_{G} g) &=f(g^{n}) \ast_{H} f(g)\\
+&=\big(f(g)\big)^{n} \ast_{H} f(g) \\
+&= \big(f(g)\big)^{n+1}.
+\end{aligned}
+\]
+Ahora, para $n<0$, note que $-n > 0$. Así, $g^{n} = (g^{-n})^{-1}$. Así,
+\[
+f(g^{n}) = f\big((g^{-n})^{-1}\big) = \big(f(g^{-n})\big)^{-1} = \Big(\big(f(g)\big)^{-n}\Big)^{-1} = \big(f(g)\big)^{n}.
+\]
+Finalmente, para (4), como $\lvert g \rvert = n$,
+\[
+g^{n} = 1_{G} \implies f(g^{n}) = \big(f(g)\big)^{n} = 1_{H},
+\]
+de donde deducimos que $\lvert f(g) \rvert \Big\lvert n$.
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{Proyección y homomorfismos a $\Z$}
+\begin{enumerate}[label=(\arabic*)]
+\item Considere $f:(\mathbb{Z}, +)\to(\mathbb{Z}_{n}, +)$ tal que $x \mapsto [x]$. Note que
+\[
+f(x+y) = [x+y] = [x] + [y] = f(x) + f(y),
+\]
+\end{enumerate}
+de donde concluimos que $f$ es un homomorfismo.
+\begin{enumerate}[label=(\arabic*)]
+\item ¿Existe un homomorfismo no trivial $f:\mathbb{Z}_{n} \to \mathbb{Z}$? Si existiera, note que $\lvert [1] \rvert = n$ y entonces $\lvert f[1] \rvert \Big\lvert n$, una contradicción, pues el orden de los elementos en $\mathbb{Z}$ es infinito (salvo el cero).
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Composición de homomorfismos}
+Sean $G,H,K$ grupos y $f:G\to H$, $g:H\to K$ homomorfismos. Entonces $g \circ f:G \to K$ es un homomorfismo.
+\end{namedres}
+\begin{proof}
+Ejercicio
+
+\end{proof}
+\begin{namedstd}{Definición}{Kernel e Imagen de un homomorfismo}
+Sean $G,H$ grupos y $f:G\to H$ homomorfismo. Defina
+\[
+\begin{aligned}
+\Ker(f) &= \{ x \in G: f(x) = 1_{H} \} \subseteq G \\
+\Imm(f) &= \{ f(x):x \in G \} \subseteq H.
+\end{aligned}
+\]
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Kernel e Imagen son subgrupos}
+Sean $G,H$ grupos y $f:G\to H$ homomorfismo. Entonces,
+\begin{enumerate}[label=(\arabic*)]
+\item $\Ker(f) \leq G$
+\item $\Imm(f) \leq H$
+\end{enumerate}
+
+\end{namedres}
+\begin{proof}
+Para (1), note que $1_{G} \in \Ker(f)$, por lo que $\Ker(f) \neq \emptyset$. Sean $x,y \in \Ker(f)$.
+\[
+f(x \ast_{G} y^{-1}) = f(x) \ast_{H} f(y^{-1}) =1_{H} \implies x \ast_{G} y \in \Ker(f).
+\]
+Para (2), note que $f(1_{G}) = 1_{H} \in \Imm(f)$, por lo que $\Imm(f) \neq \emptyset$. Sean $a,b \in \Imm(f)$. Luego, existen $x,y \in G$ tales que $f(x) = a$ y $f(y) = b$. Por propiedades de homomorfismos, $b^{-1} = f(y^{-1})$. Así,
+\[
+f(x \ast_{G} y^{-1}) = f(x) \ast_{H} \big(f(y)\big)^{-1} = a \ast_{H} b^{-1} \in \Imm(f).
+\]
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{Proyección $\Z \to \Z_n$}
+Sea $\pi:\mathbb{Z} \to \mathbb{Z}_{n}$ tal que $x \mapsto [x]$. Tenemos que
+\[
+\begin{aligned}
+\Imm(\pi) &= \{ \pi(x):x \in \mathbb{Z} \} \\
+&=\{ [x]: x \in \mathbb{Z} \} \\
+&=\mathbb{Z}_{n},\\
+\Ker(\pi) &=\{ x:\pi(x) = [0] \} \\
+&=\{ x: [x] = 0 \} \\
+&=n \cdot \mathbb{Z}.
+\end{aligned}
+\]
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Monomorfismos, epimorfismos e isomorfismos}
+Sea $f:G\to H$ un homomorfismo de grupos:
+\begin{enumerate}[label=(\arabic*)]
+\item si $f$ es inyectivo, decimos que $f$ es un monomorfismo,
+\item si $f$ es sobreyectivo, decimos que $f$ es un epimorfismo,
+\item si $f$ es biyectivo, decimos que $f$ es un isomorfismo.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Existencia del isomorfismo inverso}
+Si $f:G\to H$ es un isomorfismo, entonces $f^{-1}:H\to G$ (como función) es un isomorfismo.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+
+\end{proof}
+\begin{namedres}{Teorema}{Monomorfismos y kernel}
+Sea $f:G\to H$ homomorfismo. Entonces,
+\[
+f \text{ es monomorfismo} \iff \Ker(f) = \{ 1_{G} \}
+\]
+\end{namedres}
+\begin{proof}
+ejercicio. Notar que $f(x)=f(y) \implies f(x \ast y^{-1}) = 1_{H}$.
+
+
+\end{proof}
+\begin{namedres}{Teorema}{Imagen inversa y homomorfismos}
+Sea $f:G\to H$ un homomorfismo y sea $H'\leq H$. Entonces $f^{-1}(H') \leq G$
+\end{namedres}
+\begin{proof}
+Note que $1_{G} \in f^{-1}(H')$ pues $f(1_{G}) = 1_{H} \in H \implies f^{-1}(H') \neq \emptyset$. Sean $x,y \in f^{-1}(H')$. Hay que mostrar que $x \ast_{G} y^{-1} \in f^{-1}(H')$. Como $f(x) \in H', f(y) \in H'$, entonces $\big(f(y)\big)^{-1} = f(y^{-1}) \in H'$. Entonces $f(x \ast_{G} y^{-1}) = f(x)\ast_{H} f(y^{-1}) \in H'$.
+
+\end{proof}
+\begin{namedstd}{Definición}{Automorfismo y grupo de automorfismos}
+Sea $G$ un grupo. Un automorfismo de $G$ es un isomorfismo de $G$ en $G$. Defina $\mathrm{Aut} \hspace{2pt}(G) = \{ f:G\to G \text{ isomorfismo}\}$ como el conjuto de automorfismos de $G$.
+Note que $\mathrm{Aut} \hspace{2pt}(G) \subseteq S_{G} = \{ \phi: G\to G \text{ biyectiva}\}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Subgrupo de automorfismos}
+$\mathrm{Aut} \hspace{2pt}(G) \leq S_{g}$.
+\end{namedres}
+\begin{proof}
+Ejercicio
+
+\end{proof}
+\begin{namedstd}{Definición}{Grupos isomorfos}
+Decimos que dos grupos $G$ y $H$ son isomorfos si existe un isomorfismo $f:G\to H$. Escribimos $G \cong H$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Isomorfismo $\Z_4 \cong G$}
+
+Considere $G = (\{ 1,i,-1,-i \}, \ast)$.
+\begin{center}\fbox{\itshape Figura del cuaderno (20260407\_144838.jpg) omitida}\end{center}
+\begin{center}\fbox{\itshape Figura del cuaderno (20260407\_144841.jpg) omitida}\end{center}
+
+$Z_{4} \cong G$ bajo el isomorfismo
+\[
+\begin{aligned}
+0  &\mapsto 1 \\
+1 &\mapsto i \\
+2 &\mapsto -1 \\
+3 &\mapsto -i
+\end{aligned}
+\]
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Ser isomorfo es relación de equivalencia}
+Note que la relación $G \cong H$ es reflexiva, transitiva y simétrica (es fácil probarlo). Luego es una relación de equivalencia.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Isomorfismos de grupos cíclicos}
+Si $G = \langle g \rangle$, entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $\lvert g \rvert = \infty \implies G \cong \mathbb{Z}$.
+\item Si $\lvert g \rvert = n \implies G \cong \mathbb{Z}_{n}$.
+\end{enumerate}
+
+\end{namedres}
+
+\subsection{Cadenas y sucesiones exactas}
+
+
+\begin{namedstd}{Definición}{Complejo de cadenas}
+Un complejo de cadenas es un conjunto $\mathcal{S} = (G_{i}, \phi_{i})_{i \in \mathbb{Z}}$ en donde:
+\begin{enumerate}[label=(\arabic*)]
+\item Para todo $i \in \mathbb{Z}$, $G_{i}$ es un grupo,
+\item Para todo $i \in \mathbb{Z}$, $\phi_{i}: G_{i} \to G_{i-1}$ es un homomorfismo de grupos.
+\item $\phi_i \circ \phi_{i+1}: G_{i+1} \to G_{i-1}$ es tal que $(\phi_{i} \circ \phi_{i+1})(x) = 1_{G_{i-1}}$ para todo $x \in G_{i+1}$.
+\end{enumerate}
+
+\[
+\cdots \to G_{3} \overset{\phi_{3}}{\to} G_{2} \overset{\phi_{2}}{\to} G_{1} \overset{\phi_{1}}{\to} G_{0} \overset{\phi_{-1}}{\to} G_{-1} \overset{\phi_{-2}}{\to} \cdots
+\]
+Note que $(\phi_{i} \circ \phi_{i+1})(x) = \phi_{i} \big(\phi_{i+1}(x)\big)= 1_{G_{i-1}}$, luego $\phi_{i+1}(x) \in \Ker(\phi_{i})$ para todo $i \in \mathbb{N}$. Sea $Z_{n}(\mathcal{S}) = \Ker(\phi_{n}) \subseteq G_{n}$. $B_{n}(\mathcal{S})=\Imm(\phi_{n+1}) \subseteq G_{n}$.  Note que
+\[
+B_{n}(\mathcal{S}) \leq  Z_{n}(\mathcal{S}) \leq  G_{n}
+\]
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Sucesión exacta}
+Tome  $\mathcal{S} = (G_{i}, \phi_{i})_{i \in \mathbb{Z}}$ un complejo de cadenas. Si tenemos que para todo $i$ tenemos que $\Imm(\phi_{i+1}) = \Ker(\phi_{i})$. Decimos que $\mathcal{S}$ es una sucesión exacta.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Sucesión corta}
+Una sucesión es corta si es finita.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Sucesión exacta corta}
+Considere
+\[
+0 \rightarrow G_{2} \overset{ f }{\rightarrow} G_{1} \overset{ g }{\rightarrow} G_{0} \rightarrow 0,
+\]
+donde $0$ denota el grupo trivial. Los homomorfismos sin nombre son los triviales.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Exactitud de la sucesión e inyectividad/sobreyectividad}
+Sea $\phi_{0}:G_{0}\to G_{1}$ homomorfismo:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $0 \overset{ f }{\rightarrow} G_{0} \overset{ \phi_{0} }{\rightarrow} G_{1}$ es exacta, entonces $\phi_{0}$ es inyectiva.
+\item Si $G_{0} \overset{ \phi_{0} }{\rightarrow} G_{1} \overset{ f }{\rightarrow} 0$ es exacta, entonces $\phi_{0}$ es sobreyectiva.
+\item Si $0 \overset{  f }{\rightarrow} G_{0} \overset{ \phi_{0} }{\rightarrow} G_{1} \overset{ g }{\rightarrow} 0$, entonces $\phi_{0}$ es un isomorfismo.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1), note que $\Ker(\phi_{0}) = \Imm(f) = \{ 1_{G_{0}} \}$, por lo que $\phi_{0}$ es inyectiva. Para (2), note que $\Imm(\phi_{0}) = \Ker f = G_{1}$. Combinamos ambos resultados para (3).
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{Sucesión exacta $\Z \to \Z_2$}
+Considere
+\[
+0 \rightarrow 2\mathbb{Z} \overset{ i }{\rightarrow}  \mathbb{Z} \overset{ \pi }{\rightarrow} \mathbb{Z}_{2} \rightarrow 0,
+\]
+donde $i(x) = x$ y $\pi(x) = [x]$ para todo $x \in \mathbb{Z}$. Basta mostrar que $\Imm(i) = \Ker(\pi)$.
+
+\end{namedstd}
+
+\subsection{Traslación y conjugación}
+
+
+\begin{namedstd}{Definición}{Traslación}
+Sea $(G, \ast)$ un grupo y sea $a \in G$. La traslación izquierda (dercha) de $a$ es $T_{a}:G\to G$ tal que $x \mapsto a \ast x$ ($x \mapsto x \ast a$).
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Traslación es biyectiva}
+\begin{enumerate}[label=(\arabic*)]
+\item $T_{a}$ es inyectiva pues $T_{a}(x)=T_{a}(y) \iff a \ast x = a \ast y \iff x = y$.
+\item $T_{a}$ es sobreyectiva, pues si $y \in G$, $T_{a}(a^{-1} \ast y) = y$.
+\end{enumerate}
+Luego, $T_{a}$ es biyectiva. Concluya que $T_{a} \in S_{G} = \{ \sigma:G\to G \text{ biyectiva}\}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Traslaciones de $G$ son un monomorfismo}
+Sea $f:G\to S_{G}$ tal que $f(a) = T_{a}$. Entonces $f$ es un monomorfismo.
+\end{namedres}
+\begin{proof}
+Probaremos primero que $f$ es un homomorfismo, i.e., que $f(a \ast b) = T_{a \ast b} = T_{a} \ast T_{b}$. Sea $x \in G$. Tenemos que
+\[
+\begin{aligned}
+(T_{a} \circ T_{b})(x) = T_{a}(T_{b}(x)) &= T_{a} (b \ast x)\\
+&= a \ast (b \ast x) \\
+&=(a \ast b) \ast x \\
+&= T_{a \ast b} (x)
+\end{aligned},
+\]
+de donde tenemos que $f$ es un homomorfismo. Probaremos que $f$ es inyectiva. Sea $a \in \Ker(f)$. Sea $a \in  G$ tal que $f(a) = T_{a} = \mathrm{id}_{G}$. Luego,
+\[
+\forall x \in G  \quad(T_{a}(x)= x) \implies \forall x \in G  \quad(a \ast x = x) \implies a = 1_{G}.
+\]
+Así, $\Ker(f) = \{ \mathrm{id_{G}} \}$. Concluimos que $f$ es un monomorfismo.
+
+\end{proof}
+\begin{namedstd}{Definición}{Conjugación}
+Sea $G$ un grupo y $a \in G$. Defina la conjugación por $a$ $C_{a}: G\to G$ tal que $x \mapsto a \ast x \ast a^{-1}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Conjugación en el automorfismo}
+Sea $G$ un grupo y $a \in G$. Entonces $C_{a} \in \mathrm{Aut}(G)$.
+\end{namedres}
+\begin{proof}
+Note que $C_{a}(x \ast y) = C_{a}(x) \ast C_{a}(y)$ (ejercicio), por lo que $C_{a}$ es homomorfismo. Para probar que es inyectiva, tome $x \in \Ker(C_{a})$. Luego
+\[
+C_{a}(x) = 1_{G} \implies a \ast x \ast a ^{-1} = 1_{G} \implies x = 1_{G}
+\]
+Para probar que es sobreyectiva, sea $x \in G$. Note que $C_{a}(a^{-1} \ast x \ast a) = x$, de donde concluimos sobreyectividad.
+
+\end{proof}
+\begin{namedres}{Teorema}{Conjugaciones de $G$ son un homomorfismo}
+Sea $f:G\to \mathrm{Aut}(G) \leq S_{G}$ tal que $f(a) = C_{a}$. Entonces $f$ es un homomorfismo.
+\end{namedres}
+\begin{proof}
+Sea $x \in G$. Entonces
+\[
+\begin{aligned}
+(C_{a} \circ C_{b})(x) &= C_{a} (C_{b}(x))\\
+&=C_{a} ( b \ast x \ast b^{-1})\\
+&=a \ast ( b \ast x \ast b^{-1}) \ast a ^{-1} \\
+&=(a \ast b) \ast x \ast (a \ast b) ^{-1} \\
+&=C_{a \ast b}(x).
+\end{aligned}
+\]
+
+\end{proof}
+
+\subsection{Coclases}
+
+
+\begin{namedstd}{Definición}{Coclases}
+Sea $G$ un grupo y $H \leq G$:
+\begin{enumerate}[label=(\arabic*)]
+\item Una coclase izquierda (derecha) de $H$ es $aH = \{ a \ast h:h \in H \}$ ($Ha = \{ h \ast a:h \in H \}$), con $a \in G$.
+\end{enumerate}
+Se suele escribir "$a+H$" o "$H+a$" en grupos aditivos.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplos}{Coclases en $\Z$ y $S_3$}
+\begin{enumerate}[label=(\arabic*)]
+\item Considere $G = (\mathbb{Z}, +)$ y sea $n \in \mathbb{Z}$. Tome $H = \langle n \rangle = n \mathbb{Z}$. Sea $a \in \mathbb{Z}$. Note que
+\[
+\begin{aligned} 
+a + H &= \{ a+h:h \in H \} \\
+&=\{ a + nk: k \in \mathbb{Z} \} \\
+&=\{ t: t \equiv a  \quad \mathrm{mod } \hspace{2mm}n \}.
+\end{aligned}
+\]
+\item Considere $G = S_{3}$ y $\tau = \begin{pmatrix}1 & 2\end{pmatrix}$. Tome $H = \langle \tau \rangle = \{ \mathrm{id}, \tau \}$. Tenemos que
+\[
+\begin{aligned}
+H \cdot \begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix} &= \{ \begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix}, \begin{pmatrix}
+1 & 2
+\end{pmatrix} \begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix} \} \\
+&=\{ \begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix}, \begin{pmatrix}
+2 & 3 
+\end{pmatrix} \},\\
+\begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix} \cdot H &= \{ \begin{pmatrix}
+1 & 2 & 3
+\end{pmatrix}, \begin{pmatrix}
+3 & 1
+\end{pmatrix} \},\\
+H \cdot \begin{pmatrix}
+3 & 2 & 1
+\end{pmatrix} &= \{ \begin{pmatrix}
+3 & 2 & 1
+\end{pmatrix}, \begin{pmatrix}
+1 & 3
+\end{pmatrix} \}
+\end{aligned}
+\]
+\end{enumerate}
+Note que $H \cdot \begin{pmatrix}3 & 2 & 1\end{pmatrix} \quad \cap \quad H \ast \begin{pmatrix}1 & 2 & 3\end{pmatrix} = \emptyset$.
+
+\end{namedstd}
+\begin{namedres}{Lema}{Criterio de igualdad de coclases}
+Sea $H \leq G$ y $a,b \in G$. Entonces
+\[
+aH = bH \iff (b^{-1} \ast a) \in H.
+\]
+\end{namedres}
+\begin{proof}
+($\implies$): Tenemos que $a \in bH$. Luego, existe $h \in H$ tal que $a = b \ast h \implies b^{-1} \ast a = h \in H$.
+($\impliedby$): Suponga que $b ^{-1} \ast a \in H$. Luego, existe $h_{0} \in H$ tal que $b ^{-1} \ast a = h_{0}$. Entonces $a = b \ast h_{0}$, entonces $a \in bH$. Luego, $aH \subseteq bH$, pues si $x \in aH$, tenemos que
+\[
+x = a \ast h = b \ast\underbrace{ h_{0} \ast h }_{ \in H }\in bH
+\]
+La otra inclusión se prueba de manera análoga.
+
+\end{proof}
+\begin{namedres}{Teorema}{Dos cualesquiera coclases son iguales o disjuntas}
+Sea $H\leq G$ y sean $a,b \in G$. Entonces $aH = bH$ o $aH \cap bH = \emptyset$.
+\end{namedres}
+\begin{proof}
+Suponga que $aH \cap bH \neq \emptyset$. Sea $x \in aH \cap bH$. Luego, existen $h_{1}, h_{2} \in H$ tal que $x= a \ast h_{1} = b \ast h_{2}$. Entonces, $b^{-1} \ast x = b^{-1} \ast a \ast h_{1} \in H$ , de modo que $b ^{-1} \ast a \in H$. Por el lema anterior $aH = bH$., de donde concluimos el resultado.
+
+\end{proof}
+\begin{namedstd}{Nota}{Coclases como partición}
+Esto nos muestra que las coclases forman una partición del grupo. Más aún, si definimos la relación $\sim$ en $G$ como $a \sim b \iff aH = bH$, esta es una relación de equivalencia.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Conjunto cociente}
+Definimos el conjunto cociente de $G$ sobre $H$  como $G/H := \{ aH:a \in G \}$, esto es, el conjunto de representantes de $G$ cocientado con la clase de equivalencia de coclases de $H$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Igualdad del número de coclases izquierdas/derechas}
+Sea $H\leq G$. Entonces el número de coclases derechas es igual al número de coclases izquierdas.
+\end{namedres}
+\begin{proof}
+Sean $A = \{ aH: a \in G \}$ y $B = \{ Hb:b \in G \}$. Sea $f:A\to B$ tal que $f(aH) = Ha^{-1}$. $f$ está bien definida: Si $aH = a'H$, entonces $H a^{-1} = H(a')^{-1}$. Terminar la prueba (ejercicio).
+
+\end{proof}
+\begin{namedres}{Proposición}{Cardinalidad de subgrupo y coclases}
+Si $H\leq G$ y $a \in G$, entonces $\lvert a H \rvert = \lvert H \rvert$ (como cardinalidad pues $aH$ no es necesariamente un grupo)
+\end{namedres}
+\begin{proof}
+Defina $f:H\to aH$ tal que $h \mapsto a \ast h$. Note que
+\[
+\begin{aligned}
+f(h_{1}) = f(h_{2}) \implies a \ast h_{1} = a \ast h_{2} \implies a^{-1} \ast a \ast h_{1} = a^{-1} \ast a \ast h_{2} \implies h_{1}=h_{2}.
+\end{aligned}
+\]
+
+\end{proof}
+\begin{namedstd}{Definición}{Índices}
+Sea $H \leq G$. Definimos el índice de $H$ en $G$ como $[G:H] = \lvert G/H \rvert$ es el número de coclases diferentes de $H$ en $G$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Lagrange para grupos finitos}
+Sea $G$ un grupo finito y $H\leq G$. Entonces, $\lvert G \rvert = [G:H] \cdot \lvert H \rvert$. En particular, $\lvert H \rvert \Big\lvert \lvert G \rvert$.
+\end{namedres}
+\begin{proof}
+Sea $k = [G :H]$. Sean $a_{1}H, a_{2}H, \dots, a_{k}H$ las coclases diferentes de $H$ en $G$. Entonces $G = \bigcup_{i=1}^{k} a_{i} H$. Como $a_{1}H, a_{2}H, \dots, a_{k}H$ son disjuntos, entonces $\lvert G \rvert = \sum_{i=1}^{k} \lvert a_{i} H \rvert = k \lvert H \rvert$.
+
+\end{proof}
+\begin{namedres}{Corolario}{Orden de un elemento divide al orden del grupo}
+Sea $a \in G$. Entonces $\lvert a \rvert \Big\lvert \lvert G \rvert$.
+\end{namedres}
+\begin{proof}
+Tome $H = \langle a \rangle$. Entonces $\lvert H \rvert = \lvert a \rvert$ y el resultado se sigue del teorema de Lagrange.
+
+\end{proof}
+\begin{namedres}{Corolario}{Multiplicatividad del índice}
+Sean $K,H,G$ grupos tales que $K \leq H\leq G$. Entonces, $[G:K] = [G:H] [H:K]$.
+\end{namedres}
+\begin{proof}
+Aplicando el teorema de Lagrange sobre los tres índices:
+\[
+[G:H] \cdot \lvert H \rvert = \lvert G \rvert, \quad [H:K] \cdot \lvert K \rvert = \lvert H \rvert, \quad [G:H] \cdot [H : K] = \lvert G \rvert. 
+\]
+Así,
+\[
+[G:H] \cdot [H:K] = \frac{\lvert G \rvert}{\lvert H \rvert } \cdot \frac{\lvert H \rvert}{\lvert K \rvert }  = \frac{\lvert G \rvert}{\lvert K \rvert } = [G:K].
+\]
+
+\end{proof}
+\begin{namedres}{Proposición}{Coclases sobre el kernel de un homomorfismo}
+Sean $G, G'$ y $f:G \to G'$ un homomorfismo. Sea $H = \Ker(f) \leq G$. Sea $a \in G$ y $a' = f(a)$. Entonces $aH = \{ x \in G:f(x) = a' \}$.
+\end{namedres}
+\begin{proof}
+Sea $x \in aH$, entonces existe $h \in H$ tal que $x = a \ast h$. Luego, $f(x) = f(a) \ast_{G'} f(h) = f(a) = a'$. Luego, $aH \subseteq \{ x \in G:f(x) = a' \}$. Por otro lado, si $x \in G$ tal que $f(x) = a'$, tenemos que
+\[
+f(x) = f(a) \iff \big(f(a)\big)^{-1} \ast_{G'} f(x) = 1_{G'} \iff f(a^{-1} \ast x) = 1_{G'},
+\]
+de donde tenemos que $a^{-1} \ast x \in H$ y, por el criterio de igualdad de coclases, $xH = aH$, de donde $x \in aH$. Así, $\{ x \in G: f(x) = a' \} \subseteq aH$, y por tanto $aH \subseteq \{ x \in G:f(x) = a' \}$.
+
+\end{proof}
+
+\subsection{Subgrupos normales}
+
+
+\begin{namedstd}{Definición}{Producto de conjuntos}
+Sea $G$ un grupo y $S,T \subseteq G$. Defina $ST = \{ s \ast t: s \in S, t \in T \}$.
+Note que si $S = \{ s \}$ y $T\leq G$, entonces $sT =ST$, una coclase de $G$. Note que si $S,T,U \subseteq G$, . Si $\mathcal{F} = \{ A:A\subseteq G \}$, entonces $\cdot$ está definida en $\mathcal{F}$ y es asociativa.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Subgrupo normal}
+Sea $H \leq G$. Decimos que $H$ es un subgrupo normal de $G$ y escribimos $H \triangleleft G$ si $Hx = xH$ para todo $x \in G$.
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Propiedades de subgrupos normales}
+\begin{enumerate}[label=(\arabic*)]
+\item Si $G$ es abeliano, todo subgrupo es normal.
+\item $xH = Hx \iff xH x^{-1} = \{ x \ast h \ast x ^{-1}: h \in H \} = H$.
+\item Si $H \triangleleft G$, esto no implica que para todos $x \in G$ y $h \in H$ $x \ast h = h \ast x$. Lo que sí es cierto es que si $h \in H$, existe $h' \in H$ tal que $x \ast h = h' \ast x$.
+\item Si para todo $x \in  G$, $x H x ^{-1} \subseteq H$, esto necesariamente implica la igualdad entre ambos conjuntos, y por tanto, que $H \triangleleft G$. Suponga que $xHx ^{-1} \subseteq H$ para todo $x \in G$. Note que, para $x \in G$.
+\[
+H = x ^{-1}(\underbrace{  x H x ^{-1} }_{ \in H }) x \subseteq x ^{-1} H x \subseteq H \implies x ^{-1} H x = H.
+\]
+\item Para todo grupo $G$, $\{ 1_{G} \} \triangleleft G$, $G \triangleleft G$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Proposición}{Subgrupos encadenados}
+Sean $K,H,G$ grupos con $K\leq H\leq G$. Si $K \triangleleft G$, entonces $K \triangleleft H$.
+\end{namedres}
+\begin{proof}
+El resultado es trivial, pues $G \subseteq H$.
+
+
+\end{proof}
+\begin{namedres}{Teorema}{Kernel es subgrupo normal}
+Sea $f:G\to G'$ un homomorfismo de grupos. Entonces, $\Ker(f) \triangleleft G$.
+\end{namedres}
+\begin{proof}
+Sea $H:= \Ker(f)$. Sea $x \in G$. Hay que mostrar que $xHx ^{-1} \subseteq H$. Sea $h \in H$. Entonces, $f(x \ast h \ast x ^{-1}) = f(x) \ast f(h) \ast f(x ^{-1}) = 1_{G'}$.
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{Subgrupo normal en $S_3$}
+Sea $G = S_{3} = \{ (1), \begin{pmatrix}1 & 2\end{pmatrix}, \begin{pmatrix}1 & 3\end{pmatrix}, \begin{pmatrix}2 & 3\end{pmatrix} \begin{pmatrix}1 & 2 & 3\end{pmatrix} \begin{pmatrix}3 & 2 & 1\end{pmatrix} \}$. Considere, $H = \langle \begin{pmatrix}1 & 2 & 3\end{pmatrix} \rangle$.  Tenemos que
+\begin{center}\fbox{\itshape Figura del cuaderno (20260417\_150411.jpg) omitida}\end{center}
+y así por el resto de ciclos.
+\end{namedstd}
+
+\subsection{Grupo cociente}
+
+
+\begin{namedres}{Proposición}{Grupos normales y operaciones}
+Si $H \triangleleft G$ y $a,b \in G$, entonces $aH \cdot bH = (a \ast b) H$
+\end{namedres}
+\begin{proof}
+Note que
+\[
+\begin{aligned}
+aH \cdot bH
+\end{aligned} = aH \cdot Hb = a Hb = a b H = (a \ast b) H.
+\]
+
+\end{proof}
+\begin{namedres}{Teorema}{Existencia del grupo cociente}
+Sea $H \triangleleft G$. Entonces $G / H$ es un grupo bajo la operación $\cdot$
+\[
+a H \cdot bH = (a \ast b) H.
+\]
+\end{namedres}
+\begin{proof}
+La operación está bien definida y es asociativa (véase proposición anterior).
+\begin{enumerate}[label=(\arabic*)]
+\item Pertenencia de la identidad: $1_{G} \cdot H = H$
+\item Existencia de inversos: $aH \cdot a^{-1}H = (a \ast a^{-1}) H = H = id_{G / H }$.
+\end{enumerate}
+
+\end{proof}
+\begin{namedstd}{Nota}{Independencia del representante}
+¿Por qué no depende del representante? Suponga que $aH = \hat{a}H$ y $bH = \hat{b}H$. Entonces
+\[
+aH \cdot bH = \hat{a} H \cdot \hat{b}H \iff (a \ast b) H = (\hat{a} \ast \hat{b}) H \iff (a \ast b) \ast (\hat{ a} \ast \hat{b})^{-1} \in H,
+\]
+que es claramente cierto.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Todo subgrupo normal es kernel de un homomorfismo}
+Sea $H \triangleleft G$ y considere $f:G\to G / H$ tal que $f(a) = a H$. Entonces $f$ es un epimorfismo y $\Ker(f) = H$.
+\end{namedres}
+\begin{proof}
+Probaremos primero que $f$ es un homomorfismo. Note que $f(a \ast b) = (a \ast b) H = aH \cdot bH = f(a) \cdot f(b)$. La sobreyectividad se sigue por la definición. Ahora, si $x \in H$, entonces $f(x) = xH = H =id_{G / H}$, luego, $x \in \Ker f$. Si $x \in \Ker f$, entonces $f(x) = xH = H$, luego $x \in H$.
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{Cocientes triviales}
+\begin{enumerate}[label=(\arabic*)]
+\item Note que $\{ 1_{G} \} \triangleleft G \implies G / \{ 1_{G} \} = \{ a \cdot \{ 1_{G}: a \in G \} \} = \{ \{ a \}: a \in G \} \cong G$.
+\item $G \triangleleft G \implies G / G = \{ a \cdot G: a \in G \} = \{ G \} = \{ 1_{G / G} \}$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Cocientes en $\Z$ y en grupo cíclico}
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G = (\mathbb{Z}, + )$, $H = 4\mathbb{Z}$. Note que $H \triangleleft G$ pues $G$ es abeliano. Note que $G / H \cong \mathbb{Z}_{4}$, pues $aH = bH \iff a + (-b) \in 4\mathbb{Z} \iff 4 \mid a-b \iff a \cong b  \quad \text{mod }4$.
+\item Sea $G$ un grupo y sea $a \in G$ tal que $\lvert a \rvert = 8$. y $G=\langle a \rangle$. Sea $H = \langle a^{4}. \rangle$ Como $G$ es conmutativo. $H \triangleleft G$. Tenemos que $H = \{ 1_{G, }a^{4} \}$ y $G = \{ 1_{G}, a, a^{2},\dots,a^{7} \}$. ¿Quién es $G/H$? Encontremos las coclases:
+\begin{enumerate}[label=(\alph*)]
+\item $H = a^{4}H$
+\item $aH = \{ a, a^{5} \} = a^{5} H$
+\item $a^{2}H = \{ a^{2}, a^{6} \} = a^{6}H$
+\item $a^{3}H = \{ a^{3},a^{7} \}= a^{7}H$
+Así, $G/H = \{ H, aH, a^{2}H, a^{3}H \}$ y $G = H  \hspace{2mm}  \dot{\cup} \hspace{2mm} aH \hspace{2mm} \dot{\cup} \hspace{2mm} a^{2}H \hspace{2mm}\dot{\cup} \hspace{2mm} a^{3}H$.
+\end{enumerate}
+\end{enumerate}
+
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Conmutador y subgrupo conmutador}
+Sea $(G,\ast)$ un grupo. Sean $a,b \in G$. Defina el conmutador de $a,b$ como
+\[
+[a,b] = a \ast b \ast a^{-1} \ast b ^{-1} \in G
+\]
+Defina el subgrupo conmutador de $G$ como $G':=  \langle [a,b]:a,b \in G \rangle$.
+
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{Caracterización via conjugación}
+Sea $S < G$. Entonces $S \triangleleft G$ si y solo si  $C_{a}(S) \leq S$ para todo $a \in G$.
+\end{namedstd}
+\begin{namedres}{Teorema}{Subgrupo conmutador y cocientes abelianos}
+Sea $G$ un grupo y $G'$ su subgrupo conmutador. Entonces $G' \triangleleft G$. Además, si $H \triangleleft G$, entonces $G/H$ es abeliano si y solo si $G' \triangleleft H$.
+\end{namedres}
+\begin{proof}
+Hay que probar que, para todo $g \in G$, $gG'g^{-1} \subseteq G'$. Basta mostrar que si $a, b \in G$, $g \in G$ , entonces $g[a,b]g^{-1} \in G'$, ¿por qué? Si $z = [a_{1} , b_{1}] [a_{2}, b_{2}]$, entonces
+\[
+gzg^{-1} = g [a_{1},b_{1}] [a_{2}, b_{2}] g^{-1} = (g[a_{1},b_{1}]g^{-1})(g [a_{2},b_{2}] g^{-1}),
+\]
+luego, basta probar el resultado para cualquier conmutador y se sigue inmediatamente para todo $z \in G'$, Sea $[a,b] \in G'$. Entonces,
+\[
+\begin{aligned}
+g \ast a \ast b \ast a^{-1} \ast b^{-1} \ast g^{-1}
+\end{aligned}
+\]
+\[
+= (g \ast a \ast g^{-1}) \ast (g \ast b \ast g^{-1}) \ast(g \ast a^{-1} \ast g ^{-1}) \ast (g \ast b ^{-1} \ast g ^{-1}) = [g \ast a \ast g ^{-1},g \ast b \ast g ^{-1} ]\in G'.
+\]
+Suponga ahora que $G/H$ es abeliano. Entonces para todos $a,b \in G$, $aH \cdot b H = b H \cdot a H$, por lo que $(a \ast b) H = (b \ast a)H$. Luego , $(a \ast b) \ast (b \ast a) ^{-1} = a \ast b \ast a^{-1} \ast b ^{-1} = [a,b] \in H$. Así, $\{ [a,b]: a,b \in G \} \subseteq H \implies G' \subseteq H \implies G' \leq H$. (Escribir la otra dirección).
+
+
+\end{proof}
+\begin{namedstd}{Ejemplo}{$A_3 \triangleleft S_3$}
+Considere $S_{3} = \{ (1),\begin{pmatrix}1 & 2\end{pmatrix}, \begin{pmatrix}2 & 3\end{pmatrix}, \begin{pmatrix}1 & 3\end{pmatrix}, \begin{pmatrix}1 & 2 & 3\end{pmatrix} \begin{pmatrix}3 & 2 & 1\end{pmatrix} \}$ y $A_{3} = \{ \sigma \in S_{3}: \sigma \text{ es par} \} = \{ \begin{pmatrix}1\end{pmatrix}, \begin{pmatrix}1 & 2 & 3\end{pmatrix}, \begin{pmatrix}3 & 2 & 1\end{pmatrix}\}$. Probaremos que $A_{3} \triangleleft S_{3}$. Considere $S = \{ -1,1 \}$. Note que $(S, \cdot) = (\mathbb{Z}_{2}, +)$. Sea $f:S_{3} \to S$ tal que $\sigma \mapsto \sgn( \sigma )$. Note que $f$ es un homomorfismo, pues
+\[
+\begin{aligned}
+f(\sigma_{1} \circ \sigma_{2}) &= \sgn(\sigma_{1} \circ \sigma_{2}  )\\
+&= \sgn( \sigma_{1} ) \cdot \sgn( \sigma_{2} )\\
+&= f(\sigma_{1}) \cdot f(\sigma_{2}).
+\end{aligned}
+\]
+Note que $\Ker f = A_{3}$, de donde concluimos que $A_{3} \triangleleft S_{3}$. ¿Quién es $S_{3}/A_{3}$? Construyamos las coclases
+\begin{enumerate}[label=(\arabic*)]
+\item $A_{3}$
+\item $\begin{pmatrix}1 & 2\end{pmatrix} A_{3} = \{ \begin{pmatrix}1 & 2\end{pmatrix}, \begin{pmatrix}3 & 2\end{pmatrix}, \begin{pmatrix}1 & 3\end{pmatrix} \}$.
+\end{enumerate}
+Así, $S_{3}/A_{3} = \{ A_{3}, \begin{pmatrix}1&2\end{pmatrix}A_{3} \} \cong \mathbb{Z}_{2}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{$\langle r_1\rangle \triangleleft D_4$}
+Considere $D_{4} = \{ r_{0},r_{1},r_{2},r_{3},s_{1},s_{2},s_{3},s_{4} \}$ el grupo de simetrías del cuadrado y $H = \langle r_{1} \rangle = \{ r_{0},r_{1},r_{2},r_{3} \}$. Debemos probar que para todo $i \in \{ 1,\dots,4 \}$, $s_{i} H s_{i} ^{-1} \subseteq H$. Note en primer lugar que para todo $i$, $s_{i}^{2} = r_{0}$, luego, $s_{i} = s_{i}^{-1}$.  Luego, hay que probar que para todos $j \in \{ 0,1,2,3 \}, i \in\{ 1,2,3,4 \}$, $s_{i} r_{j} s_{i} ^{-1} \in H$
+
+
+\end{namedstd}
+
+\subsection{Teoremas del Isomorfismo}
+
+
+\begin{namedres}{Teorema}{Primer teorema del isomorfismo}
+Sean $G, G'$ grupos y sea $f:G \to G'$ un homomorfismo y sea $H = \Ker(f)$. Entonces, $G / H \cong \Imm(f)$.
+\end{namedres}
+\begin{proof}
+Como $H \triangleleft G$, $G / H$ es un grupo. Sea $f':G / H \to G'$ tal que $aH \mapsto f(a)$. Probaremos que $f'$ está bien definida, i.e., que envía miembros de la misma clase de equivalencia a las mismas imágenes. Dados $a,b \in G$, suponga que $aH = bH$, i.e., que $b^{-1}a \in H$. Así,
+\[
+f(b^{-1}a)=1_{G'} \implies (f(b))^{-1} f(a) = 1_{G'}\implies f(b) = f(a) \implies f'(aH) = f'(bH).
+\]
+Probaremos ahora que $f'$ es un homomorfismo. Dados, $aH, bH \in G / H$, note que
+\[
+f'(aH \cdot bH) = f'((a \ast b)H)= f(a \ast b) =f(a) \ast_{G'}f(b) = f'(aH)\ast_{G'} f'(bH).
+\]
+Así, $f$ es homomorfismo. Para la inyectividad, sea $aH \in \Ker(f')$. Luego,
+\[
+f'(aH) = 1_{G'} \implies f(a) = 1_{G'} \implies a \in \Ker(f) = H \implies aH=H.
+\]
+Finalmente, probaremos que $f'$ es sobreyectiva, i.e, que $\Imm(f') = \Imm(f)$. Note que
+\[
+b \in \Imm(f') \iff \exists a \in G (f'(aH)=b) \iff \exists a \in G (f(a)=b) \iff b \in \Imm(f).
+\]
+Así, $f'$ es un isomorfismo, de donde concluimos el resultado.
+
+\end{proof}
+\begin{namedres}{Teorema}{Tercer teorema del isomorfismo}
+Sean $K \leq H \leq G$ grupos tales que $K \triangleleft G$ y $H \triangleleft G$. Entonces $H / K \triangleleft G / K$ y $G / H \cong (G/K) / (H / K)$.
+\end{namedres}
+\begin{proof}
+Probaremos primero que $H / K \triangleleft G / K$. Sea $aK \in G / K$. Hay que mostrar que $(aK) \cdot H /K \cdot (aK)^{-1} \subseteq H / K$. Sea $bK \in H / K$, luego
+\[
+(aK) \cdot (bK) \cdot (aK)^{-1} = (aba^{-1})K \in H / K.
+\]
+Concluimos que $H / K \triangleleft G / K$. Ahora, defina $f:G/K \to G / H$ tal que $aK \mapsto aH$. Probaremos que $f$ está bien definida. Tome $a,b \in G$ tales $aK = bK$. Entonces,
+\[
+b^{-1}a \in K \subseteq H \iff b^{-1} a \in H \iff aH = bH \implies f(aK) = f(bK).
+\]
+Probemos que $f$ es un homomorfismo:
+\[
+f(aK \cdot bK) = f(a \cdot b \cdot K) \quad= ab H = aH \cdot bH =f(aK) \cdot f(bK),
+\]
+de donde concluimos que $f$ es un homomorfismo. Finalmente, note que
+\[
+aK \in\Ker(f) \iff f(aK) =H \iff aH =H \iff a \in H \iff aK \in H / K,
+\]
+de modo que $\Ker(f)  = H / K$. Finalmente, aplicando el primer teorema del isomorfismo, concluimos el resultado.
+
+\end{proof}
+\begin{namedres}{Teorema}{conmutatividad de subgrupos normales}
+Sea $N,H \leq G$ con $N \triangleleft G$. Entonces $NH=HN$.
+\end{namedres}
+\begin{proof}
+Ejercicio
+
+\end{proof}
+\begin{namedres}{Teorema}{Segundo teorema del isomorfismo}
+Sea $(G, \cdot)$ un grupo, $H \leq G$, $N \triangleleft G$. Entonces $N \cap H \triangleleft H$, $NH \leq G$ y $H / (N \cap H) \cong NH / N$.
+\end{namedres}
+\begin{proof}
+Sabemos que $N \cap H \subseteq H$, $N \cap H \subseteq N$. Sea $x \in H$. Entonces $x \in G$. Hay que mostrar que $x(N \cap H)x ^{-1} \subseteq N \cap H$. Evidentemente, $x(N \cap H)x ^{-1} \subseteq H$. Como $N \triangleleft G$, entonces $x(N \cap H)x ^{-1} \subseteq x N x ^{-1} \subseteq N$. Así, $x(N \cap H)x ^{-1} \subseteq N \cap H$ y probamos normalidad de $N \cap H$.
+La prueba de $NH\leq G$ se deja como ejercicio.
+Finalmente, defina $f:H \to G / N$ tal que $h \mapsto h N$. Note que $f$ es un homomorfismo, pues $f(g \cdot h) = g h N = (gN)(hN) = f(g) \cdot f(h)$. Además,
+\[
+h \in \Ker(f) \iff f(h) = N \iff hN =N \iff h \in N,
+\]
+por lo que $\Ker(f) = N \cap H$. Finalmente, probamos que $\Imm(f) = NH /N$. Sea $gN \in \Imm(f)$. Luego, existe $h \in H$ tal que $hN = gN$. Luego, $g \in HN = NH$, entonces $gN \in NH / N$. Ahora, sea $g \in HN / N$. Entonces, existe $x \in HN$ tal que $g = xN \in HN / N$. Luego, $x = h_{1} n_{1}$, con $h_{1} \in H$, $n_{1} \in N$. Así,
+\[
+g = xN = (h_{1} \cdot n_{1})N = h_{1} N,
+\]
+entonces $g = f(h_{1}) \in \Imm(f)$. El resultado se sigue al aplicar el primer teorema del isomorfismo.
+
+\end{proof}
+\begin{namedstd}{Ejercicio}{Imagen inversa de un subgrupo}
+Si $f:G \to G^{\ast}$ es un homomorfismo y $S^{\ast}\leq G^{\ast}$. Entonces $f^{-1}(S^{\ast}) = \{ x \in G  : f(x)\in S^{\ast} \}$
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Correspondencia}
+Sea $(G, \cdot)$ un grupo, $H \triangleleft G$ y $p:G \to G / H$ tal que $p(g)=gH$. Entonces $K \mapsto p(K) = K / H$ es una biyección entre los subgrupos de $G$ que contienen a $H$ y los subgrupos de $G/H$. Además, si $K$ es tal que $H\leq K\leq G$ y $K^{\ast}:=K / H$, tenemos que
+\begin{enumerate}[label=(\arabic*)]
+\item $L\leq K \iff L^{\ast} \leq K^{\ast}$ y en este caso $[K:L] =[K^{\ast}:L^{\ast}]$.
+\item $L \triangleleft K \iff L^{\ast} \triangleleft K^{\ast}$, y en este caso, $K / L \cong K^{\ast} / L^{\ast}$.
+\end{enumerate}
+
+\end{namedres}
+\begin{proof}
+Sean $A = \{ L: H\leq L \leq G \}$ y $B = \{ \tilde{G}: \tilde{G} \leq G / H \}$. Defina $\Phi:A \to B$ tal que $\Phi(L) = L / H$. Suponga que $L,K \in A$ y $L / H = K /H$. Probaremos que $L = K$. Sea $\ell \in L$. Entonces, $\ell H \in L / H$, i.e., existe $k \in K$ tal que $\ell H = k H$. Así, $\ell ^{-1} k \in H \subseteq K$. Como $k \in K$ y $\ell^{-1}k \in K$, tenemos $\ell = k \cdot (\ell^{-1}k)^{-1} \in K$, de donde $L \subseteq K$. La otra inclusión es igual. Luego $\Phi$ es inyectiva. Ahora, sea $C \in B$,  i.e, $C \leq G / H$. Sea $K = p ^{-1}(C) \leq G$ y $\Ker(p) \subseteq K$. Entonces, $H \subseteq K$. Así, $\Phi(K)=C$. Concluya que que $\Phi$ es una biyección. Probaremos ahora los puntos 1 y 2:
+\begin{enumerate}[label=(\arabic*)]
+\item Es claro que $L \leq K \iff L ^\ast \leq K^{\ast}$. Para probar que los indices coinciden, basta probar que existe una biyección entre las coclases de $K/L$ y $K^\ast/L^{\ast}$. Sea $f:K/L \to K^{\ast}/L^{\ast}$ tal que $kL \mapsto p(k)L^{\ast} = kH (L / H)$.
+\begin{itemize}
+\item \textbf{Bien-definición de $f$}: Si $k_{1}, k_{2} \in K$ son tales que $k_{1}L = k_{2}L$, entonces $k_{2}^{-1} k_{1} \in L$ y en consecuencia $k_{2}^{-1} k_{1} H \in L/H = L^{\ast}$, lo que implica que $f(k_{1}L) = p(k_{1}) L^\ast = p(k_{2}) L^{\ast} = f(k_{2}L)$, y por tanto, $f$ está bien definida.
+\item \textbf{Inyectividad de $f$}: Sean $k_{1}, k_{2} \in K$ tales que $f(k_{1}L) = f(k_{2}L)$. Note que $f$ es inyectiva, pues
+\[
+\begin{aligned}
+p(k_{1})L^{\ast} = p(k_{2}) L^{\ast} &\implies p(k_{2})^{-1} \ast p(k_{1}) \in L^{\ast} \implies p(k_{2}^{-1} k_{1}) \in L^\ast = L/H \\
+k_{2}^{-1} k_{1} H \in L / H &\implies k_{2}^{-1} k_{1} \in L \implies k_{1}L = k_{2}L,
+\end{aligned}
+\]
+\item \textbf{Sobreyectividad de $f$}: Esto se sigue directamente de la sobreyectividad de $p$.
+Así, $[K:L] = [K^{\ast}:L^{\ast}]$.
+\end{itemize}
+\item El isomorfismo entre $K/L$ y $K^{\ast}/L^{\ast}$ se sigue del tercer teorema del isomorfismo.
+\end{enumerate}
+\end{proof}
+
+% ======================================================================
+\section{Acciones de Grupo y Grupos Simples}
+% ======================================================================
+
+
+\subsection{Definiciones y propiedades elementales}
+
+\begin{namedstd}{Definición}{Acción de Grupos}
+Sea $(G, \cdot)$ un grupo y sea $X$ un conjunto. Decimos que $G$ actúa sobre $X$ (o que $X$ es un $G$-conjunto) si existe una función $\alpha: G \times X \to X$ tal que
+\begin{enumerate}[label=(\arabic*)]
+\item $\forall g,h \in G  \quad\forall x \in X  \quad \Big( \alpha\big(g, \alpha(h,x)\big) = \alpha(g \cdot h, x)\Big)$,
+\item $\forall x \in X  \quad\Big( \alpha(1_{G}, x) = x \Big)$.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Notación}{Acción de un elemento}
+Si $G$ actúa sobre $X$, dado $g \in G$, denotamos $\alpha_{g}:X \to X$ tal que $x \mapsto \alpha(g,x)$. Si conocemos la acción específica, es común escribir $g \cdot x$.
+
+\end{namedstd}
+\begin{namedstd}{Nota}{Propiedades inmediatas}
+\begin{enumerate}[label=(\arabic*)]
+\item Para todos $g,h \in G$ y para todo $x \in X$, tenemos que $\alpha_{g}(\alpha_{h}(x)) = \alpha_{g \cdot h}(x)$.
+\item $\alpha_{1_{G}} = \mathrm{id}_{X}$
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedstd}{Ejemplos}{Acciones usuales}
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $n \in \mathbb{N}$. Considere $G = S_{n}$ y $X = \{ 1,\dots,n \}$. Defina $\alpha: S_{n} \times X \to X$ tal que $(\sigma, i) \mapsto \sigma(i)$. Note que si $\gamma,\sigma \in S_{n}$, dado $i \in X$,
+\[
+\alpha_{\sigma}(\alpha_{\gamma}(i)) = \alpha_{\sigma}(\gamma(i)) = (\sigma \circ \gamma)(i) = \alpha_{\sigma \circ \gamma} (i).
+\]
+\end{enumerate}
+Además, $\alpha_{\mathrm{id}}(i) = \mathrm{id}(i) = i$. Por tanto, $\alpha$ es una acción de grupos y $S_{n}$ actúa sobre $X$.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sean $G = (\mathbb{Z}, +)$ y $X = \mathbb{R}$. Defina $\tau: G \times X \to X$ tal que $(n,x) \mapsto x+ n$. Note que dados $m,n \in \mathbb{Z}$ y $x \in \mathbb{R}$,
+\[
+\tau_{n}(\tau_{m(x)}) = \tau_{n}(x+m) = (x+m)+n = x + (m+n) = \tau_{m+n}(x).
+\]
+\end{enumerate}
+Además, $\tau_{0}(x) = x+0 = x$. Por tanto, $\mathbb{Z}$ actúa sobre $\mathbb{R}$.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sean $G = \mathrm{GL}_{n}(\mathbb{R})$ y $X = \mathbb{R}^{n}$. Defina $\alpha: G \times X \to X$ tal que $(A,v) \mapsto A v$. Mostrar que $\alpha$ es una acción de grupos queda como ejercicio.
+\end{enumerate}
+
+\begin{enumerate}[label=(\arabic*)]
+\item Dado un grupo $G$, defina $\mu:G \times G \to G$ tal que $(g,h) \mapsto g \cdot h$. Es fácil ver que $\mu$ es una acción de grupo. Así, $G$ actúa sobre sí mismo.
+\end{enumerate}
+
+\end{namedstd}
+\begin{namedres}{Lema}{Acción es biyectiva sobre $X$}
+Sea $G$ un grupo y $X$ un conjunto. Suponga que $\alpha:G \times X \to X$ es una acción de grupos. Entonces, si $g \in G$, $\alpha_{g}: X \to X$ tal que $x \mapsto \alpha(g,x)$ es una biyección, i.e., $\alpha_{g} \in S_{x}$.
+\end{namedres}
+\begin{proof}
+Considere $\alpha_{g^{-1}}:X \to X$ tal que $x \mapsto \alpha(g^{-1}, x)$. Note que
+\[
+(\alpha_{g} \circ \alpha_{g^{-1}})(x) = \alpha_{g \circ g ^{-1}}(x) = \alpha_{1_{G}}(x) = x.
+\]
+De la misma forma, $(\alpha_{g^{-1}} \circ \alpha_{g}) = \mathrm{id}_{X}$, por lo que concluimos que la función es biyectiva.
+
+
+\end{proof}
+\begin{namedres}{Teorema}{Acciones y homomorfismos están en biyección}
+Sea $G$ un grupo y $X$ un conjunto. Defina
+\[
+\begin{aligned}
+\Omega:&= \{ \alpha: G \times X  \to X: \alpha \text{ es una acción de } G \text{ en }X\},\\
+\Sigma:&= \{ \phi: G \to S_{X} : \phi \text{ es homomorfismo de grupos} \}.
+\end{aligned}
+\]
+Entonces, $\Omega$ y $\Sigma$ están en biyección
+\end{namedres}
+\begin{proof}
+Defina $\Phi: \Omega \to \Sigma$ de la siguiente manera. Dada una acción $\alpha: G \times X \to X$, defina $\phi:G \to S_{X}$ tal que $\phi(g) = \alpha_{g}$ donde $\alpha_{g}:X \to X$ es tal que $x \mapsto\alpha(g,x)$. Es fácil ver que $\phi$ es un homomorfismo y que $\alpha_{g} \in S_{X}$. Tome $\Phi(\alpha) = \phi$.
+Ahora, defina $\Psi: \Sigma \to \Omega$ de la siguiente manera. Dado $\phi:G\to S_{X}$ homomorfismo, sea $\alpha:G \times X \to X$ tal que $(g,x) \mapsto \phi(g)(x) \in X$. Note que $\alpha$ es una acción, pues si $g,h \in G$y $x \in X$, tenemos que
+\[
+\begin{aligned}
+\alpha(g \cdot h,x) = \phi(gh) (x) &= (\phi(g) \circ \phi(h))(x) \\
+&= \phi(g) \big(\phi(h)(x)\big) \\
+&=\phi(g) (\alpha(h, x)) \\
+&=\alpha(g, \alpha(h,x)),
+\end{aligned}
+\]
+y además, dado $x \in X$, $\alpha(1_{G}, x) = \phi(1_{G})(x) = \mathrm{id}_{X}(x) = x$. Tome $\Psi(\phi) = \alpha$. Verificar que $\Phi \circ \Psi = \mathrm{id}_{\Sigma}$ y que $\Psi \circ \Phi = \mathrm{id}_{\Omega}$ queda como ejercicio.
+
+\end{proof}
+\begin{namedres}{Teorema}{Cayley}
+Dado $G$ un grupo, $G$ es isomorfo a un subgrupo de $S_{G}$.
+\end{namedres}
+\begin{proof}
+Considere $\mu_{g}:G \to G$ tal que $h \mapsto g\cdot h$. Sea $\phi: G \to S_{G}$ tal que $g \mapsto \mu_{g}$. Ya vimos que $\phi$ es un homomorfismo. Veamos que $\phi$ es inyectivo:
+\[
+g \in \Ker(\phi) \iff \phi(g) = \mu_{g}= \mathrm{id}_{G} \iff g \cdot x = x  \quad \forall x \in G \iff g =1_{G},
+\]
+por lo que $\Ker(\phi) = \{ 1_{G} \}$. Ahora, usando el primer teorema del isomorfismo, obtenemos que
+\[
+G / \Ker(\phi) = G/\{ 1_{G} \} = G\cong \Imm(\phi) \leq  S_{G},
+\]
+de donde concluimos el resultado.
+
+\end{proof}
+
+\subsection{Órbitas y estabilizadores}
+
+Sea $G$ un grupo y $X$ un conjunto. Sea $\alpha$ una acción de $G$ sobre $X$. Defina la relación $\sim$ en $X$ tal que $x \sim y \iff \exists g \in G \Big(\alpha_{g}(x) = y\Big)$. Es fácil ver que $\sim$ es una relación de equivalencia.
+
+\begin{namedstd}{Definición}{Órbita}
+Sea $G$ un grupo y $X$ un conjunto tal que $G$ actúa sobre $X$ por la acción $\alpha$. Dada la relación de equivalencia $\sim$ arriba definida, definimos la órbita de $x \in X$ como
+\[
+\mathcal{O}_{x} := \{ y \in X:y \sim x \} = \{ y \in X: \exists g \in G \big( \alpha_{g}(x) = y \big) \}.
+\]
+Como $\sim$ es una relación de equivalencia, las órbitas forman una partición de $X$, i.e., $X = \dot\bigcup_{x \in X} \mathcal{O}_{x}$.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Acción transitiva}
+Sea $G$ un grupo y $X$ un conjunto tal que $G$ actúa sobre $X$. Si existe $x \in X$ tal que $\mathcal{O}_{x} =X$ decimos que la acción es transitiva. Equivalentemente, la acción es transitiva si para todos $x,y \in X$ existe $g \in G$ tal que $x = \alpha_{g}(y)$.
+
+\end{namedstd}
+\begin{namedstd}{Definición}{Estabilizador}
+Sea $G$ un grupo y $X$ un conjunto tal que $G$ actúa sobre $X$ por la acción $\alpha$. Dado $x \in X$, definimos el estabilizador de $x$ por $G_{x}:= \{ g \in G:\alpha_{g}(x)=x \}$.
+
+\end{namedstd}
+\begin{namedres}{Lema}{Estabilizador es un subgrupo}
+\end{namedres}
+\begin{proof}
+$G_{x} \neq \emptyset$ pues $1_{G} \in G_{x}$ por definición. Ahora, sean $g,h \in G_{x}$. Note que $\alpha_{h^{-1}}(x) = (\alpha_{h})^{-1}(x) = x$. Finalmente, tenemos que
+\[
+\alpha_{gh^{-1}}(x) = \alpha_{g}(\alpha_{h^{-1}}(x)) = x,
+\]
+por lo que $g \cdot h^{-1} \in G_{x}$, de donde concluimos que $G_{x} \leq G$.
+
+
+\end{proof}
+\begin{namedstd}{Ejemplos}{Órbitas y estabilizadores}
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $n\geq2$. Considere la acción de $S_{n}$ sobre $X = \{ 1,\dots,n \}$ tal que $\alpha_{\sigma}(i) = \sigma(i)$. En este caso hay una única órbita. Sean $i,j \in X$ y considere $\tau = \begin{pmatrix}i & j\end{pmatrix}$. Note que $\alpha_{\tau}(i) = j$, por lo que $i \sim j$, i.e., todo par de elementos de $X$ se relacionan. Por tanto la acción es transitiva. Ahora, note que si $1 \leq i\leq n$, $G_{i} = \{ \sigma \in S_{n}: \sigma(i) = i \} \cong S_{n-1}$.
+\end{enumerate}
+
+\begin{enumerate}[label=(\arabic*)]
+\item Considere $G = (\mathbb{Z}, + )$ y $X=\mathbb{R}$ bajo la acción $\tau(n,x) = x+n$. Note que si $x,y \in \mathbb{R}$,
+\[
+x \sim y \iff \exists n \in \mathbb{Z} \Big(\tau_{n}(x) = y\Big) \iff \exists n \in \mathbb{Z} \Big(y=x+n\Big) \iff x-y \in \mathbb{Z},
+\]
+\end{enumerate}
+de donde tenemos que $x$ y $y$ tienen la misma parte decimal. Hay una cantidad no numerable de órdenes. Es evidente ver que para todo $x \in \mathbb{R}$, $G_{x} = \{ 0 \}$.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Considere $G = \mathbb{S}^{1} =\{ e^{i\theta}:\theta \in [0, 2\pi) \}$ y $X = \mathbb{C}$. Defina la acción $\rho_{\theta}(z) = z e^{i \theta}$ (ver que esto es una acción es un ejercicio). Sea $z \in \mathbb{C}$. Entonces,
+\[
+\mathcal{O}_{z} = \{ \rho_{\theta}(z): \theta \in [0, 2\pi) \} = \{ ze^{i \theta}: \theta \in [0,2\pi) \} = \{ w \in \mathbb{C}: \lvert w \rvert  = \lvert z \rvert  \}.
+\]
+\end{enumerate}
+Ahora, veamos qué pasa con el estabilizador. Si $z = 0$, tenemos que
+\[
+G_{0} = \{ \theta \in \mathbb{S}^{1}: \rho_{\theta}(0) = 0 \} = \{ g \in \mathbb{S}^{1}: 0 e^{i \theta} = 0 \} = \mathbb{S}^{1}.
+\]
+Por otro lado, si $z \neq 0$,
+\[
+\rho_{\theta}(z) = z \iff z e^{i \theta} = z \iff \theta = 0 \iff e^{i \theta } = 1,
+\]
+lo que implica que $G_{Z} = \{ 1 \}$.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G$ un grupo y $H \leq G$. Considere $G / H = \{ gH : g \in G\}$. Defina una acción de $G$ en $G / H$ tal que $\mu:G \times G / H\to G /H$ tal que $\mu_{g}(hH) = (g \cdot h) H$. Queda como ejercicio ver que $\mu$ es una acción transitiva. Ahora, note que
+\[
+g \in G_{xH} \iff (g \cdot x) H = xH \iff x ^{-1} \cdot g \cdot x \in H \iff g \in x H x ^{-1},
+\]
+\end{enumerate}
+de modo que $G_{xH} = xH x ^{-1}$.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G = \mathrm{GL}(n,\mathbb{R})$ y $X = \mathbb{R}^n$. Defina la acción $\alpha_{A}(v)=Av$. Note que
+\[
+\mathcal{O}_{0} = \{ v \in \mathbb{R}: \exists A \in G (Av = w) \} = \{ 0 \}.
+\]
+\end{enumerate}
+Por tanto, esta acción no es transitiva.
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G$ un grupo. Defina $\mu:G\to G$ tal que $\mu_{g}(h) = gh$. Sean $h,g \in G$. Note que $\mu_{gh^{-1}}(h) = (gh^{-1})h=g$, de modo que $h \sim g$. Por tanto, la acción es transitiva.
+\end{enumerate}
+
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $G$ un grupo y considere la acción de $G$ en $G$ como la conjugación $\mu_{g}(h) = ghg^{-1}$. Sea $x \in G$. Tenemos que
+\[
+x^G := O_{x} = \{ y \in G: \exists g \in G (g xg^{-1} = y) \} = \{ gxg^{-1}:g \in G \}.
+\]
+\end{enumerate}
+Por otro lado, $G_{x}:= \{ g \in G: gxg^{-1} = x \} = C_{G}(x)$ (el centralizador).
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Órbita y cociente del estabilizador}
+Sea $G$ un grupo y $X$ un conjunto tal que $G$ actúa sobre $X$. Sea $x \in X$. Entonces $\lvert \mathcal{O}_{x} \rvert = [G:G_{x}]$.
+
+\end{namedres}
+\begin{proof}
+Vamos a construir una biyección $\Phi:\mathcal{O}_{x} \to G / G_{x}$. Sea $y \in \mathcal{O}_{x}$. Entonces existe $g \in G$ tal que $\alpha_{g}(x) = y$. Defina $\Phi(y) = g \cdot G_{x}$. $\Phi$ está bien definida, pues si $g,h$ son tales que $\alpha_{g}(x) = \alpha_{h}(x)$, entonces
+\[
+\alpha_{h^{-1}g}(x) = \alpha_{h^{-1}}(\alpha_{g}(x)) = \alpha_{h^{-1}}(\alpha_{h}(x)) = \alpha_{1_{G}}(x) = x,
+\]
+de modo que $h^{-1}g \in G_{x}$ y por tanto $g \cdot G_{x} = h \cdot G_{x}$. $\Phi$ es inyectiva pues si $y,z \in \mathcal{O}_{x}$ tal que $\Phi(y) = \Phi(z)$, existen $g,h \in G$ tales que $\alpha_{g}(x) = y$ y $\alpha_{h}(x) = z$. Así, tenemos que
+\[
+g G_{x} = h G_{x} \implies h^{-1} g \in G_{x} \implies \alpha_{h^{-1}g}(x)=x.
+\]
+Así, $\alpha_{h^{-1}}(\alpha_{g}(x)) = \alpha_{h}^{-1}(\alpha_{g}(x)) = x \implies \alpha_{g}(x)=\alpha_{h}(x)$. Finalmente $\Phi$ es sobreyectiva, pues si $g \cdot G_{x} \in G / G_{x}$, tome $y = \alpha_{g}(x)$. Note que $\Phi(y) = g \cdot G_{x}$. Así, $\Phi$ es una biyección y por tanto los conjuntos dados poseen la misma cardinalidad.
+
+\end{proof}
+\begin{namedres}{Corolario}{La órbita divide al orden del grupo}
+Sea $G$ un grupo finito y $X$ un conjunto tal que $G$ actúa sobre $X$. Entonces para todo $x \in X$, $\lvert \mathcal{O}_{x} \rvert \Big\lvert \lvert G \rvert$.
+\end{namedres}
+\begin{proof}
+Tenemos que $\lvert \mathcal{O}_{x} \rvert = [G:G_{x}] =\frac{ \lvert G \rvert}{\lvert G_{x} \rvert}$, de donde concluimos el resultado
+
+\end{proof}
+\begin{namedres}{Corolario}{Tamaño de la clase de conjugación}
+Sea $G$ un grupo finito y $x \in G$, Entonces $\lvert x^{G} \rvert = [G:C_{G}(x)]$.
+
+\end{namedres}
+\begin{namedres}{Teorema}{Cauchy}
+Sea $G$ un grupo finito y $p$ un primo tal que $p \Big\lvert \lvert G \rvert$. Entonces existe $g \in G$ tal que $\lvert g \rvert = p$.
+
+\end{namedres}
+\begin{proof}[\textbf{Prueba 1, para grupos abelianos.}]
+Suponga que $G$ es abeliano. Procedemos por inducción fuerte sobre $\lvert G \rvert=n$. El caso base ($n=1$) es trivialmente cierto por vacuidad. Suponga como hipótesis inductiva que el resultado es cierto para todo grupo $H$ tal que $\lvert H \rvert < n$. Sea $a \in G$ con $a \neq 1_{G}$ y $k = \lvert  a \rvert$. Considere los siguientes casos:
+\textbf{Caso 1:} Suponga que $p \mid k$. Entonces, existe $\ell \in \mathbb{N}$ tal que $p \ell = k$. Luego $\lvert a^{\ell} \rvert = p$.
+\textbf{Caso 2:} Suponga que $p \not\mid k$. Sea $H = \langle a \rangle$. Como $G$ es abeliano, $H \triangleleft G$, por lo que $G/H$ es un grupo y $\lvert H \rvert = k$. Note que
+\[
+\lvert G / H \rvert = \frac{\lvert G \rvert }{\lvert H \rvert } = \frac{n}{k} < n.
+\]
+Como $p \mid n$ y $p \not\mid k$, $p \mid \frac{n}{k}$. Por la hipótesis inductiva, existe $sH \in G /H$ tal que $\lvert sH \rvert = p$. Sea $m = \lvert s \rvert$. Note que $(sH)^{m} = s^{m}H = H$, por lo que $p \mid m$. Finalmente, aplique el caso 1 sobre $s$. Concluimos el resultado
+
+\end{proof}
+\begin{proof}[\textbf{Prueba 2, general.}]
+Sea $x \in G$. Recuerde que $x^{G} = \{ g x g^{-1}: g \in G \}$ y que $\lvert x^{G} \rvert = [G:C_{G}(x)]$. Procedemos por inducción fuerte sobre $\lvert G \rvert=n$.  Considere los siguientes casos:
+\textbf{Caso 1:} Si $x \in Z(G)$, entonces $x^{G}=\{ x \} \implies G = C_{G}(x)$.
+\textbf{Caso 2:} Si $x \not\in Z(G)$, entonces $\lvert x^{G} \rvert > 1$.  Entonces $C_{G}(x) < G \implies \lvert C_{G}(x) \rvert < \lvert G \rvert$. Si $p \Big\lvert \lvert C_{G}(x) \rvert$, por la hipótesis inductiva, existe $g \in C_{G}(x) \subseteq G$ tal que $\lvert g \rvert=p$, de donde concluimos el resultado. Si $p \not\Big\lvert \lvert C_{G}(x) \rvert$, tenemos que
+\[
+[G:C_{G}(x)] = \frac{\lvert G \rvert }{\lvert C_{G}(x) \rvert } \implies [G:C_{G}(x)] \cdot \lvert C_{G}(x) \rvert = \lvert G \rvert \implies p \mid [G:C_{G}(x)].
+\]
+Sean $x_{1},\dots,x_{k}$ las clases de conjugación diferentes que se obtienen mediante la relación de ser conjugación y que no estén en $Z(G)$. Entonces,
+\[
+G = Z(G) \dot{\cup} \bigcup_{i=1}^{k} x_{i}^{G} \implies \lvert G \rvert = \lvert Z(G) \rvert + \sum_{i=1}^{k} \lvert x_{i}^{G} \rvert \implies \lvert G \rvert - \sum_{i=1}^{k} \lvert x_{i}^{G} \rvert = \lvert Z(G) \rvert, 
+\]
+de donde concluimos que $p \Big\lvert \lvert Z(G) \rvert$. Así,  $Z(G)$ es subgrupo propio de $G$, y concluimos el resultado al aplicar la hipótesis inductiva sobre $Z(G)$.
+
+\end{proof}
+\begin{namedstd}{Nota}{La hipótesis de primalidad es necesaria}
+El teorema es falso si $p$ no es primo. Note que $8 \mid 120 \implies 8 \Big\lvert \lvert S_{5} \rvert$. Pero hemos visto que no hay subgrupos de orden 8 en $S_{5}$.
+
+
+\end{namedstd}
+\begin{namedstd}{Definición}{$p$-grupo}
+Sea $p$ primo. Un grupo $G$ es un $p$-grupo si existe $k \in \mathbb{N}$ tal que $\lvert G \rvert=p^{k}$.
+
+\end{namedstd}
+\begin{namedstd}{Ejercicio}{Centro de un $p$-grupo}
+Si $G$ es un $p$-grupo, $Z(G) \neq \{ 1_{G} \}$.
+
+\end{namedstd}
+\begin{namedres}{Corolario}{Grupos de orden $p^{2}$}
+Si $p$ es primo y $\lvert G \rvert = p^{2}$, entonces $G$ es abeliano.
+\end{namedres}
+\begin{proof}
+Suponga que $G$ no es abeliano. Entonces $Z(G)$ es un subgrupo propio de $G$. Por Lagrange, $\lvert Z(G) \rvert \in \{ 1,p \}$. Por el ejercicio anterior, $\lvert Z(G) \rvert = p$. Sabemos que $Z(G) \triangleleft G$. Así, $\lvert G / Z(G) \rvert = \frac{\lvert G \rvert}{\lvert Z(G) \rvert} = p$, de donde concluimos que $G / Z(G)$ es cíclico y por tanto $G$ es abeliano.
+
+
+\end{proof}
+\begin{namedres}{Teorema}{Subgrupos de un grupo abeliano finito}
+Sea $G$ un grupo abeliano finito. Entonces $G$ tiene un subgrupo de orden $d$ para todo $d$ tal que $d \Big\lvert \lvert G \rvert$.
+\end{namedres}
+\begin{proof}
+Sea $n = \lvert G \rvert$. Proceda por inducción fuerte sobre $d$, con $d \mid n$. El caso base es trivial, pues si $H = \{ 1_{G} \}\implies \lvert H \rvert=1$. Sea $d>1$. Suponga como hipótesis inductiva que para todo $e < d$ y para todo $\tilde{G}$ grupo con $e \Big\lvert \lvert \tilde{G} \rvert$ existe $\tilde{H} < \tilde{G}$ tal que $\lvert \tilde{H} \rvert = e$. Como $d \mid n$, existe $k \in \mathbb{N}$ tal que $kd=n$. Como $d>1$, existe $p$ primo tal que $p \mid d$, i.e., existe $\ell \in \mathbb{N}$ tal que $\ell p = d$. Por Teorema de Cauchy, existe $g \in G$ tal que $\lvert g \rvert=p$. Sea $H = \langle g \rangle$. Note que $H$ es cíclico, y por tanto abeliano y normal. Luego, $G / H$ es grupo. Así,
+\[
+\lvert G / H \rvert = \frac{\lvert G \rvert }{\lvert H \rvert } = \frac{n}{p} = \frac{kd}{p} = \frac{k \ell p}{p} = k \ell.
+\]
+Así, $\ell \Big\lvert \lvert G / H \rvert$ y $\lvert G/H \rvert < n$. Como $\ell < d$, por la hipótesis inductiva, existe $S^{\ast} < G / H$ tal que $\lvert S^{\ast} \rvert = \ell$. Por teorema de correspondencia, existe $S < G$ tal que $H \leq S \leq G$ y $S^{\ast} = S/H$. Concluimos notando que
+\[
+\ell = \lvert S^{\ast} \rvert = \frac{\lvert S \rvert}{\lvert H \rvert } = \frac{\lvert S \rvert}{p} \implies \lvert S \rvert = \ell p =d, 
+\]
+de donde se sigue el resultado.
+
+\end{proof}
+\begin{namedres}{Teorema}{Subgrupos de un $p$-grupo}
+Sea $G$ un $p-grupo$ tal que $\lvert G \rvert = p^{e}$. Entonces para todo $k \leq e$, existe $H \leq G$ tal que $\lvert H \rvert = p^{k}$.
+
+\end{namedres}
+\begin{proof}
+Procedemos por inducción sobre $e$. Para $e=0$, tenemos que $G=\{ 1_{G} \}.$ Tome $H = G$. Sea $e > 0$ y sea $k \leq e$.  Suponga como hipótesis inductiva que el resultado es cierto para $f<e$. Como $\lvert G \rvert = p^{e}$ y $e>0$, entonces $Z(G)$ es no trivial. Considere los siguientes casos.
+\begin{itemize}
+\item Si $G = Z(G)$, entonces $G$ es abeliano. Por el teorema anterior, concluimos el resultado.
+\item Ahora, si $G \neq Z(G)$, existe $c < e$ tal que $\lvert Z(G) \rvert = p^{c}$ con $c<e$. Si $k \leq c$, entonces por hipótesis inductiva sobre $Z(G)$, existe $H \triangleleft Z(G)$ tal que $\lvert H \rvert=p^{k}$. Por otro lado, si $k>c$, sabemos que $G / Z(G)$ es un grupo (pues $Z(G) \triangleleft G$). Ahora, note que
+\[
+\lvert G / Z(G) \rvert = \frac{\lvert G \rvert }{\lvert Z(G) \rvert } = p^{e-c}.
+\]
+\end{itemize}
+Aplicando hipótesis inductiva sobre $G / Z(G)$, existe $S^{\ast} \leq G/Z(G)$ tal que $\lvert S^{\ast} \rvert = p^{k-c}$. Por teorema de correspondencia, existe $S \leq G$ tal que $Z(G) \leq S \leq G$ y $S^{\ast} = S / Z(G)$. Así,
+\[
+\lvert S^{\ast} \rvert \cdot \lvert Z(G) \rvert = \lvert S \rvert \implies p^{k-c} \cdot p^{c} = \lvert S \rvert,
+\]
+de donde concluimos el resultado.
+
+\end{proof}
+
+\subsection{Grupos Simples}
+
+
+\begin{namedstd}{Definición}{Grupo simple}
+Sea $G$ un grupo no trivial. Decimos que $G$ es simple si no tiene subgrupos normales propios, i.e., si $H \triangleleft G$, entonces $H = \{ 1_{G} \}$ o $H=G$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Abelianos simples son $\mathbb{Z}_{p}$}
+Sea $G$ un grupo abeliano. Entonces $G$ es simple si y solo si $G=\mathbb{Z}_{p}$ con $p$ primo.
+
+\end{namedres}
+\begin{proof}
+($\impliedby$): Esta dirección es sencilla, pues basta aplicar Lagrange para notar que $G$ no tiene subgrupos propios.
+($\implies$): Como $G$ es abeliano, todo subgrupo es normal. Además, como $G$ es simple, $G \neq \{ 1_{G} \}$. Entonces, existe $x \in G$ tal que $(x \neq 1_{G})$. Tenemos que
+\[
+\langle x \rangle \triangleleft  G \implies \langle x \rangle = G \implies G \text{ es cíclico} \implies G \cong \mathbb{Z} \quad \lor \quad G \cong   \mathbb{Z}_{n}, \text{ para algún } n \in \mathbb{N}.
+\]
+Como $G$ es simple, $G \not\cong \mathbb{Z}$, por lo que $G \cong \mathbb{Z}_{n}$ para algún $n \in  \mathbb{N}$. Además, como $G$ es simple, $n$ es primo, de donde concluimos el resultado.
+
+\end{proof}
+\begin{namedstd}{Recordatorio}{Signo y grupo alternante}
+Si $\sigma \in S_{n}$ tal que $\sigma = \beta_{1} \cdots \beta_{t}$ es su descomposición en ciclos disjuntos de $\sigma$, entonces, $\sgn( \sigma ) := (-1)^{n-t}$. Si $\sgn( \sigma ) = 1$ decimos que $\sigma$ es par y $A_{n} = \{ \sigma \in S_{n}, \sigma \text{ es par} \}.$
+
+\end{namedstd}
+\begin{namedstd}{Ejercicios}{Sobre $3$-ciclos}
+\begin{enumerate}[label=(\arabic*)]
+\item $A_{n}$ es generado por los 3-ciclos si $n\geq {5}$.
+\item En $S_{5}$, todos los 3-ciclos son conjugados.
+\item En $A_{5}$, todos los 3-ciclos son conjugados.
+\end{enumerate}
+\end{namedstd}
+\begin{namedres}{Teorema}{$A_{5}$ es simple}
+$A_{5}$ es simple
+
+\end{namedres}
+\begin{proof}
+Sea $H \neq \{ \mathrm{id}_{S_{5}} \}$ tal que $H \triangleleft A_{5}$. Por los ejercicios anteriores, basta mostrar que $H$ contiene un 3-ciclo, pues si $\sigma \in H$ es un 3-ciclo, $\sigma^{A_{5}} \subseteq H$ pues $H \triangleleft A_{5}$, entonces $\langle \sigma^{A_{5}}  \rangle = \{ \tau: \tau \text{ es 3-ciclo}  \} \subseteq H$ y por tanto $H = A_{5}$.
+
+¿Cuántas configuraciones posibles tengo para la descomposición en ciclos disjuntos?
+\begin{enumerate}[label=(\arabic*)]
+\item $\sigma$ se descompone en 5 1-ciclos, y por tanto $\sigma \in A_{5}$.
+\item $\sigma$ se descompone en un 2-ciclo y 3 1-ciclos, y por tanto $\sigma \not\in A_{5}$.
+\item $\sigma$ se descompone en un 3-ciclo y 2 1-ciclos, y por tanto $\sigma \in A_{5}$.
+\item $\sigma$ se descompone en un 4-ciclo y 1 1-ciclo, y por tanto $\sigma \not\in A_{5}$.
+\item $\sigma$ se descompone en un 5-ciclo, y por tanto $\sigma \in A_{5}$.
+\item $\sigma$ se descompone en dos 2-ciclos y un 1-ciclo, y por tanto $\sigma \in A_{5}$.
+\item $\sigma$ se descompone en un 3-ciclo y un 2-ciclo, y por tanto $\sigma \not\in A_{5}$.
+\end{enumerate}
+Luego, si $\sigma \in H \setminus \{ 1_{G} \}$, su factorización es del tipo 3, 5 o 6. Si $\sigma$ es del tipo 3, entonces posee un 3-ciclo y por tanto se cumple el resultado.
+SI $\sigma$ es del tipo 5, suponga sin pérdida de generalidad que $\sigma = \begin{pmatrix}1 & 2 & 3 & 4 & 5\end{pmatrix}$. Sea $\alpha = \begin{pmatrix}1 & 2 & 3\end{pmatrix} \in A_{5}$. Luego,
+\[
+w = \begin{pmatrix}
+2 & 3 & 1 & 4 & 5
+\end{pmatrix} =\alpha \sigma \alpha^{-1} \in H, \text{ pues }H \triangleleft A_{5} \implies w \sigma ^{-1} = \begin{pmatrix}
+1 & 2 & 4
+\end{pmatrix} \in H.
+\]
+Si $\sigma$ es del tipo 6, suponga sin pérdida de generalidad que $\sigma = \begin{pmatrix}1 & 2\end{pmatrix}\begin{pmatrix}3 & 4\end{pmatrix}$. Sea $\beta = \begin{pmatrix}3 & 4 & 5\end{pmatrix} \in A_{5}$. Note que $\delta :=\beta \sigma \beta ^{-1} = \begin{pmatrix}1 & 2\end{pmatrix}\begin{pmatrix}4 & 5\end{pmatrix} \in H$. Finalmente, $\sigma \cdot \delta = \begin{pmatrix}3 & 4 & 5\end{pmatrix} \in H$.
+Concluya que $A_{5}$ es simple.
+
+\end{proof}
+\begin{namedres}{Teorema}{$A_{6}$ es simple}
+$A_{6}$ es simple
+
+\end{namedres}
+\begin{proof}
+Sea $H\neq \{ \mathrm{id}_{S_{6}} \}$ tal que $H \triangleleft A_{6}$. Suponga por contradicción que si $\sigma \in H \setminus \{ \mathrm{id}_{S_{6}} \}$, entonces $\sigma$ mueve todo elemento de $\{ 1,2,\dots,6 \}$.  ¿Cuántas configuraciones posibles tengo para la descomposición en ciclos disjuntos?
+\begin{enumerate}[label=(\arabic*)]
+\item $\sigma$ se descompone en tres 2-ciclos, y por tanto $\sigma \not\in A_{6}$.
+\item $\sigma$ se descompone en un 2-ciclo y un 4-ciclo, y por tanto $\sigma \in A_{6}$.
+\item $\sigma$ se descompone en dos 3-ciclos, y por tanto $\sigma \in A_{6}$.
+\end{enumerate}
+Si $\sigma$ es del tipo 2, considere $\sigma = \begin{pmatrix}1 & 2\end{pmatrix}\begin{pmatrix}3 & 4 & 5 & 6\end{pmatrix}$. Como $H$ es subgrupo, si $\sigma \in H$, $\sigma^{2} \in H$. Pero $\sigma^{2}(1) = 1$, una contradicción.
+Por otro lado, si $\sigma$ es del tipo 3, considere $\sigma=\begin{pmatrix}1 & 2 & 3\end{pmatrix}\begin{pmatrix}4 & 5 & 6\end{pmatrix}$. Luego, tenemos que $\sigma ^{-1} = \begin{pmatrix}3 & 2 & 1\end{pmatrix}\begin{pmatrix}6 & 5 & 4\end{pmatrix}$. Sea $\gamma = \begin{pmatrix}2 & 3 & 4\end{pmatrix}$. Como $H$ es subgrupo, tenemos que $\sigma\gamma \sigma ^{-1} \gamma ^{-1} = \begin{pmatrix}1 & 5 & 3 & 2 & 4\end{pmatrix} \in H$, una contradicción.
+Concluya que existen $\sigma \in H$ y $i \in \{ 1,\dots,6 \}$ tales que $\sigma(i) = i$. Sea $F = \{ \sigma \in A_{6}: \sigma(i)=i \}$. Note que, $F \neq \{ 1_{S_{6}} \}$ y $F \cap H \neq \{ 1_{S_{6}} \}$. Es fácil ver que $F \cong A_{5}$. Finalmente, como $F \cap H \triangleleft F \cong A_{5}$ y $A_{5}$ es simple, tenemos que $F \cap H = F$, de donde $F \subseteq H$. Concluya que $A_{6}$ es simple porque contiene un 3-ciclo.
+\end{proof}
+\begin{namedres}{Teorema}{$A_{n}$ es simple para $n \geq 5$}
+$A_{n}$ es simple para $n \geq5$
+
+\end{namedres}
+\begin{proof}
+Considere el caso para $n>6$. Sea $H\neq \{ \mathrm{id}_{S_{n}} \}$ tal que $H \triangleleft A_{n}$ Sea $\sigma \in H \setminus \{ \mathrm{id}_{Sn} \}$. Entonces, existe $i \in \{ 1,\dots,n \}$ tal que $\sigma(i) = j \neq i$. Sea $\alpha$ un 3-ciclo tal que $\alpha(i)=i$ y $\alpha(j)\neq j$. Note que
+\[
+\alpha(\sigma(i)) = \alpha(j) \neq  j  \quad \land  \quad\sigma(\alpha(i)) = \sigma(i) =j \implies \alpha \sigma \neq \sigma\alpha \implies \alpha\sigma\alpha ^{-1}\sigma ^{-1} \in H \setminus \{1_{S+n}\}.
+\]
+Sabemos que la conjugación de permutaciones no me cambia la estructura de ciclos. Luego $\sigma \alpha ^{-1} \sigma ^{-1}$ es un 3-ciclo y $\gamma = \alpha\sigma\alpha ^{-1}\sigma ^{-1} \in H$ es un producto de dos 3-ciclos y por tanto mueve a lo sumo 6 elementos. Sean $i_{1},\dots i_{k}$, con $k \leq 6$, los elementos que mueve $\gamma$. Ahora, sea $F:=\{ \sigma \in A_{n}: \sigma(\ell) = \ell  \quad \forall \ell \not\in \{ i_{1},\dots,i_{k} \}\}$. Es fácil ver que $F \cong S_{6}$. y $F \cap H \neq \{ 1_{S_{n}} \}$. Así, $F \cap H \triangleleft F \cong A_{6}$, por lo que $F \cap H = F$ y por tanto $F \subseteq H$. En particiular, $\begin{pmatrix}i_{1} & i_{2} & i_{3}\end{pmatrix} \in F \subseteq H$, de donde concluimos que es simple porque contiene un $3-$ciclo..
+
+\end{proof}
+
+\subsection{Teoremas de Sylow}
+
+
+\begin{namedstd}{Definición}{Subgrupo de Sylow}
+Sea $p$ un primo y $G$ un grupo. Decimos que $H\leq G$ es un $p-$subgrupo de Sylow si $\lvert H \rvert = p^{e}$ y $p^{e}$ es la mayor potencia de $p$ que divide a $\lvert G \rvert$.
+
+\end{namedstd}
+\begin{namedstd}{Ejemplo}{Sylow en $S_{4}$}
+Considere $S_{4}$. Note que $\lvert S_{4} \rvert=4! = 2^{3} \cdot 3$. Un $2-$subgrupo de Sylow tiene tamaño $2^{3}$. Un $3-$subgrupo de Sylow tiene tamaño $3$. Un $5$-subgrupo de Sylow es $\{ e \}$.
+
+\end{namedstd}
+\begin{namedres}{Teorema}{Primer teorema de Sylow}
+Si $p$ es primo y $G$ es finito, existe un $p-$subgrupo de Sylow.
+
+\end{namedres}
+\begin{proof}
+Sea $\lvert G \rvert = p^{e}k$ tal que $p \not\mid k$. Sea $\Omega:=\{ T \subseteq G: \lvert T \rvert=p^{e} \}$. Considere la acción $\alpha$ de $G$ en $\Omega$ tal que $\alpha _g(T) = gT$. (queda como ejercicio ver que es una acción). Tenemos que $\lvert \Omega \rvert = \binom{p^{e}k}{p^{e}} \equiv k \mod p$. Como $p$ no divide a $k$, tenemos que $p\ \not\mid \Omega$. Sabemos que
+\[
+\Omega = \dot{\bigcup}_{i \in I} \mathcal{O}_{i},
+\]
+donde $\mathcal{O}_{i}$ son las órbitas distintas. Luego $\lvert \Omega \rvert = \sum_{i \in I} \lvert \mathcal{O}_{i} \rvert$. Por lo tanto, existe una órbita $\mathcal{O}_{i}$ tal que $p \not\mid \lvert \mathcal{O}_{i} \rvert$. Luego, existe $H \in \Omega$ tal que $p \not\mid \mathcal{O}_{H}$ (tomando $H$ como un representante de la clase de $\mathcal{O}_{i}$) . Tenemos que $\lvert \mathcal{O}_{H} \rvert = [G:G_{H}] = \frac{\lvert G \rvert}{\lvert G_{H} \rvert} = \frac{p^{e}k}{\lvert G_{H}. \rvert}$ De aquí, tenemos que $\lvert \mathcal{O}_{H} \rvert \mid p^{e}k \implies \lvert \mathcal{O}_{H} \rvert \mid k$. Sea $A = \bigcup_{T \in \mathcal{O}_{H}} T = \bigcup_{g \in G} gH$. Probaremos que $G=A$. Es claro que $A \subseteq G$.
+Vamos a mostrar primero que $A$ es estable por traslaciones izquierdas. Sea $g \in G$, $T \in \mathcal{O}_{H}$. Hay que mostrar que $gA \subseteq A$. Dado $x \in A$, existe $T \in \mathcal{O}_{H}$ tal que $x \in T$ y por tanto, $gx \in gT \subseteq A$, de donde concluimos el resultado. Finalmente, tome $h_{0} \in H$ (existe pues $H \neq \emptyset$); entonces $1_{G} \in h_{0}^{-1}H \in \mathcal{O}_{H}$, de modo que $1_{G} \in A$. Dado cualquier $g \in G$, la estabilidad por traslaciones da $g = g \cdot 1_{G} \in gA \subseteq A$. Concluya que $G \subseteq A$ y por tanto $G=A$. Así, tenemos que
+\[
+p^{e}k = \lvert G \rvert = \lvert A \rvert =\left\lvert  \bigcup_{T \in \mathcal{O}_{H}}T  \right\rvert \leq \sum_{T \in \mathcal{O}_{H}}  \lvert T \rvert = \lvert \mathcal{O}_{H} \rvert \cdot \lvert T \rvert = \lvert \mathcal{O}_{H} \rvert \cdot p^{e},
+\]
+y por tanto, $k\leq \lvert \mathcal{O}_{H} \rvert$. Pero $\lvert \mathcal{O}_{H} \rvert \mid k$, de donde $\lvert \mathcal{O}_{H} \rvert = k$. Finalmente, como
+\[
+\lvert \mathcal{O}_{H} \rvert \cdot \lvert G_{H} \rvert = p^{e} \cdot k \implies \lvert G_{H} \rvert = \frac{p^{e}k}{k} = p^{e}.
+\]
+Así, $\lvert G_{H} \rvert = p^{e}$ y es un grupo.
+\end{proof}
+\begin{namedres}{Teorema}{Segundo teorema de Sylow}
+Sea $G$ un grupo finito y $p$ primo. Si $P$ y $Q$ son $p-$grupos de Sylow, entonces son conjugados, i.e., existe $g \in G$ tal que $gPg^{-1} = Q$.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\textbf{Sugerencia:} Considere la acción $\alpha:P \times G / Q \to G / Q$ tal que $\alpha_{g}(hQ) = ghQ$.
+\end{proof}
+\begin{namedres}{Teorema}{Tercer teorema de Sylow}
+Sea $G$ finito y $p$ primo y $n_{p}$ el número de $p-$grupos de Sylow. Entonces $p \mid n_{p}-1$. 
+\end{namedres}
+\begin{proof}
+\textbf{Sugerencia:} Definir $\Lambda_{p}: \{ H \subseteq G: H \text{ es un }p-\text{subgrupo de Sylow} \}$. Considerar la acción $\alpha: G \times\Lambda_{p} \to \Lambda_{p}$ tal que $\alpha_{g}(P) = gPg^{-1}$.
+\end{proof}
+
+
+
+\appendix
+% =============================================================================
+\section{Anexo: caracterizaciones equivalentes}
+% =============================================================================
+
+A lo largo del curso, varios conceptos clave admitieron \emph{múltiples caracterizaciones equivalentes} que conviene tener juntas a la vista. Este anexo recopila esos paquetes de equivalencias en cajas autocontenidas, una por concepto. Cada caja indica además dónde se prueba cada caracterización dentro del documento.
+
+\anexogroup{Subgrupos y generación}
+
+\begin{equivbox}{blue}{Caracterizaciones de subgrupo $H \leq G$}
+Sea $(G,\ast)$ un grupo y $\emptyset \neq H \subseteq G$. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; $(H, \ast\mid_{H})$ es un grupo. \hfill\textit{§1.5.}
+\item \textbf{(criterio $xy^{-1}$)}\; Para todos $x, y \in H$: $x \ast y^{-1} \in H$. \hfill\textit{Teorema 1.5.2.}
+\item \textbf{(tres condiciones)}\; $H$ es cerrado bajo $\ast$, $1_{G} \in H$, y $h \in H \implies h^{-1} \in H$. \hfill\textit{Nota 1.5.1.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{green!60!black}{Caracterizaciones del subgrupo generado $\langle S \rangle$ y de los grupos cíclicos}
+Sea $S \subseteq G$, $S \neq \emptyset$. Las siguientes describen el mismo objeto $\langle S \rangle$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(intersección)}\; $\langle S \rangle = \bigcap \{ H : H \leq G \ \land\ S \subseteq H \}$. \hfill\textit{Definición 1.5.4.}
+\item \textbf{(minimalidad)}\; $\langle S \rangle$ es el subgrupo más pequeño que contiene a $S$. \hfill\textit{Teorema 1.5.5.}
+\item \textbf{(palabras)}\; $\langle S \rangle = \{ x_{1}^{\alpha_{1}} \ast \dots \ast x_{n}^{\alpha_{n}} : n \in \mathbb{N}^{\ast},\ x_{i} \in S,\ \alpha_{i} \in \{-1,1\} \}$. \hfill\textit{Teorema 1.5.6.}
+\end{enumerate}
+Para grupos cíclicos ($G = \langle g \rangle$):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em,resume]
+\item \textbf{(clasificación)}\; $\lvert g \rvert = \infty \implies G \cong \Z$; \quad $\lvert g \rvert = n \implies G \cong \Z_{n}$. \hfill\textit{Teorema 2.1.18.}
+\item \textbf{(herencia)}\; Todo subgrupo de un grupo cíclico es cíclico. \hfill\textit{Teorema 1.7.7.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Órdenes y generadores}
+
+\begin{equivbox}{cyan!70!black}{Caracterizaciones del orden de un elemento}
+Sea $g \in G$ con $\lvert g \rvert = n < \infty$ y $k \in \mathbb{Z}$. Entonces:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; $n$ es el menor natural positivo con $g^{n} = 1_{G}$. \hfill\textit{Definición 1.6.1.}
+\item \textbf{(divisibilidad)}\; $g^{k} = 1_{G} \iff n \mid k$. \hfill\textit{Teorema 1.6.3.}
+\item \textbf{(conteo)}\; $\langle g \rangle = \{ 1_{G}, g, \dots, g^{n-1} \}$ y $\lvert \langle g \rangle \rvert = \lvert g \rvert$; además $g^{i} = g^{j} \iff n \mid i - j$. \hfill\textit{Proposición 1.6.10.}
+\item \textbf{(potencias)}\; $\lvert g^{k} \rvert = \dfrac{n}{\mcd(n,k)}$; en particular, si $c \mid n$, $\lvert g^{c} \rvert = n/c$. \hfill\textit{Proposición 1.7.3.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{teal}{Caracterizaciones de generadores y unidades de $\Z_m$}
+Sea $G = \langle g \rangle$ con $\lvert g \rvert = n$, y sea $[a] \in \Z_{m}$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(generador de potencia)}\; $G = \langle g^{k} \rangle \iff \mcd(n,k) = 1$. \hfill\textit{Corolario 1.7.6.}
+\item \textbf{(igualdad de subgrupos)}\; $\langle g^{k} \rangle = \langle g^{\ell} \rangle \iff \mcd(k,n) = \mcd(\ell,n) \iff \lvert g^{k} \rvert = \lvert g^{\ell} \rvert$. \hfill\textit{Teorema 1.7.5.}
+\item \textbf{(generador de $\Z_m$)}\; $\langle [a] \rangle = \Z_{m} \iff \MCD(a,m) = 1$. \hfill\textit{Teorema 1.6.8.}
+\item \textbf{(unidad)}\; $[a] \in U(m) \iff \MCD(a,m) = 1$. \hfill\textit{Ejercicio 1.6.7.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Coclases y normalidad}
+
+\begin{equivbox}{purple}{Caracterizaciones de la igualdad de coclases $aH = bH$}
+Sea $H \leq G$ y $a, b \in G$. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(criterio algebraico)}\; $b^{-1} \ast a \in H$. \hfill\textit{Lema 2.4.3.}
+\item \textbf{(pertenencia)}\; $a \in bH$. \hfill\textit{Prueba del Lema 2.4.3.}
+\item \textbf{(no disjuntas)}\; $aH \cap bH \neq \emptyset$. \hfill\textit{Teorema 2.4.4.}
+\item \textbf{(relación de equivalencia)}\; $a \sim b$ bajo la relación cuyas clases son las coclases. \hfill\textit{Nota 2.4.5.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{orange!85!black}{Caracterizaciones de subgrupo normal $H \triangleleft G$}
+Sea $H \leq G$. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; $xH = Hx$ para todo $x \in G$. \hfill\textit{Definición 2.5.2.}
+\item \textbf{(conjugación, igualdad)}\; $xHx^{-1} = H$ para todo $x \in G$. \hfill\textit{Nota 2.5.3.}
+\item \textbf{(conjugación, contención)}\; $xHx^{-1} \subseteq H$ para todo $x \in G$. \hfill\textit{Nota 2.5.3.}
+\item \textbf{(estabilidad por $C_a$)}\; $C_{a}(H) \subseteq H$ para todo $a \in G$. \hfill\textit{Ejercicio 2.6.8.}
+\item \textbf{(kernel)}\; $H = \Ker(f)$ para algún homomorfismo $f$ con dominio $G$. \hfill\textit{Teoremas 2.5.5 y 2.6.4.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Homomorfismos y acciones}
+
+\begin{equivbox}{brown!85!black}{Caracterizaciones de inyectividad de un homomorfismo}
+Sea $f : G \to H$ un homomorfismo de grupos. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; $f$ es un monomorfismo (función inyectiva). \hfill\textit{Definición 2.1.9.}
+\item \textbf{(kernel trivial)}\; $\Ker(f) = \{ 1_{G} \}$. \hfill\textit{Teorema 2.1.11.}
+\item \textbf{(fibras)}\; Cada fibra de $f$ es una sola coclase: $\{ x : f(x) = f(a) \} = a\Ker(f)$, que se reduce a $\{a\}$. \hfill\textit{Proposición 2.4.13.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{olive}{Caracterizaciones de una acción de grupo}
+Sea $G$ un grupo y $X$ un conjunto. Dar una acción de $G$ sobre $X$ equivale a:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(axiomas)}\; Una función $\alpha : G \times X \to X$ con $\alpha(g, \alpha(h,x)) = \alpha(g \cdot h, x)$ y $\alpha(1_{G}, x) = x$. \hfill\textit{Definición 3.1.1.}
+\item \textbf{(homomorfismo)}\; Un homomorfismo $\phi : G \to S_{X}$ (vía $\phi(g) = \alpha_{g}$); la correspondencia es biyectiva. \hfill\textit{Teorema 3.1.6.}
+\item \textbf{(biyecciones)}\; Cada $\alpha_{g}$ es una biyección de $X$, con $(\alpha_{g})^{-1} = \alpha_{g^{-1}}$. \hfill\textit{Lema 3.1.5.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{magenta!80!black}{Paquete de Sylow: existencia, conjugación y conteo}
+Sea $G$ finito, $p$ primo y $\lvert G \rvert = p^{e}k$ con $p \nmid k$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; Un $p$-subgrupo de Sylow es un $H \leq G$ con $\lvert H \rvert = p^{e}$. \hfill\textit{Definición 3.4.1.}
+\item \textbf{(existencia)}\; Siempre existe un $p$-subgrupo de Sylow. \hfill\textit{Teorema 3.4.3.}
+\item \textbf{(conjugación)}\; Dos $p$-subgrupos de Sylow cualesquiera son conjugados. \hfill\textit{Teorema 3.4.4.}
+\item \textbf{(conteo)}\; El número $n_{p}$ de $p$-subgrupos de Sylow cumple $p \mid n_{p} - 1$. \hfill\textit{Teorema 3.4.5.}
+\end{enumerate}
+\end{equivbox}
+
+% =============================================================================
+\section{Anexo: implicaciones y equivalencias}
+% =============================================================================
+
+Este anexo organiza, por familias de propiedades, qué implica qué: las equivalencias ($\Leftrightarrow$), las implicaciones válidas en general ($\Rightarrow$) y las recíprocas que \emph{fallan} ($\not\Rightarrow$), con contraejemplos tomados del propio curso.
+
+\begin{equivbox}{blue}{Cíclicos, abelianos y subgrupos}
+\textbf{Equivalencias ($\Leftrightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $G$ abeliano $\iff Z(G) = G$. \hfill\textit{Nota 1.9.2.}
+\item $G$ cíclico con $\lvert G \rvert = n$ $\iff G \cong \Z_{n}$; \quad cíclico infinito $\iff G \cong \Z$. \hfill\textit{Teorema 2.1.18.}
+\item $G$ abeliano y simple $\iff G \cong \Z_{p}$, $p$ primo. \hfill\textit{Teorema 3.3.2.}
+\end{itemize}
+\textbf{Implicaciones siempre válidas ($\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $G$ cíclico $\implies$ $G$ abeliano. \hfill\textit{usado en la prueba del Teorema 3.2.14.}
+\item $G$ abeliano $\implies$ todo $H \leq G$ es normal. \hfill\textit{Nota 2.5.3.}
+\item $H \leq G$ cíclico $\implies$ $H$ cíclico. \hfill\textit{Teorema 1.7.7.}
+\item $G$ cíclico $\implies$ $G$ numerable. \hfill\textit{Nota 1.6.9.}
+\end{itemize}
+\textbf{Implicaciones que NO valen en general ($\not\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item abeliano $\not\Rightarrow$ cíclico: $(\R, +)$ es abeliano pero no numerable, luego no cíclico. \hfill\textit{Nota 1.6.9.}
+\item grupo $\not\Rightarrow$ abeliano: $D_{4}$ y $S_{3}$ no son conmutativos. \hfill\textit{Ejercicio 1.3.8, Notación 1.8.3.}
+\item asociatividad $+$ neutro $\not\Rightarrow$ grupo: $(\mathbb{N}, +)$ es monoide sin inversos. \hfill\textit{Ejemplo 1.3.2.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{green!60!black}{Normalidad y cocientes}
+\textbf{Equivalencias ($\Leftrightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $H \triangleleft G \iff xHx^{-1} \subseteq H\ \forall x \iff H$ es kernel de un homomorfismo. \hfill\textit{Nota 2.5.3; Teoremas 2.5.5 y 2.6.4.}
+\item $G/H$ abeliano $\iff G' \triangleleft H$ \ (con $H \triangleleft G$ y $G'$ el subgrupo conmutador). \hfill\textit{Teorema 2.6.9.}
+\end{itemize}
+\textbf{Implicaciones siempre válidas ($\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $K \triangleleft G$ y $K \leq H \leq G$ $\implies$ $K \triangleleft H$. \hfill\textit{Proposición 2.5.4.}
+\item $N \triangleleft G$ $\implies$ $NH = HN$ para todo $H \leq G$. \hfill\textit{Teorema 2.7.3.}
+\item $H \triangleleft G$ $\implies$ $G/H$ es un grupo con $aH \cdot bH = (a \ast b)H$. \hfill\textit{Teorema 2.6.2.}
+\end{itemize}
+\textbf{Implicaciones que NO valen en general ($\not\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $H \leq G \not\Rightarrow H \triangleleft G$: en $S_{3}$, $H = \langle (1\;2) \rangle$ tiene coclases izquierdas y derechas distintas. \hfill\textit{Ejemplos 2.4.2.}
+\item $H \triangleleft G \not\Rightarrow$ $x \ast h = h \ast x$ elemento a elemento: solo garantiza $x \ast h = h' \ast x$ para algún $h' \in H$. \hfill\textit{Nota 2.5.3.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{red!75!black}{Órdenes y existencia de subgrupos}
+\textbf{Equivalencias ($\Leftrightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $g^{k} = 1_{G} \iff \lvert g \rvert \mid k$. \hfill\textit{Teorema 1.6.3.}
+\end{itemize}
+\textbf{Implicaciones siempre válidas ($\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $H \leq G$ finito $\implies \lvert H \rvert \mid \lvert G \rvert$, y $\lvert g \rvert \mid \lvert G \rvert$. \hfill\textit{Teorema 2.4.10, Corolario 2.4.11.}
+\item $p$ primo, $p \mid \lvert G \rvert$ $\implies$ existe $g \in G$ con $\lvert g \rvert = p$. \hfill\textit{Teorema 3.2.9 (Cauchy).}
+\item $G$ abeliano finito y $d \mid \lvert G \rvert$ $\implies$ existe $H \leq G$ con $\lvert H \rvert = d$. \hfill\textit{Teorema 3.2.14.}
+\item $\lvert G \rvert = p^{e}$ $\implies$ para todo $k \leq e$ existe $H \leq G$ con $\lvert H \rvert = p^{k}$. \hfill\textit{Teorema 3.2.15.}
+\item $\lvert G \rvert = p^{2}$ $\implies$ $G$ abeliano. \hfill\textit{Corolario 3.2.13.}
+\item $G$ $p$-grupo no trivial $\implies Z(G) \neq \{ 1_{G} \}$. \hfill\textit{Ejercicio 3.2.12.}
+\end{itemize}
+\textbf{Implicaciones que NO valen en general ($\not\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $d \mid \lvert G \rvert \not\Rightarrow$ existe \emph{elemento} de orden $d$ (si $d$ no es primo): $8 \mid 120 = \lvert S_{5} \rvert$, pero $S_{5}$ no tiene elementos de orden $8$. \hfill\textit{Nota 3.2.10.}
+\item simple $\not\Rightarrow$ abeliano: $A_{5}$ es simple y no es abeliano. \hfill\textit{Teorema 3.3.5.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{violet}{Permutaciones, paridad y simplicidad}
+\textbf{Equivalencias ($\Leftrightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $\alpha$ es un $r$-ciclo $\iff \lvert \alpha \rvert = r$. \hfill\textit{Ejercicio 1.8.9.}
+\item $\alpha$ impar $\iff \sgn(\alpha) = -1$. \hfill\textit{Teorema 1.8.23.}
+\end{itemize}
+\textbf{Implicaciones siempre válidas ($\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item $\alpha, \beta$ disjuntas $\implies \alpha \circ \beta = \beta \circ \alpha$. \hfill\textit{Teorema 1.8.12.}
+\item Toda $\alpha \in S_{n}$ es producto de ciclos disjuntos, y de transposiciones ($n \geq 2$). \hfill\textit{Teorema 1.8.15, Proposición 1.8.16.}
+\item $\sgn(\alpha\beta) = \sgn(\alpha)\sgn(\beta)$. \hfill\textit{Teorema 1.8.21.}
+\item $n \geq 5 \implies A_{n}$ es simple. \hfill\textit{Teorema 3.3.7.}
+\end{itemize}
+\textbf{Implicaciones que NO valen en general ($\not\Rightarrow$):}
+\begin{itemize}[leftmargin=1.8em]
+\item conmutar $\not\Rightarrow$ regla general: dos permutaciones cualesquiera no tienen por qué conmutar ($\alpha \circ \beta \neq \beta \circ \alpha$ en $S_{3}$). \hfill\textit{Notación 1.8.3.}
+\end{itemize}
+\end{equivbox}
+
+% =============================================================================
+\section{Anexo: estrategias de demostración}
+% =============================================================================
+
+Patrones de argumentación que se repiten a lo largo del curso, con sus variantes y los lugares del documento donde aparecen.
+
+\begin{strategybox}{1.\ Para mostrar que $H$ es subgrupo: criterio $x \ast y^{-1}$}
+\textbf{Patrón:} \textit{verificar $H \neq \emptyset$ y que $x, y \in H \implies x \ast y^{-1} \in H$ (Teorema 1.5.2).}
+\begin{itemize}[leftmargin=1.5em]
+\item Para la no-vacuidad, el testigo usual es $1_{G}$.
+\item Alternativa de tres pasos: cierre, neutro, inversos (Nota 1.5.1) cuando el criterio compacto enreda.
+\end{itemize}
+\textbf{Apariciones:} Lema 1.5.3 (intersección), Teorema 2.1.7 (kernel e imagen), Teorema 2.1.12 (imagen inversa), Lema 3.2.4 (estabilizador).
+\end{strategybox}
+
+\begin{strategybox}{2.\ Para mostrar normalidad: basta $gHg^{-1} \subseteq H$}
+\textbf{Patrón:} \textit{la contención para todo $g$ ya implica la igualdad (Nota 2.5.3), así que nunca se prueba la igualdad directamente.}
+\begin{itemize}[leftmargin=1.5em]
+\item Si $H = \Ker(f)$, la normalidad es automática: $f(x h x^{-1}) = 1$ (Teorema 2.5.5).
+\item En cocientes: $(aK)(bK)(aK)^{-1} = (aba^{-1})K$ reduce la normalidad en $G/K$ a la normalidad en $G$ (Teorema 2.7.2).
+\end{itemize}
+\textbf{Apariciones:} Teorema 2.5.5, Teorema 2.6.9 (conmutador), Teorema 2.7.2 ($H/K \triangleleft G/K$), Teorema 2.7.4 ($N \cap H \triangleleft H$), Ejemplo 2.6.11 ($D_4$).
+\end{strategybox}
+
+\begin{strategybox}{3.\ Para construir isomorfismos de cocientes: fabricar $f$ y aplicar el primer teorema}
+\textbf{Patrón:} \textit{en lugar de construir el isomorfismo a mano, defina un homomorfismo $f$ desde el grupo grande, calcule $\Ker(f)$ e $\Imm(f)$, y aplique $G/\Ker(f) \cong \Imm(f)$ (Teorema 2.7.1).}
+\begin{itemize}[leftmargin=1.5em]
+\item La elección de $f$ está dictada por el cociente buscado: proyecciones $aK \mapsto aH$ (tercer teorema), inclusiones $h \mapsto hN$ (segundo teorema), $\sigma \mapsto \sgn(\sigma)$ ($S_3/A_3$).
+\item Subproducto gratuito: $\Ker(f)$ resulta normal sin trabajo extra.
+\end{itemize}
+\textbf{Apariciones:} Teorema 2.7.2, Teorema 2.7.4, Teorema 3.1.7 (Cayley), Ejemplo 2.6.10 ($S_{3}/A_{3} \cong \Z_{2}$).
+\end{strategybox}
+
+\begin{strategybox}{4.\ Bien-definición de funciones sobre cocientes}
+\textbf{Patrón:} \textit{toda función definida eligiendo representantes ($aH \mapsto \dots$) exige verificar que representantes de la misma coclase dan la misma imagen; la herramienta es el criterio $aH = bH \iff b^{-1} \ast a \in H$ (Lema 2.4.3).}
+\begin{itemize}[leftmargin=1.5em]
+\item Para operaciones (no solo funciones): verificar también compatibilidad en ambos factores (Nota 2.6.3).
+\item El mismo chequeo aparece camuflado al probar inyectividad: $f(aH) = f(bH) \implies aH = bH$ es la dirección recíproca.
+\end{itemize}
+\textbf{Apariciones:} Teorema 2.6.2 (operación de $G/H$), Teorema 2.7.1 ($f'$), Teorema 2.7.2 ($f$), Teorema 2.7.6 ($\Phi$ y $f$), Teorema 2.4.7 ($f(aH) = Ha^{-1}$).
+\end{strategybox}
+
+\begin{strategybox}{5.\ Contar con Lagrange y órbita-estabilizador}
+\textbf{Patrón:} \textit{traducir preguntas de existencia o tamaño a divisibilidad: $\lvert G \rvert = [G:H]\,\lvert H \rvert$ (Teorema 2.4.10) y $\lvert \mathcal{O}_{x} \rvert = [G:G_{x}]$ (Teorema 3.2.6).}
+\begin{itemize}[leftmargin=1.5em]
+\item Órdenes de elementos: $\lvert g \rvert \mid \lvert G \rvert$ (Corolario 2.4.11).
+\item Índices encadenados: $[G:K] = [G:H][H:K]$ (Corolario 2.4.12).
+\item Clases de conjugación: $\lvert x^{G} \rvert = [G : C_{G}(x)]$ (Corolario 3.2.8).
+\end{itemize}
+\textbf{Apariciones:} Teorema 1.7.9 (Lagrange cíclico), Corolarios 2.4.11–2.4.12, Corolario 3.2.7, Teorema 3.4.3 (cálculo final $\lvert G_{H} \rvert = p^{e}$).
+\end{strategybox}
+
+\begin{strategybox}{6.\ Inducción fuerte sobre $\lvert G \rvert$ (o sobre el exponente)}
+\textbf{Patrón:} \textit{suponer el resultado para todos los grupos de orden menor y pasar a un subgrupo propio ($C_{G}(x)$, $Z(G)$, $\langle g \rangle$) o a un cociente ($G/H$, $G/Z(G)$) donde la hipótesis aplique.}
+\begin{itemize}[leftmargin=1.5em]
+\item El paso al cociente exige rescatar la conclusión vía el teorema de correspondencia (Teorema 2.7.6): un $S^{\ast} \leq G/H$ se levanta a $H \leq S \leq G$ con $\lvert S \rvert = \lvert S^{\ast} \rvert \cdot \lvert H \rvert$.
+\item Variante combinatoria: inducción sobre el número de elementos movidos (permutaciones) o sobre la longitud $r$ de un ciclo.
+\end{itemize}
+\textbf{Apariciones:} Teorema 3.2.9 (Cauchy), Teorema 3.2.14, Teorema 3.2.15, Teorema 1.8.15, Proposición 1.8.16.
+\end{strategybox}
+
+\begin{strategybox}{7.\ Ecuación de clases}
+\textbf{Patrón:} \textit{partir $G$ en $Z(G)$ y las clases de conjugación no triviales: $\lvert G \rvert = \lvert Z(G) \rvert + \sum_{i} [G : C_{G}(x_{i})]$, y extraer divisibilidades sobre $\lvert Z(G) \rvert$.}
+\begin{itemize}[leftmargin=1.5em]
+\item Si $p \mid \lvert G \rvert$ y $p$ divide cada $[G:C_{G}(x_{i})]$, entonces $p \mid \lvert Z(G) \rvert$.
+\item De ahí: los $p$-grupos tienen centro no trivial (Ejercicio 3.2.12), insumo de $\lvert G \rvert = p^{2} \implies$ abeliano (Corolario 3.2.13).
+\end{itemize}
+\textbf{Apariciones:} Teorema 3.2.9 (Cauchy, prueba general), Ejercicio 3.2.12, Corolario 3.2.13.
+\end{strategybox}
+
+\begin{strategybox}{8.\ Inventar la acción correcta}
+\textbf{Patrón:} \textit{para obtener información estructural, hacer actuar a $G$ (o a un subgrupo $P$) sobre un conjunto fabricado a medida y leer órbitas y estabilizadores.}
+\begin{itemize}[leftmargin=1.5em]
+\item Sobre sí mismo por traslación: Cayley, $G \hookrightarrow S_{G}$ (Teorema 3.1.7).
+\item Sobre sí mismo por conjugación: clases $x^{G}$ y centralizadores (Ejemplos 3.2.5).
+\item Sobre coclases $G/H$: estabilizadores conjugados $G_{xH} = xHx^{-1}$ (Ejemplos 3.2.5).
+\item Sobre subconjuntos $\Omega = \{ T \subseteq G : \lvert T \rvert = p^{e} \}$ por traslación: primer teorema de Sylow (Teorema 3.4.3); las sugerencias de los teoremas 3.4.4 y 3.4.5 siguen el mismo molde.
+\end{itemize}
+\textbf{Apariciones:} Teorema 3.1.7, Ejemplos 3.2.5, Teoremas 3.4.3–3.4.5.
+\end{strategybox}
+
+\begin{strategybox}{9.\ (Permutaciones) Descomponer primero en ciclos disjuntos}
+\textbf{Patrón:} \textit{ante cualquier afirmación sobre $\sigma \in S_{n}$, escribir su factorización en ciclos disjuntos (Teorema 1.8.15) y razonar tipo por tipo sobre la estructura cíclica.}
+\begin{itemize}[leftmargin=1.5em]
+\item La estructura cíclica clasifica los casos posibles (análisis exhaustivo de tipos en $A_{5}$ y $A_{6}$).
+\item El signo se lee de la factorización: $\sgn(\sigma) = (-1)^{n-k}$ con $k$ ciclos (Definición 1.8.19).
+\item Ciclos disjuntos conmutan (Teorema 1.8.12), así que el orden de los factores es irrelevante.
+\end{itemize}
+\textbf{Apariciones:} Definición 1.8.19, Ejemplo 1.8.18, Teoremas 3.3.5 y 3.3.6 (análisis por tipos).
+\end{strategybox}
+
+\begin{strategybox}{10.\ (Permutaciones) Conjugar para fabricar elementos de un subgrupo normal}
+\textbf{Patrón:} \textit{si $H \triangleleft A_{n}$ y $\sigma \in H$, entonces $\alpha\sigma\alpha^{-1} \in H$ para todo $\alpha \in A_{n}$; combinando, $\alpha\sigma\alpha^{-1}\sigma^{-1} \in H$. Eligiendo $\alpha$ con astucia se produce dentro de $H$ un elemento más simple (idealmente un $3$-ciclo).}
+\begin{itemize}[leftmargin=1.5em]
+\item La conjugación preserva la estructura cíclica: $\alpha\sigma\alpha^{-1}$ tiene el mismo tipo que $\sigma$.
+\item Una vez obtenido un $3$-ciclo en $H$, la conjugación de $3$-ciclos y la generación por $3$-ciclos (Ejercicios 3.3.4) fuerzan $H = A_{n}$.
+\item Para reducir el soporte: el conmutador $\alpha\sigma\alpha^{-1}\sigma^{-1}$ mueve a lo sumo $6$ puntos si $\alpha$ es un $3$-ciclo.
+\end{itemize}
+\textbf{Apariciones:} Teorema 3.3.5 (tipos 5 y 6), Teorema 3.3.6 (tipo dos $3$-ciclos), Teorema 3.3.7 (reducción a $A_{6}$).
+\end{strategybox}
+
+% =============================================================================
+\section{Anexo: órdenes y divisibilidad --- la herramienta de conteo}
+% =============================================================================
+
+El recurso transversal del curso: casi toda prueba de existencia o clasificación se reduce a comparar órdenes. Aquí están todas las fórmulas juntas.
+
+\anexogroup{El orden de un elemento}
+
+\begin{equivbox}{blue}{Reglas básicas del orden}
+Sea $g \in G$ con $\lvert g \rvert = n < \infty$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item $g^{k} = 1_{G} \iff n \mid k$. \hfill\textit{Teorema 1.6.3.}
+\item $g^{i} = g^{j} \iff n \mid i - j$; \quad si $\lvert g \rvert = \infty$, $g^{i} = g^{j} \iff i = j$. \hfill\textit{Proposición 1.6.10.}
+\item $\lvert g^{k} \rvert = \dfrac{n}{\mcd(n,k)}$; \quad si $c \mid n$, $\lvert g^{c} \rvert = n/c$; \quad si $\lvert g \rvert = rs$, $\lvert g^{r} \rvert = s$. \hfill\textit{Proposición 1.7.3, Ejercicio 1.7.2.}
+\item $\lvert f(g) \rvert \mid \lvert g \rvert$ para todo homomorfismo $f$. \hfill\textit{Proposición 2.1.3.}
+\item En el cociente: $(sH)^{m} = s^{m}H$, así que $\lvert sH \rvert \mid \lvert s \rvert$. \hfill\textit{prueba del Teorema 3.2.9.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Conteo global: Lagrange y sus corolarios}
+
+\begin{equivbox}{green!60!black}{Lagrange e índices}
+Sea $G$ finito, $K \leq H \leq G$ y $a \in G$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item $\lvert G \rvert = [G:H] \cdot \lvert H \rvert$; en particular $\lvert H \rvert \mid \lvert G \rvert$. \hfill\textit{Teorema 2.4.10.}
+\item $\lvert g \rvert \mid \lvert G \rvert$ para todo $g \in G$. \hfill\textit{Corolario 2.4.11.}
+\item $[G:K] = [G:H] \cdot [H:K]$. \hfill\textit{Corolario 2.4.12.}
+\item $\lvert aH \rvert = \lvert H \rvert$ (como cardinalidad) y el número de coclases izquierdas es igual al de derechas. \hfill\textit{Proposición 2.4.8, Teorema 2.4.7.}
+\item En cíclicos: $\lvert H \rvert \mid n$ y para cada $k \mid n$ hay un único $H \leq G$ con $\lvert H \rvert = k$, a saber $\langle g^{n/k} \rangle$. \hfill\textit{Teoremas 1.7.9 y 1.7.10.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Conteo por acciones}
+
+\begin{equivbox}{orange!85!black}{Órbitas, estabilizadores y clases}
+Sea $G$ finito actuando sobre $X$, $x \in X$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item $\lvert \mathcal{O}_{x} \rvert = [G : G_{x}]$; en particular $\lvert \mathcal{O}_{x} \rvert \mid \lvert G \rvert$. \hfill\textit{Teorema 3.2.6, Corolario 3.2.7.}
+\item Las órbitas parten $X$: $X = \dot{\bigcup}\, \mathcal{O}_{x}$. \hfill\textit{Definición 3.2.1.}
+\item Conjugación: $\lvert x^{G} \rvert = [G : C_{G}(x)]$ y $\lvert G \rvert = \lvert Z(G) \rvert + \sum_{i} \lvert x_{i}^{G} \rvert$. \hfill\textit{Corolario 3.2.8; prueba del Teorema 3.2.9.}
+\item $\lvert S_{n} \rvert = n!$ \ y \ $\lvert A_{n} \rvert = n!/2$. \hfill\textit{Teorema 1.8.1, Definición 1.8.24.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Existencia de elementos y subgrupos}
+
+\begin{equivbox}{purple}{Teoremas de existencia}
+Sea $G$ finito y $p$ primo:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(Cauchy)}\; $p \mid \lvert G \rvert \implies$ existe $g$ con $\lvert g \rvert = p$. \hfill\textit{Teorema 3.2.9.}
+\item \textbf{(abeliano)}\; $G$ abeliano y $d \mid \lvert G \rvert \implies$ existe $H \leq G$ con $\lvert H \rvert = d$. \hfill\textit{Teorema 3.2.14.}
+\item \textbf{($p$-grupos)}\; $\lvert G \rvert = p^{e} \implies$ existe $H \leq G$ con $\lvert H \rvert = p^{k}$ para todo $k \leq e$. \hfill\textit{Teorema 3.2.15.}
+\item \textbf{(Sylow)}\; $\lvert G \rvert = p^{e}k$, $p \nmid k$ $\implies$ existe $H \leq G$ con $\lvert H \rvert = p^{e}$. \hfill\textit{Teorema 3.4.3.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Tarjeta de bolsillo}
+
+\begin{equivbox}{gray}{Todas las fórmulas de conteo en una vista}
+\begin{itemize}[leftmargin=1.6em]
+\item $g^{k} = 1_{G} \iff \lvert g \rvert \mid k$ \quad\textbullet\quad $\lvert g^{k} \rvert = \lvert g \rvert / \mcd(\lvert g \rvert, k)$
+\item $\lvert \langle g \rangle \rvert = \lvert g \rvert$ \quad\textbullet\quad $G = \langle g^{k} \rangle \iff \mcd(\lvert g \rvert, k) = 1$ \quad\textbullet\quad $\langle [a] \rangle = \Z_{m} \iff \MCD(a,m) = 1$
+\item $\lvert G \rvert = [G:H]\,\lvert H \rvert$ \quad\textbullet\quad $[G:K] = [G:H][H:K]$ \quad\textbullet\quad $\lvert aH \rvert = \lvert H \rvert$
+\item $\lvert g \rvert \mid \lvert G \rvert$ \quad\textbullet\quad $\lvert f(g) \rvert \mid \lvert g \rvert$ \quad\textbullet\quad $\lvert sH \rvert \mid \lvert s \rvert$ en $G/H$
+\item $\lvert \mathcal{O}_{x} \rvert = [G:G_{x}]$ \quad\textbullet\quad $\lvert x^{G} \rvert = [G:C_{G}(x)]$ \quad\textbullet\quad $\lvert G \rvert = \lvert Z(G) \rvert + \sum [G:C_{G}(x_{i})]$
+\item $\lvert S_{n} \rvert = n!$ \quad\textbullet\quad $\lvert A_{n} \rvert = n!/2$ \quad\textbullet\quad $\lvert G/H \rvert = \lvert G \rvert / \lvert H \rvert$
+\item Existencia: Cauchy ($p$ primo) \textbullet\ abeliano ($d$ arbitrario) \textbullet\ $p$-grupos ($p^{k}$, $k \leq e$) \textbullet\ Sylow ($p^{e}$ máximo)
+\end{itemize}
+\end{equivbox}
+
+
+\end{document}

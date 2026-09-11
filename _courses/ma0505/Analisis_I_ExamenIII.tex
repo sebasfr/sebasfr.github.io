@@ -1,0 +1,2137 @@
+% =============================================================================
+%  Notas de Análisis I — MA0505 — III Parcial
+%  Compilar con: pdflatex Analisis_I_ExamenIII.tex (dos veces para que el TOC
+%  recoja las entradas de cada definición, teorema, lema, etc.)
+% =============================================================================
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{XCharter}
+\usepackage[libertine,charter]{newtxmath}
+\usepackage[spanish,es-noshorthands]{babel}
+% Renombramos elementos al español manualmente (no requiere texlive-lang-spanish)
+\addto\captionsenglish{%
+  \renewcommand{\contentsname}{\'Indice}%
+  \renewcommand{\refname}{Referencias}%
+}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit}
+\usepackage{eso-pic}
+\usepackage{etoolbox}
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={Notas de Análisis I --- MA0505},
+  pdfauthor={Sebastián Fernández Rivera}
+}
+
+% Mostrar entradas hasta nivel "subsubsection" en el índice
+% (cada teorema/definición/etc. aparece en el TOC con nombre y página).
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+
+\renewcommand{\proofname}{\textbf{Prueba}}
+\allowdisplaybreaks
+
+% -----------------------------------------------------------------------------
+%  Contador y entornos para resultados (definiciones, teoremas, etc.)
+%  - Cada resultado se numera dentro de su subsection: 1.1.1, 1.1.2, ...
+%  - Cada resultado se agrega automáticamente al índice con su nombre y página.
+% -----------------------------------------------------------------------------
+\newcounter{result}[subsection]
+\renewcommand{\theresult}{\thesubsection.\arabic{result}}
+
+% Cuerpo en cursiva (para teoremas, proposiciones, lemas, corolarios)
+\newenvironment{namedres}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+% -----------------------------------------------------------------------------
+%  Caja coloreada para los resúmenes de los anexos.
+%  Uso: \begin{equivbox}{ColorXcolor}{Título}  ...  \end{equivbox}
+% -----------------------------------------------------------------------------
+\newtcolorbox{equivbox}[2]{%
+  enhanced,
+  breakable,
+  colback=#1!6!white,
+  colframe=#1!72!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#2},% braces protect commas in the title from tcolorbox key parser
+  arc=4pt,
+  boxrule=0.8pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  before skip=4pt, after skip=8pt,
+}
+
+% Encabezado compacto para los sub-grupos de un Anexo:
+% sustituye a \subsection*{...}\addcontentsline{...} cuando se desea poco
+% espacio entre el título del grupo y la caja siguiente.
+\newcommand{\anexogroup}[1]{%
+  \par\addvspace{0.7\baselineskip}%
+  \noindent{\bfseries\large #1}\par\nobreak
+  \addcontentsline{toc}{subsection}{#1}%
+  \vspace{4pt}\nopagebreak
+}
+
+% Cuerpo en redonda (para definiciones, ejemplos, ejercicios, notas, notación)
+\newenvironment{namedstd}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+% Subrayado HTML <u>...</u> -> \uline
+\newcommand{\hlu}[1]{\underline{#1}}
+
+% Operadores y abreviaturas
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Imm}{Im}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\mcd}{mcd}
+\DeclareMathOperator{\MCD}{MCD}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+% Función indicadora (los beamers usan \ind)
+\newcommand{\ind}{\mathbf{1}}
+
+% =============================================================================
+%  Cabecera y pie de página (fancyhdr)
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{MA0505 --- An\'alisis I, III Parcial}}
+\fancyfoot[C]{\small Página \thepage{} de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% =============================================================================
+%  Tabs de color en el borde exterior (índice rápido por sección)
+% =============================================================================
+\definecolor{sec1col}{HTML}{1F77B4}   % Egorov y Lusin
+\definecolor{sec2col}{HTML}{2CA02C}   % Convergencia en medida
+\definecolor{sec3col}{HTML}{17BECF}   % Integral de funciones no negativas
+\definecolor{sec4col}{HTML}{9467BD}   % Propiedades de la integral
+\definecolor{sec5col}{HTML}{FF7F0E}   % Integral de funciones medibles
+\definecolor{sec6col}{HTML}{D62728}   % Riemann y Lebesgue
+\definecolor{sec7col}{HTML}{8C564B}   % (reserva)
+\definecolor{sec8col}{HTML}{E377C2}   % (reserva)
+\definecolor{sec9col}{HTML}{BCBD22}   % (reserva)
+\definecolor{sec10col}{HTML}{555555}  % Anexo
+
+\newcounter{thumbsec}
+\pretocmd{\section}{\stepcounter{thumbsec}}{}{}
+
+% Bandera para evitar que los thumb-tabs aparezcan en la portada y el índice.
+% Se activa explícitamente en el cuerpo, justo después del \tableofcontents.
+\newif\ifdrawthumb
+\drawthumbfalse
+
+\newcommand{\drawthumbtab}{%
+  \ifdrawthumb%
+  \ifnum\value{thumbsec}>0%
+    \ifnum\value{thumbsec}<7%
+      \begin{tikzpicture}[remember picture, overlay]%
+        \pgfmathsetmacro{\toppadcm}{4.0}%
+        \pgfmathsetmacro{\tabHcm}{1.6}%
+        \pgfmathsetmacro{\ypos}{-\toppadcm - (\value{thumbsec} - 1) * \tabHcm}%
+        \ifodd\value{page}%
+          % Páginas impares (recto) --- tab en el borde derecho.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north east)
+            rectangle ++(-0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=-0.35cm, yshift=\ypos cm - 0.6cm]current page.north east)
+            {\arabic{thumbsec}};
+        \else%
+          % Páginas pares (verso) --- tab en el borde izquierdo.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north west)
+            rectangle ++(0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=0.35cm, yshift=\ypos cm - 0.6cm]current page.north west)
+            {\arabic{thumbsec}};
+        \fi%
+      \end{tikzpicture}%
+    \fi%
+  \fi%
+  \fi%
+}
+\AddToShipoutPictureFG{\drawthumbtab}
+
+\begin{document}
+
+% =============================================================================
+% PORTADA
+% =============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.5cm}
+
+{\scshape\Large Universidad de Costa Rica\par}
+\vspace{0.3cm}
+{\scshape\large Escuela de Matem\'atica\par}
+
+\vspace{1.2cm}
+
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{0.6cm}
+
+{\Huge\bfseries Notas de An\'alisis I\par}
+
+\vspace{0.5cm}
+
+{\Large\itshape Resumen de definiciones, teoremas y resultados\par}
+
+\vspace{0.4cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+
+\vspace{1.4cm}
+
+{\Large\bfseries MA0505 --- An\'alisis I\par}
+
+\vspace{2.2cm}
+
+\begin{tabular}{rl}
+\textbf{Autor:}              & Sebasti\'{a}n Fern\'{a}ndez Rivera \\[4pt]
+\textbf{Curso:}              & MA0505 --- An\'alisis I \\[4pt]
+\textbf{Documento:}          & Notas para el III Parcial \\[4pt]
+\textbf{Resultados numerados:} & 63 \\[4pt]
+\textbf{Fecha:}              & \today
+\end{tabular}
+
+\vfill
+
+\begin{minipage}{0.85\textwidth}
+\centering
+\itshape
+Este documento re\'{u}ne las definiciones, teoremas, proposiciones, lemas, corolarios, ejemplos, notas, ejercicios y notaciones presentadas en el curso sobre los teoremas de Egorov y Lusin, la convergencia en medida, la integral de Lebesgue y su relaci\'{o}n con la integral de Riemann. Cada resultado est\'{a} numerado de la forma \texttt{seccion.subseccion.resultado} y aparece en el \'{\i}ndice con su p\'{a}gina correspondiente para una consulta r\'{a}pida durante el examen.
+\end{minipage}
+
+\vspace{1cm}
+
+{\color{blue!50!black}\rule{0.5\textwidth}{0.6pt}}
+
+\end{titlepage}
+
+% =============================================================================
+% \'INDICE
+% =============================================================================
+\thispagestyle{empty}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+% \tableofcontents llama internamente a \section*{...}, lo cual activa el hook
+% \pretocmd{\section}{...} y hace avanzar \value{thumbsec} a 1 antes de iniciar
+% el cuerpo. Reseteamos para que la sección 1 reciba el thumb-tab "1".
+\setcounter{thumbsec}{0}
+\drawthumbtrue   % Activa los thumb-tabs a partir de aquí (cuerpo del documento).
+
+% =============================================================================
+\section{Los teoremas de Egorov y Lusin}
+% =============================================================================
+
+\subsection{El teorema de Egorov}
+
+A lo largo de esta sección, $m$ denota la medida de Lebesgue en $\R^{d}$, $m_{e}$ la medida exterior, y ``c.p.d.'' abrevia \emph{casi por doquier}.
+
+\begin{namedstd}{Nota}{La convergencia puntual no implica convergencia uniforme}
+Recordemos que existen sucesiones $f_{k} : E \to \R$ continuas tales que
+\[
+\lim_{k \to \infty} f_{k} = f
+\]
+puntualmente en $E$, pero tales que $f_{k}$ no converge uniformemente a $f$ en compactos. El teorema de Egorov muestra que, para funciones medibles sobre un conjunto de medida finita, la convergencia puntual c.p.d. sí es uniforme fuera de un conjunto de medida arbitrariamente pequeña.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La hipótesis de medida finita es esencial en Egorov}
+Sean $E = \R^{d}$ y
+\[
+f_{k}(x) = \ind_{B(0,k)}(x).
+\]
+Entonces $\lim_{k \to \infty} f_{k} = 1$ puntualmente en $\R^{d}$. Sea $F$ cerrado y no acotado; entonces para todo $k \in \N$ existe $x \in F$ tal que
+\[
+|1 - f_{k}(x)| = 1,
+\]
+pues $F$ posee puntos fuera de $B(0,k)$. Es decir, la convergencia no puede ser uniforme en $F$. Note además que, si $F$ es cerrado y $m(\R^{d} \setminus F) < \infty$, entonces $F$ no es acotado. Por lo tanto, la conclusión del teorema de Egorov falla para esta sucesión: ningún cerrado que deje afuera medida finita admite convergencia uniforme.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Lema técnico previo al teorema de Egorov}
+Sean $E \subseteq \R^{d}$ medible con $m(E) < \infty$ y $\{f_{k}\}_{k=1}^{\infty}$ funciones medibles en $E$ tales que
+\[
+\lim_{k \to \infty} f_{k} = f \quad \text{c.p.d. en } E, \qquad |f(x)| \neq \infty \ \text{c.p.d. en } E.
+\]
+Entonces, dados $\varepsilon > 0$ y $\eta > 0$, existen $F \subseteq E$ cerrado y $k_{0} = k_{0}(\varepsilon, \eta) \geq 0$ tales que
+\[
+m(E \setminus F) < \eta
+\]
+y
+\[
+|f_{k}(x) - f(x)| < \varepsilon \quad \text{para todo } x \in F \text{ y } k \geq k_{0}.
+\]
+\end{namedres}
+\begin{proof}
+Defina
+\[
+\tilde{E} = \{ x \in E :\ \lim_{k \to \infty} f_{k}(x) = f(x),\ |f(x)| < \infty \}.
+\]
+Por hipótesis, $m(E \setminus \tilde{E}) = 0$. Para $\varepsilon > 0$ y $\eta > 0$ fijos, definamos
+\[
+E_{m} = \{ x \in \tilde{E} :\ k \geq m \implies |f(x) - f_{k}(x)| < \varepsilon \}.
+\]
+Entonces cada $E_{m}$ es medible, pues
+\[
+E_{m} = \tilde{E} \cap \bigcap_{k \geq m} \{ x \in E :\ |f(x) - f_{k}(x)| < \varepsilon \}
+\]
+es una intersección numerable de conjuntos medibles, y además $E_{m} \subseteq E_{m+1}$, ya que la condición se exige sobre menos índices $k$ al crecer $m$. Se cumple que $\bigcup_{m=1}^{\infty} E_{m} = \tilde{E}$ (ejercicio; véase el ejercicio siguiente).
+
+Por la continuidad desde abajo de la medida, tenemos que
+\[
+m(\tilde{E}) = \lim_{m \to \infty} m(E_{m}).
+\]
+Como $m(\tilde{E}) \leq m(E) < \infty$, podemos restar y obtenemos
+\[
+\lim_{m \to \infty} m(\tilde{E} \setminus E_{m}) = \lim_{m \to \infty} \big( m(\tilde{E}) - m(E_{m}) \big) = 0.
+\]
+Además $E \setminus E_{m} = (E \setminus \tilde{E}) \cup (\tilde{E} \setminus E_{m})$ y $m(E \setminus \tilde{E}) = 0$, entonces $m(E \setminus E_{m}) = m(\tilde{E} \setminus E_{m}) \to 0$. Sea entonces $k_{0}$ tal que
+\[
+m(E \setminus E_{k_{0}}) < \frac{\eta}{2}.
+\]
+Note que si $x \in E_{k_{0}}$, entonces, por definición de $E_{k_{0}}$,
+\[
+|f(x) - f_{k}(x)| < \varepsilon \quad \text{para } k \geq k_{0}.
+\]
+Finalmente, como $E_{k_{0}}$ es medible, por regularidad interna existe $F$ cerrado con $F \subseteq E_{k_{0}}$ que satisface
+\[
+m(E_{k_{0}} \setminus F) < \frac{\eta}{2}.
+\]
+Entonces
+\[
+m(E \setminus F) \leq m(E \setminus E_{k_{0}}) + m(E_{k_{0}} \setminus F) < \eta,
+\]
+y si $x \in F \subseteq E_{k_{0}}$ y $k \geq k_{0}$, tenemos que $|f_{k}(x) - f(x)| < \varepsilon$.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{La unión de los $E_{m}$ recupera $\tilde{E}$}
+Con la notación de la prueba anterior, muestre que $\bigcup_{m=1}^{\infty} E_{m} = \tilde{E}$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Egorov: la convergencia c.p.d. es casi uniforme en medida finita}
+Sean $E \subseteq \R^{d}$ medible, con $m(E) < \infty$, y $\{f_{k}\}_{k=1}^{\infty}$ funciones medibles en $E$. Asuma que
+\[
+\lim_{k \to \infty} f_{k} = f
+\]
+c.p.d. en $E$ y que $|f(x)| \neq \infty$ c.p.d. en $E$. Entonces, dado $\varepsilon > 0$, existe $F_{\varepsilon} \subseteq E$ cerrado tal que:
+\begin{enumerate}[label=(\roman*)]
+\item $m(E \setminus F_{\varepsilon}) < \varepsilon$.
+\item $f_{k}$ converge a $f$ uniformemente en $F_{\varepsilon}$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Sea $\varepsilon > 0$. Aplicando el lema anterior con $\varepsilon_{m} = \tfrac{1}{m}$ y $\eta_{m} = \tfrac{\varepsilon}{2^{m}}$ para cada $m \geq 1$, existen $F_{m} \subseteq E$ cerrados y enteros $\kappa_{m}^{\varepsilon}$ tales que
+\[
+m(E \setminus F_{m}) < \frac{\varepsilon}{2^{m}}
+\]
+y
+\[
+|f(x) - f_{k}(x)| < \frac{1}{m} \quad \text{para todo } k \geq \kappa_{m}^{\varepsilon} \text{ y } x \in F_{m}.
+\]
+Sea
+\[
+F_{\varepsilon} = \bigcap_{m=1}^{\infty} F_{m}.
+\]
+Entonces $F_{\varepsilon}$ es cerrado, por ser intersección de cerrados, y
+\[
+m(E \setminus F_{\varepsilon}) = m\left( E \cap \bigcup_{m=1}^{\infty} F_{m}^{c} \right) \leq \sum_{m=1}^{\infty} m(E \setminus F_{m}) < \sum_{m=1}^{\infty} \frac{\varepsilon}{2^{m}} = \varepsilon.
+\]
+Veamos que la convergencia es uniforme en $F_{\varepsilon}$. Dado $\delta > 0$, tome $m \geq 1$ con $\tfrac{1}{m} < \delta$. Si $x \in F_{\varepsilon} \subseteq F_{m}$ y $k \geq \kappa_{m}^{\varepsilon}$, entonces
+\[
+|f(x) - f_{k}(x)| < \frac{1}{m} < \delta.
+\]
+Como $\kappa_{m}^{\varepsilon}$ no depende de $x$, concluimos que $f_{k} \to f$ uniformemente en $F_{\varepsilon}$.
+\end{proof}
+
+\subsection{El teorema de Lusin}
+
+\begin{namedstd}{Definición}{Propiedad $C$ de una función}
+Una función $f : E \to \R$ tiene la \emph{propiedad $C$} en $E$ si dado $\varepsilon > 0$, existe un $F \subseteq E$ cerrado tal que
+\begin{enumerate}[label=(\arabic*)]
+\item $m(E \setminus F) < \varepsilon$;
+\item $f$ es continua relativa a $F$, es decir, $f : F \to \R$ es continua.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Caracterización secuencial de la continuidad relativa}
+La segunda condición de la definición anterior es equivalente a que si $\{x_{n}\}_{n=1}^{\infty} \subseteq F$ con
+\[
+\lim_{n \to \infty} x_{n} = x \in F,
+\]
+entonces
+\[
+\lim_{n \to \infty} f(x_{n}) = f(x).
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{Las funciones simples medibles tienen la propiedad $C$}
+Sea $\phi$ una función simple y medible en $E$. Entonces $\phi$ tiene la propiedad $C$.
+\end{namedres}
+\begin{proof}
+Escribamos
+\[
+\phi(x) = \sum_{\ell=1}^{m} b_{\ell} \ind_{B_{\ell}}(x)
+\]
+con los $B_{\ell} \subseteq E$ medibles, $B_{i} \cap B_{j} = \emptyset$ y $b_{i} \neq b_{j}$ si $i \neq j$, y $E = \bigcup_{\ell=1}^{m} B_{\ell}$.
+
+Dado $\varepsilon > 0$, por regularidad interna tome, para cada $1 \leq \ell \leq m$, un cerrado $F_{\ell} \subseteq B_{\ell}$ tal que
+\[
+m(B_{\ell} \setminus F_{\ell}) < \frac{\varepsilon}{m}.
+\]
+Entonces
+\[
+F = \bigcup_{\ell=1}^{m} F_{\ell}
+\]
+es cerrado, por ser unión finita de cerrados. Además, como los $B_{\ell}$ cubren $E$, tenemos que $E \setminus F \subseteq \bigcup_{\ell=1}^{m} (B_{\ell} \setminus F_{\ell})$, y por lo tanto
+\[
+m(E \setminus F) \leq \sum_{\ell=1}^{m} m(B_{\ell} \setminus F_{\ell}) < m \cdot \frac{\varepsilon}{m} = \varepsilon.
+\]
+Falta ver que $\phi$ es continua relativa a $F$. Tome $\{x_{n}\}_{n=1}^{\infty} \subseteq F$ tal que
+\[
+\lim_{n \to \infty} x_{n} = y \in F.
+\]
+Entonces existe $\ell_{0}$ tal que $y \in F_{\ell_{0}}$. Afirmamos que, dado $\ell \neq \ell_{0}$, el conjunto
+\[
+\{x_{n}\}_{n=1}^{\infty} \cap F_{\ell}
+\]
+es finito. En caso contrario, existe una subsucesión
+\[
+\{x_{n_{k}}\}_{k=1}^{\infty} \subseteq F_{\ell} \quad \text{con} \quad \lim_{k \to \infty} x_{n_{k}} = y.
+\]
+Como $F_{\ell}$ es cerrado, esto implica que $y \in F_{\ell}$; pero $F_{\ell} \cap F_{\ell_{0}} \subseteq B_{\ell} \cap B_{\ell_{0}} = \emptyset$, lo que nos lleva a una contradicción.
+
+Por lo tanto, como los $x_{n}$ están repartidos entre los $F_{\ell}$ y solo finitos caen fuera de $F_{\ell_{0}}$, existe $k_{0}$ tal que $x_{n} \in F_{\ell_{0}}$ para $n \geq k_{0}$. Entonces
+\[
+\phi(x_{n}) = b_{\ell_{0}} = \phi(y) \quad \text{para } n \geq k_{0},
+\]
+es decir,
+\[
+\lim_{n \to \infty} \phi(x_{n}) = \phi(y). \qedhere
+\]
+\end{proof}
+
+\begin{namedres}{Teorema}{Lusin: medibilidad equivale a la propiedad $C$}
+Sea $f : E \to \R$ con $E$ medible. Entonces $f$ es medible si y solo si $f$ tiene la propiedad $C$ en $E$.
+\end{namedres}
+\begin{proof}
+\textit{Medible implica propiedad $C$, caso $m(E) < \infty$.} Sea $f : E \to \R$ medible; entonces existe $\{f_{k}\}_{k=1}^{\infty}$ una sucesión de funciones simples y medibles tales que
+\[
+\lim_{k \to \infty} f_{k}(x) = f(x)
+\]
+c.p.d. en $E$. Sea $\varepsilon > 0$. Por el lema anterior, para cada $k \geq 1$ existe $F_{k} \subseteq E$ cerrado que satisface
+\[
+m(E \setminus F_{k}) < \frac{\varepsilon}{2^{k+1}},
+\]
+y tal que $f_{k}$ es continua relativa a $F_{k}$. Como $m(E) < \infty$, por el teorema de Egorov existe $F_{0} \subseteq E$ cerrado tal que
+\[
+m(E \setminus F_{0}) < \frac{\varepsilon}{2} \qquad \text{y} \qquad \lim_{k \to \infty} f_{k} = f \ \text{uniformemente en } F_{0}.
+\]
+Si tomamos
+\[
+F = F_{0} \cap \bigcap_{k=1}^{\infty} F_{k},
+\]
+entonces $F$ es cerrado, y como
+\[
+E \setminus F = (E \setminus F_{0}) \cup \bigcup_{k=1}^{\infty} (E \setminus F_{k}),
+\]
+tenemos que
+\[
+m(E \setminus F) \leq m(E \setminus F_{0}) + \sum_{k=1}^{\infty} m(E \setminus F_{k}) < \frac{\varepsilon}{2} + \sum_{k=1}^{\infty} \frac{\varepsilon}{2^{k+1}} = \varepsilon.
+\]
+Cada $f_{k}$ es continua relativa a $F_{k} \supseteq F$, y por lo tanto continua relativa a $F$. Como
+\[
+\lim_{k \to \infty} f_{k} = f
+\]
+uniformemente en $F$, y el límite uniforme de funciones continuas es continuo, tenemos que $f$ es continua relativa a $F$.
+
+\textit{Medible implica propiedad $C$, caso $m(E) = \infty$.} Llamemos
+\[
+E_{k} = E \cap \{ x \in \R^{d} :\ k-1 \leq |x| < k \}, \quad k \geq 1.
+\]
+Los $E_{k}$ son medibles, disjuntos dos a dos, cubren $E$ y $m(E_{k}) \leq m(B(0,k)) < \infty$. Por el caso anterior, para cada $k$ existe $F_{k} \subseteq E_{k}$ cerrado tal que $f$ es continua relativa a $F_{k}$ y
+\[
+m(E_{k} \setminus F_{k}) \leq \frac{\varepsilon}{2^{k}}.
+\]
+Tome
+\[
+F = \bigcup_{k=1}^{\infty} F_{k}.
+\]
+Como $E \setminus F \subseteq \bigcup_{k=1}^{\infty} (E_{k} \setminus F_{k})$, tenemos que $m(E \setminus F) \leq \sum_{k=1}^{\infty} \varepsilon/2^{k} = \varepsilon$.
+
+Veamos que $F$ es cerrado. Sea $\{x_{n}\}_{n=1}^{\infty} \subseteq F$ con $\lim_{n \to \infty} x_{n} = y \in \R^{d}$. Como la sucesión converge, es acotada: existe $k_{0}$ tal que
+\[
+n \geq k_{0} \implies |x_{n}| \leq |y| + 1.
+\]
+Sea $M$ un entero con $M \geq |y| + 2$. Si $x_{n} \in F_{k} \subseteq E_{k}$ con $n \geq k_{0}$, entonces $k - 1 \leq |x_{n}| \leq |y| + 1$, es decir $k \leq |y| + 2 \leq M$. Por lo tanto
+\[
+x_{n} \in \bigcup_{k=1}^{M} F_{k} \quad \text{para } n \geq k_{0},
+\]
+que es una unión finita de cerrados y por ende un cerrado. Entonces $y \in \bigcup_{k=1}^{M} F_{k} \subseteq F$, y $F$ es cerrado.
+
+Veamos que $f$ es continua relativa a $F$. Sea $\{x_{n}\}_{n=1}^{\infty} \subseteq F$ con $\lim_{n \to \infty} x_{n} = y \in F$. Por lo anterior, existe $k_{0}$ tal que $x_{n} \in \bigcup_{k=1}^{M} F_{k}$ para $n \geq k_{0}$. Como los $F_{k}$ son cerrados y disjuntos dos a dos, por el argumento de la prueba del lema anterior existen $k_{1}$ y $\ell_{1}$ tales que
+\[
+n \geq k_{1} \implies x_{n} \in F_{\ell_{1}},
+\]
+con $y \in F_{\ell_{1}}$. Como $f$ es continua relativa a $F_{\ell_{1}}$, concluimos que $\lim_{n \to \infty} f(x_{n}) = f(y)$.
+
+\textit{Propiedad $C$ implica medible.} Si $f$ posee la propiedad $C$, entonces para cada $k \geq 1$ existe $F_{k} \subseteq E$ cerrado que satisface:
+\begin{enumerate}[label=(\roman*)]
+\item $m(E \setminus F_{k}) < \frac{1}{k}$;
+\item $f$ es continua relativa a $F_{k}$.
+\end{enumerate}
+Sea
+\[
+H = \bigcup_{k=1}^{\infty} F_{k},
+\]
+entonces $H \subseteq E$ y $m(E \setminus H) = 0$ (ejercicio; véase el ejercicio siguiente). Escribamos $Z = E \setminus H$. Finalmente, para cada $a \in \R$,
+\begin{align*}
+\{ x \in E :\ f(x) > a \} &= \{ x \in H :\ f(x) > a \} \cup \{ x \in Z :\ f(x) > a \} \\
+&= \bigcup_{k=1}^{\infty} \{ x \in F_{k} :\ f(x) > a \} \cup \{ x \in Z :\ f(x) > a \}.
+\end{align*}
+Cada $\{ x \in F_{k} :\ f(x) > a \}$ es medible: como $f$ es continua relativa a $F_{k}$, este conjunto es abierto relativo a $F_{k}$, es decir, de la forma $F_{k} \cap G$ con $G$ abierto de $\R^{d}$, que es medible. Por otra parte, $\{ x \in Z :\ f(x) > a \} \subseteq Z$ tiene medida exterior cero y es por lo tanto medible. Entonces $\{ f > a \}$ es medible para todo $a \in \R$, es decir, $f$ es medible.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{El complemento de la unión de los $F_{k}$ es nulo}
+Con la notación de la prueba anterior, muestre que si $H = \bigcup_{k=1}^{\infty} F_{k}$ con $m(E \setminus F_{k}) < \tfrac{1}{k}$ para todo $k \geq 1$, entonces $m(E \setminus H) = 0$.
+\end{namedstd}
+
+% =============================================================================
+\section{Convergencia en medida}
+% =============================================================================
+
+\subsection{Definición y relación con la convergencia c.p.d.}
+
+\begin{namedstd}{Definición}{Convergencia en medida}
+Sean $f, f_{n} : E \to \overline{\R}$ medibles y finitas casi por doquier. Decimos que $f_{n}$ \emph{converge a $f$ en medida} si, para todo $\varepsilon > 0$,
+\[
+\lim_{n \to \infty} m\{ |f_{n} - f| > \varepsilon \} = 0.
+\]
+Denotamos $f_{n} \xrightarrow{m} f$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{La convergencia en medida es la más débil del curso}
+Esta convergencia es la convergencia más débil que veremos en el curso: la convergencia uniforme implica la convergencia puntual, la puntual implica la convergencia c.p.d., y sobre conjuntos de medida finita la convergencia c.p.d. implica la convergencia en medida, como muestra el teorema siguiente. Ninguna de las implicaciones recíprocas vale en general.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{En medida finita, la convergencia c.p.d. implica convergencia en medida}
+Sean $f, f_{n} : E \to \overline{\R}$ medibles y finitas casi por doquier. Si
+\[
+\lim_{n \to \infty} f_{n} = f
+\]
+casi por doquier en $E$ y $m(E) < \infty$, entonces $f_{n} \xrightarrow{m} f$ en $E$.
+\end{namedres}
+\begin{proof}
+Sean $\eta > 0$ y $\varepsilon > 0$; hay que mostrar que existe $n_{0}$ tal que
+\[
+m\{ |f_{n} - f| > \varepsilon \} < \eta
+\]
+cuando $n \geq n_{0}$. Como $m(E) < \infty$, por el teorema de Egorov existe $F \subseteq E$ cerrado tal que
+\[
+m(E \setminus F) < \eta
+\]
+y $f_{n} \to f$ uniformemente en $F$. Entonces existe $n_{0}$ tal que
+\[
+|f_{n}(x) - f(x)| < \varepsilon \quad \text{para todo } n \geq n_{0} \text{ y } x \in F.
+\]
+Luego
+\[
+\{ x \in E :\ |f_{n}(x) - f(x)| > \varepsilon \} \subseteq E \setminus F
+\]
+cuando $n \geq n_{0}$, y por monotonía de la medida,
+\[
+m\{ x \in E :\ |f_{n}(x) - f(x)| > \varepsilon \} \leq m(E \setminus F) < \eta. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{La máquina de escribir: convergencia en medida sin convergencia puntual}
+Considere la sucesión de indicadoras de intervalos diádicos de $[0,1]$:
+\begin{gather*}
+I_{0} = \ind_{[0,1]}, \\
+I_{1,1} = \ind_{[0,\frac{1}{2}]}, \quad I_{1,2} = \ind_{[\frac{1}{2},1]}, \\
+I_{2,i} = \ind_{[\frac{i-1}{2^{2}},\frac{i}{2^{2}}]}, \quad 1 \leq i \leq 4.
+\end{gather*}
+En general, $I_{n,i} = \ind_{[\frac{i-1}{2^{n}},\frac{i}{2^{n}}]}$ con $1 \leq i \leq 2^{n}$. Para obtener una sucesión ordenamos los índices lexicográficamente:
+\[
+(m,i) \leq (n,j) \iff (m < n) \lor \big( (m = n) \land i \leq j \big).
+\]
+Esta sucesión converge a cero en medida, pues para $0 < \varepsilon < 1$ el conjunto $\{ I_{n,i} > \varepsilon \}$ es un intervalo de medida $2^{-n}$, y $n \to \infty$ a lo largo de la sucesión. Sin embargo, no converge en ningún punto: para cada $x \in [0,1]$ y cada $n$ existe algún $i$ con $x \in [\frac{i-1}{2^{n}},\frac{i}{2^{n}}]$, de modo que la sucesión toma los valores $1$ y $0$ infinitas veces en $x$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Toda sucesión convergente en medida tiene una subsucesión convergente c.p.d.}
+Sea $f_{n} \xrightarrow{m} f$ en $E$. Entonces existen índices $n_{1} < n_{2} < \dots$ de manera que
+\[
+f_{n_{j}} \to f
+\]
+casi por doquier en $E$.
+\end{namedres}
+\begin{proof}
+Dado $j \geq 1$, por la convergencia en medida existe $n_{j}$ tal que
+\[
+m\left\{ |f_{n} - f| > \frac{1}{j} \right\} \leq \frac{1}{2^{j}} \quad \text{si } n \geq n_{j}.
+\]
+Sin pérdida de generalidad podemos suponer $n_{j} < n_{j+1}$, escogiendo los índices de manera creciente. Entonces
+\[
+m\left\{ |f_{n_{j}} - f| > \frac{1}{j} \right\} \leq \frac{1}{2^{j}}.
+\]
+Tome
+\[
+H_{m} = \bigcup_{j \geq m} \left\{ |f_{n_{j}} - f| > \frac{1}{j} \right\}.
+\]
+Entonces $H_{m+1} \subseteq H_{m}$ y, por subaditividad numerable,
+\[
+m(H_{m}) \leq \sum_{j \geq m} m\left\{ |f_{n_{j}} - f| > \frac{1}{j} \right\} \leq \sum_{j \geq m} \frac{1}{2^{j}} = \frac{1}{2^{m-1}}.
+\]
+Considere
+\[
+Z = \bigcap_{m \in \N} H_{m}.
+\]
+Como $Z \subseteq H_{m}$ para todo $m$, tenemos que $m(Z) \leq 2^{-(m-1)}$ para todo $m$, y entonces $Z$ tiene medida cero. Además, si
+\[
+x \in E \setminus Z = \bigcup_{m \in \N} (E \setminus H_{m}),
+\]
+entonces existe $m_{0}$ tal que $x \in E \setminus H_{m_{0}}$. Como
+\[
+E \setminus H_{m_{0}} = E \setminus \bigcup_{j \geq m_{0}} \left\{ |f_{n_{j}} - f| > \frac{1}{j} \right\} = \bigcap_{j \geq m_{0}} \left\{ |f_{n_{j}} - f| \leq \frac{1}{j} \right\},
+\]
+obtenemos que, dado $x \in E \setminus Z$, existe $m_{0}$ tal que
+\[
+|f_{n_{j}}(x) - f(x)| \leq \frac{1}{j} \quad \text{para } j \geq m_{0}.
+\]
+Finalmente, dado $\varepsilon > 0$, existe $j_{0}$ tal que $\tfrac{1}{j_{0}} < \varepsilon$, y entonces
+\[
+|f_{n_{j}}(x) - f(x)| \leq \frac{1}{j} \leq \frac{1}{j_{0}} < \varepsilon
+\]
+para $j \geq \max(j_{0}, m_{0})$. Es decir, $f_{n_{j}}(x) \to f(x)$ para todo $x$ fuera del conjunto nulo $Z$.
+\end{proof}
+
+\subsection{Sucesiones de Cauchy en medida}
+
+\begin{namedstd}{Definición}{Sucesión de Cauchy en medida}
+Decimos que $(f_{n})_{n \in \N}$ es \emph{de Cauchy en medida} si para todos $\varepsilon, \eta > 0$ existe $N \in \N$ tal que
+\[
+m\{ |f_{n} - f_{m}| > \varepsilon \} < \eta
+\]
+para $n, m \geq N$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Toda sucesión de Cauchy en medida converge en medida}
+Una sucesión de Cauchy en medida es convergente en medida.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+% =============================================================================
+\section{La integral de Lebesgue de funciones no negativas}
+% =============================================================================
+
+\subsection{La región bajo el gráfico}
+
+\begin{namedstd}{Definición}{Región bajo el gráfico y gráfico de una función}
+Sea $f : E \to \overline{\R}$ medible con $E \subseteq \R^{d}$ medible y $f \geq 0$. Definimos la \emph{región bajo el gráfico} de $f$ sobre $E$ como
+\[
+R(f,E) = \{ (x,y) \in \R^{d+1} :\ x \in E,\ 0 \leq y \leq f(x) \},
+\]
+y el \emph{gráfico} de $f$ sobre $E$ como
+\[
+\Gamma(f,E) = \{ (x, f(x)) :\ x \in E \}.
+\]
+Surge la pregunta: ¿es $R(f,E)$ medible?
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La región bajo un múltiplo de una indicadora}
+Analicemos el caso
+\[
+f(x) = a \ind_{A}(x)
+\]
+con $A \subseteq E$ medible y $a > 0$. Entonces ocurre que
+\begin{align*}
+R(f,E) &= \{ (x,y) \in \R^{d+1} :\ x \in E,\ 0 \leq y \leq f(x) \} \\
+&= \{ (x,y) \in \R^{d+1} :\ x \in A,\ 0 \leq y \leq a \} \cup \{ (x,y) \in \R^{d+1} :\ x \in E \setminus A,\ y = 0 \} \\
+&= \big( A \times [0,a] \big) \cup \big( (E \setminus A) \times \{0\} \big).
+\end{align*}
+Es decir, la medibilidad de $R(f,E)$ en este caso se reduce a la medibilidad de productos de la forma $A \times [0,a]$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Medida del producto de un medible por un intervalo}
+Sea $A \subseteq \R^{d}$ medible y $a \geq 0$. Entonces $A \times [0,a] \subseteq \R^{d+1}$ es medible y su medida es
+\[
+m(A \times [0,a]) = a\, m(A),
+\]
+con la convención $0 \cdot \infty = 0$.
+\end{namedres}
+\begin{proof}
+\textit{Caso de una caja.} Si $A = [a_{1},b_{1}] \times \dots \times [a_{d},b_{d}]$, entonces $A \times [0,a]$ es una caja de $\R^{d+1}$ y el resultado se sigue de la fórmula para el volumen de cajas. Verificar los detalles queda como ejercicio para la persona lectora.
+
+\textit{Caso de un abierto con $m(A) < \infty$.} Si $A$ es abierto, entonces existen cajas $I_{k}$ en $d$ dimensiones tales que
+\[
+A = \bigcup_{k=1}^{\infty} I_{k} \quad \text{con } I_{j}^{\circ} \cap I_{k}^{\circ} = \emptyset \text{ si } j \neq k.
+\]
+Entonces
+\[
+A \times [0,a] = \bigcup_{k=1}^{\infty} I_{k} \times [0,a]
+\]
+es un conjunto medible, por ser unión numerable de cajas. Como
+\[
+(I_{k} \times [0,a])^{\circ} \cap (I_{j} \times [0,a])^{\circ} = \emptyset, \quad k \neq j,
+\]
+y la medida de una unión numerable de cajas con interiores disjuntos dos a dos es la suma de sus medidas, tenemos que
+\[
+m(A \times [0,a]) = \sum_{i=1}^{\infty} m(I_{i} \times [0,a]) = a \sum_{i=1}^{\infty} m(I_{i}) = a\, m(A).
+\]
+
+\textit{Caso de un $G_{\delta}$ con $m(A) < \infty$.} Sea ahora
+\[
+A = \bigcap_{j=1}^{\infty} G_{j}
+\]
+un $G_{\delta}$ con cada $G_{i}$ abierto y $G_{i+1} \subseteq G_{i}$. Podemos asumir la monotonía porque, reemplazando $G_{j}$ por $G_{1} \cap \dots \cap G_{j}$, que sigue siendo abierto, la intersección total no cambia. Además, como $m(A) < \infty$, por regularidad exterior existe un abierto $G \supseteq A$ con $m(G) < \infty$; intersecando cada $G_{j}$ con $G$ podemos suponer también que $m(G_{1}) < \infty$. Luego
+\[
+A \times [0,a] = \bigcap_{j=1}^{\infty} G_{j} \times [0,a],
+\]
+con $G_{i+1} \times [0,a] \subseteq G_{i} \times [0,a]$ medibles y de medida finita, pues $m(G_{i} \times [0,a]) = a\, m(G_{i}) \leq a\, m(G_{1}) < \infty$ por el caso anterior. Entonces, por continuidad desde arriba de la medida,
+\[
+m(A \times [0,a]) = \lim_{i \to \infty} m(G_{i} \times [0,a]) = \lim_{i \to \infty} a\, m(G_{i}) = a\, m(A).
+\]
+
+\textit{Caso medible general con $m(A) < \infty$.} En el caso de que $A$ sea medible con medida finita, podemos escribir
+\[
+A = H \setminus Z
+\]
+con $H$ un conjunto $G_{\delta}$ tal que $A \subseteq H$, $m(H) = m(A)$, y $Z = H \setminus A$ de medida cero. Entonces, por el paso anterior, $H \times [0,a]$ es medible y
+\[
+m(H \times [0,a]) = a\, m(H).
+\]
+Se deja de ejercicio probar que
+\[
+m_{e}(Z \times [0,a]) = 0.
+\]
+Entonces $Z \times [0,a]$ es medible con medida cero,
+\[
+A \times [0,a] = (H \times [0,a]) \setminus (Z \times [0,a])
+\]
+es medible, y
+\[
+m(A \times [0,a]) = m(H \times [0,a]) = a\, m(H) = a\, m(A).
+\]
+
+\textit{Caso $m(A) = \infty$.} Finalmente, si $m(A) = \infty$, llamemos
+\[
+A_{k} = A \cap B(0,k).
+\]
+De esta manera
+\[
+A = \bigcup_{k=1}^{\infty} A_{k},
+\]
+con $A_{k} \subseteq A_{k+1}$ medibles y acotados, en particular de medida finita. Por los argumentos anteriores,
+\[
+A_{k} \times [0,a] \subseteq A_{k+1} \times [0,a]
+\]
+son conjuntos medibles tales que
+\[
+m(A_{k} \times [0,a]) = a\, m(A_{k}).
+\]
+Entonces $A \times [0,a] = \bigcup_{k=1}^{\infty} A_{k} \times [0,a]$ es medible y, por continuidad desde abajo,
+\[
+m(A \times [0,a]) = \lim_{k \to \infty} m(A_{k} \times [0,a]) = \lim_{k \to \infty} a\, m(A_{k}) = a\, m(A). \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{El producto de un nulo por un intervalo es nulo}
+Sea $Z \subseteq \R^{d}$ con $m(Z) = 0$ y $a \geq 0$. Muestre que $m_{e}(Z \times [0,a]) = 0$.
+\end{namedstd}
+
+\subsection{El gráfico de una función medible}
+
+\begin{namedres}{Lema}{El gráfico de una función medible tiene medida cero}
+Sea $f : E \to \R$ medible, con $E$ medible. Entonces $m_{e}(\Gamma(f,E)) = 0$.
+\end{namedres}
+\begin{proof}
+Asumamos primero que $E$ tiene medida finita. Sea $\varepsilon > 0$ y, para cada $k \in \Z$,
+\[
+E_{k} = \{ x \in E :\ k \varepsilon \leq f(x) < (k+1) \varepsilon \}.
+\]
+Los $E_{k}$ son medibles, disjuntos dos a dos, y
+\[
+E = \bigcup_{k \in \Z} E_{k}.
+\]
+Note que
+\[
+\Gamma(f, E_{k}) = \{ (x, f(x)) :\ x \in E_{k} \} \subseteq E_{k} \times [k\varepsilon, (k+1)\varepsilon).
+\]
+Por el lema anterior y la invariancia de la medida exterior bajo traslaciones, tenemos que
+\[
+m_{e}(\Gamma(f,E_{k})) \leq m_{e}\big( E_{k} \times [k\varepsilon,(k+1)\varepsilon) \big) \leq \varepsilon\, m(E_{k}).
+\]
+Por lo tanto, por subaditividad numerable de la medida exterior, vale que
+\[
+m_{e}(\Gamma(f,E)) = m_{e}\left( \bigcup_{k \in \Z} \Gamma(f,E_{k}) \right) \leq \sum_{k \in \Z} m_{e}(\Gamma(f,E_{k})) \leq \sum_{k \in \Z} \varepsilon\, m(E_{k}) = \varepsilon\, m(E),
+\]
+donde la última igualdad usa que los $E_{k}$ son disjuntos dos a dos. Como $\varepsilon > 0$ es arbitrario y $m(E) < \infty$, concluimos que $m_{e}(\Gamma(f,E)) = 0$.
+
+Terminar la prueba en el caso $m(E) = \infty$ queda como ejercicio (véase el ejercicio siguiente).
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{El caso de medida infinita del lema del gráfico}
+Termine la prueba del lema anterior: muestre que si $m(E) = \infty$, entonces también $m_{e}(\Gamma(f,E)) = 0$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{La región bajo una función simple no negativa es medible}
+Sea $\phi : E \to \R$ simple, medible y no negativa, digamos
+\[
+\phi(x) = \sum_{i=1}^{m} a_{i} \ind_{A_{i}},
+\]
+con $a_{i} \neq a_{j}$ y $A_{i} \cap A_{j} = \emptyset$ para $i \neq j$, y $E = \bigcup_{i=1}^{m} A_{i}$. Entonces $R(\phi,E)$ es medible.
+\end{namedres}
+\begin{proof}
+Tenemos que
+\[
+R(\phi,E) = \{ (x,y) \in \R^{d+1} :\ x \in E,\ 0 \leq y \leq \phi(x) \} = \bigcup_{j=1}^{m} \{ (x,y) \in \R^{d+1} :\ x \in A_{j},\ 0 \leq y \leq a_{j} \},
+\]
+es decir, $R(\phi,E) = \bigcup_{j=1}^{m} A_{j} \times [0,a_{j}]$, que es una unión finita de conjuntos medibles por el lema del producto, y por lo tanto es un conjunto medible.
+\end{proof}
+
+\begin{namedres}{Teorema}{La región bajo el gráfico de una función medible no negativa es medible}
+Sea $f : E \to \R$ medible con $f \geq 0$ y $E$ medible. Entonces $R(f,E) \subseteq \R^{d+1}$ es un conjunto medible.
+\end{namedres}
+\begin{proof}
+Como $f \geq 0$ es medible, existe una sucesión creciente de funciones simples, medibles y no negativas $\{\phi_{k}\}_{k=1}^{\infty}$ que satisface
+\[
+\lim_{k \to \infty} \phi_{k}(x) = f(x)
+\]
+en $E$. Luego, si $0 \leq y < f(x)$, como $\phi_{k}(x) \to f(x) > y$, existe $\phi_{k}$ tal que
+\[
+0 \leq y \leq \phi_{k}(x).
+\]
+Entonces, separando los puntos con $y < f(x)$ de aquellos con $y = f(x)$,
+\[
+R(f,E) = \{ (x,y) :\ x \in E,\ 0 \leq y < f(x) \} \cup \{ (x,y) :\ x \in E,\ f(x) = y \},
+\]
+y por lo anterior obtenemos
+\[
+R(f,E) = \bigcup_{k=1}^{\infty} R(\phi_{k},E) \cup \{ (x,y) :\ x \in E,\ f(x) = y,\ y \geq 0 \},
+\]
+pues cada $R(\phi_{k},E) \subseteq R(f,E)$ al ser $\phi_{k} \leq f$. Ahora, cada $R(\phi_{k},E)$ es medible por el lema anterior, y el segundo conjunto está contenido en $\Gamma(f,E)$, que tiene medida exterior cero y es por lo tanto medible. Concluimos que $R(f,E)$ es medible, por ser unión numerable de medibles.
+\end{proof}
+
+\subsection{La definición de la integral}
+
+\begin{namedstd}{Definición}{Integral de Lebesgue de una función medible no negativa}
+Dada $f : E \to \R$ medible tal que $f \geq 0$, definimos su \emph{integral de Lebesgue} como
+\[
+\int_{E} f \, dx = m(R(f,E)).
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{La integral de una función simple no negativa}
+Sea $\phi = \sum_{i=1}^{m} a_{i} \ind_{A_{i}}$ simple, medible y no negativa, con los $A_{i} \subseteq E$ medibles y disjuntos dos a dos. Entonces
+\[
+\int_{E} \phi(x) \, dx = \sum_{i=1}^{m} a_{i}\, m(A_{i}).
+\]
+\end{namedres}
+\begin{proof}
+Podemos asumir que $a_{i} \neq 0$ para $1 \leq i \leq m$, pues los términos con $a_{i} = 0$ no aportan a ninguno de los dos lados. Entonces
+\begin{align*}
+\int_{E} \phi(x)\, dx &= m\big( R(\phi,E) \big) \\
+&= m\big( \{ \phi = 0 \} \times \{0\} \big) + m\left( \bigcup_{i=1}^{m} \{ (x,y) :\ x \in A_{i},\ 0 \leq y \leq a_{i} \} \right) \\
+&= 0 + \sum_{i=1}^{m} a_{i}\, m(A_{i}),
+\end{align*}
+donde usamos que $\{\phi = 0\} \times \{0\}$ tiene medida cero, que los conjuntos $A_{i} \times [0,a_{i}]$ son disjuntos dos a dos porque los $A_{i}$ lo son, y la fórmula $m(A_{i} \times [0,a_{i}]) = a_{i}\, m(A_{i})$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Monotonía de la integral respecto al integrando y al dominio}
+Sean $f, g : E \to [0,\infty)$ medibles.
+\begin{enumerate}[label=(\roman*)]
+\item Si $0 \leq g \leq f$, entonces
+\[
+\int_{E} g(x) \, dx \leq \int_{E} f(x) \, dx.
+\]
+\item Si $E_{1} \subseteq E_{2} \subseteq E$ son medibles, entonces
+\[
+\int_{E_{1}} f(x) \, dx \leq \int_{E_{2}} f(x) \, dx.
+\]
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Dado que $0 \leq g \leq f$, tenemos que
+\[
+\{ (x,y) :\ x \in E,\ 0 \leq y \leq g(x) \} \subseteq \{ (x,y) :\ x \in E,\ 0 \leq y \leq f(x) \},
+\]
+luego $R(g,E) \subseteq R(f,E)$, y la parte (i) se sigue de la monotonía de la medida.
+
+Para la segunda parte vamos primero a probar que
+\[
+\int_{E_{1}} f(x) \, dx = \int_{E} \ind_{E_{1}} f(x) \, dx
+\]
+para $E_{1} \subseteq E$ medible. Note que
+\[
+\{ (x,y) :\ x \in E,\ 0 \leq y \leq \ind_{E_{1}}(x) f(x) \} = \big( (E \setminus E_{1}) \times \{0\} \big) \cup \{ (x,y) :\ x \in E_{1},\ 0 \leq y \leq f(x) \},
+\]
+y como $(E \setminus E_{1}) \times \{0\}$ tiene medida cero, entonces
+\[
+m\big( R(\ind_{E_{1}} f, E) \big) = m\big( R(f,E_{1}) \big).
+\]
+Ahora, si $E_{1} \subseteq E_{2}$ son medibles, entonces
+\[
+\ind_{E_{1}} f \leq \ind_{E_{2}} f,
+\]
+y por la parte (i) obtenemos
+\[
+\int_{E} \ind_{E_{1}} f(x) \, dx \leq \int_{E} \ind_{E_{2}} f(x) \, dx.
+\]
+Concluimos que
+\[
+\int_{E_{1}} f(x) \, dx \leq \int_{E_{2}} f(x) \, dx. \qedhere
+\]
+\end{proof}
+
+% =============================================================================
+\section{Propiedades de la integral de funciones no negativas}
+% =============================================================================
+
+\subsection{Funciones con valores infinitos}
+
+\begin{namedstd}{Definición}{Integral de una función medible con valores en $[0,\infty]$}
+Sea $f : E \to [0,\infty]$ medible con $E$ medible y $f \geq 0$. Tome
+\[
+E_{1} = \{ x \in E :\ f(x) = \infty \}.
+\]
+Definimos
+\begin{align*}
+R(f,E) &= \{ (x,y) \in \R^{d+1} :\ x \in E,\ 0 \leq y \leq f(x) \} \\
+&= \{ (x,y) \in \R^{d+1} :\ x \in E \setminus E_{1},\ 0 \leq y \leq f(x) \} \cup \big( E_{1} \times [0,\infty) \big),
+\end{align*}
+y
+\[
+\Gamma(f,E) = \{ (x,f(x)) \in \R^{d+1} :\ x \in E \setminus E_{1} \}.
+\]
+Al igual que se hizo para funciones de valores reales, definimos
+\[
+\int_{E} f \, dx = m\big( R(f,E) \big).
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{La región sigue siendo medible para valores infinitos}
+La teoría desarrollada hasta ahora asegura que $R(f,E)$ es medible siempre que $f$ y $E$ sean medibles: la primera parte de la descomposición es la región bajo la restricción de $f$ al medible $E \setminus E_{1}$, y
+\[
+E_{1} \times [0,\infty) = \bigcup_{n=1}^{\infty} E_{1} \times [0,n]
+\]
+es una unión numerable de conjuntos medibles.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Una función con integral finita es finita c.p.d.}
+Sea $f : E \to [0,\infty]$ medible tal que
+\[
+\int_{E} f(x) \, dx < \infty.
+\]
+Entonces $m(\{ x \in E : f(x) = \infty \}) = 0$, es decir, $f$ es finita casi por doquier.
+\end{namedres}
+\begin{proof}
+Sea $E_{1} = \{ f = \infty \}$ y, para cada $n \in \N$, tome
+\[
+g(x) = n \ind_{E_{1}}(x).
+\]
+Entonces $g(x) \leq f(x)$ para $x \in E$, pues en $E_{1}$ se tiene $f = \infty \geq n$ y fuera de $E_{1}$ se tiene $g = 0 \leq f$. Luego, por la fórmula para funciones simples y la monotonía de la integral,
+\[
+n\, m(E_{1}) = \int_{E} g(x)\, dx \leq \int_{E} f(x) \, dx < \infty
+\]
+para todo $n \in \N$, y por lo tanto $m(E_{1}) = 0$.
+\end{proof}
+
+\subsection{Descomposición del dominio y el teorema de convergencia monótona}
+
+\begin{namedres}{Proposición}{Aditividad de la integral respecto al dominio}
+Sea $f : E \to [0,\infty]$ medible. En el caso de que $E = \bigcup_{i=1}^{\infty} E_{i}$ con los $E_{i}$ medibles y $E_{i} \cap E_{j} = \emptyset$ si $i \neq j$, tenemos que
+\[
+\int_{E} f(x) \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f(x) \, dx.
+\]
+Esta fórmula es válida también para uniones finitas.
+\end{namedres}
+\begin{proof}
+Como los $E_{i}$ son disjuntos dos a dos, tenemos que
+\[
+R(f,E) = \bigcup_{k=1}^{\infty} R(f,E_{k}),
+\]
+y los $R(f,E_{k})$ son disjuntos dos a dos, pues sus primeras coordenadas viven en conjuntos disjuntos. De esta manera, por aditividad numerable de la medida,
+\[
+\int_{E} f(x) \, dx = m(R(f,E)) = m\left( \bigcup_{k=1}^{\infty} R(f,E_{k}) \right) = \sum_{k=1}^{\infty} m(R(f,E_{k})) = \sum_{k=1}^{\infty} \int_{E_{k}} f(x) \, dx.
+\]
+La fórmula para uniones finitas se obtiene tomando $E_{k} = \emptyset$ para los índices restantes, pues $R(f,\emptyset) = \emptyset$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Convergencia monótona para funciones no negativas}
+Sea $\{f_{k}\}_{k=1}^{\infty}$ una sucesión de funciones medibles tales que
+\[
+0 \leq f_{k}(x) \leq f_{k+1}(x)
+\]
+para todo $x \in E$. Si
+\[
+\lim_{k \to \infty} f_{k}(x) = f(x)
+\]
+casi por doquier en $E$, entonces
+\[
+\lim_{k \to \infty} \int_{E} f_{k}(x) \, dx = \int_{E} f(x) \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Sea $Z \subseteq E$ el conjunto nulo donde falla la convergencia, y $\tilde{E} = E \setminus Z$. Para cualquier función medible no negativa $g$ se tiene $R(g,Z) \subseteq Z \times [0,\infty) = \bigcup_{n} Z \times [0,n]$, que tiene medida cero; entonces $\int_{Z} g \, dx = 0$ y, por la aditividad del dominio, las integrales sobre $E$ y sobre $\tilde{E}$ coinciden tanto para $f$ como para cada $f_{k}$. Podemos entonces suponer que $f_{k}(x) \to f(x)$ para todo $x \in E$.
+
+Con el mismo argumento de aproximación usado para la región bajo el gráfico, tenemos que
+\[
+R(f,E) = \Gamma(f,E) \cup \bigcup_{k=1}^{\infty} R(f_{k},E):
+\]
+si $0 \leq y < f(x)$, como $f_{k}(x) \uparrow f(x)$, existe $k$ con $y \leq f_{k}(x)$, es decir $(x,y) \in R(f_{k},E)$; si $y = f(x) < \infty$, entonces $(x,y) \in \Gamma(f,E)$; y cada $R(f_{k},E) \subseteq R(f,E)$ porque $f_{k} \leq f$. Como
+\[
+R(f_{k},E) \subseteq R(f_{k+1},E)
+\]
+por la monotonía de la sucesión, y $m(\Gamma(f,E)) = 0$, la continuidad desde abajo de la medida nos da
+\[
+\int_{E} f(x) \, dx = m(R(f,E)) = m\left( \bigcup_{k=1}^{\infty} R(f_{k},E) \right) = \lim_{k \to \infty} m(R(f_{k},E)) = \lim_{k \to \infty} \int_{E} f_{k}(x) \, dx. \qedhere
+\]
+\end{proof}
+
+\subsection{Una fórmula útil}
+
+\begin{namedstd}{Notación}{Suma inferior asociada a una partición finita del dominio}
+Dada $f : E \to [0,\infty]$ medible y una partición finita $E = \bigcup_{i=1}^{N} E_{i}$ en medibles disjuntos dos a dos, definimos
+\[
+\sum\big(f, \{E_{i}\}_{i=1}^{N}\big) = \sum_{i=1}^{N} \Big( \inf_{E_{i}} f \Big) \ind_{E_{i}} \leq f.
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{La integral como supremo de sumas inferiores}
+Sea $f : E \to [0,\infty]$ medible, no negativa. Entonces
+\[
+\int_{E} f(x) \, dx = \sup \left\{ \int_{E} \sum\big(f, \{E_{i}\}_{i=1}^{N}\big) \, dx :\ E = \bigcup_{i=1}^{N} E_{i} \ \text{partición finita en medibles disjuntos} \right\}.
+\]
+\end{namedres}
+\begin{proof}
+Dados $E_{1}, \dots, E_{N}$ medibles disjuntos dos a dos tales que $E = \bigcup_{i=1}^{N} E_{i}$, tenemos que
+\[
+\sum\big(f, \{E_{i}\}_{i=1}^{N}\big) \leq f,
+\]
+entonces, por monotonía y la fórmula para funciones simples,
+\[
+\sum_{i=1}^{N} \Big( \inf_{E_{i}} f \Big) m(E_{i}) = \int_{E} \sum\big(f, \{E_{i}\}_{i=1}^{N}\big) \, dx \leq \int_{E} f(x) \, dx.
+\]
+Es decir, el supremo del enunciado es menor o igual que la integral.
+
+Para la desigualdad recíproca, dados $k \geq 1$ y $1 \leq i \leq k 2^{k}$, defina
+\[
+E_{k}^{0} = \{ f \geq k \}, \qquad E_{k}^{i} = \left\{ \frac{i-1}{2^{k}} \leq f(x) < \frac{i}{2^{k}} \right\}.
+\]
+Entonces
+\[
+E = \bigcup_{i=0}^{k 2^{k}} E_{k}^{i}
+\]
+es una partición finita en medibles disjuntos dos a dos. Tome
+\[
+f_{k}(x) = k \ind_{E_{k}^{0}} + \sum_{i=1}^{k 2^{k}} \left( \frac{i-1}{2^{k}} \right) \ind_{E_{k}^{i}};
+\]
+esta es la aproximación diádica estándar, así que sabemos que
+\[
+f_{k} \leq f_{k+1} \qquad \text{y} \qquad \lim_{k \to \infty} f_{k} = f
+\]
+puntualmente en $E$. Por el teorema de convergencia monótona,
+\[
+\int_{E} f_{k} \, dx \to \int_{E} f \, dx.
+\]
+Como en cada pieza de la partición el valor de $f_{k}$ es menor o igual que el ínfimo de $f$ en ella, tenemos que
+\[
+f_{k} \leq \sum\big(f, \{E_{k}^{i}\}_{i=0}^{k 2^{k}}\big) \leq f,
+\]
+e integrando,
+\[
+\int_{E} f_{k} \, dx \leq \sum_{i=0}^{k 2^{k}} \Big( \inf_{E_{k}^{i}} f \Big) m(E_{k}^{i}) \leq \int_{E} f(x) \, dx.
+\]
+El término del medio es una de las sumas inferiores del enunciado, y el lado izquierdo converge a $\int_{E} f \, dx$; tenemos entonces que
+\[
+\lim_{k \to \infty} \sum_{i=0}^{k 2^{k}} \Big( \inf_{E_{k}^{i}} f \Big) m(E_{k}^{i}) = \int_{E} f(x) \, dx,
+\]
+y el supremo del enunciado alcanza a la integral.
+\end{proof}
+
+\begin{namedres}{Corolario}{La integral como supremo sobre funciones simples}
+Sea $f : E \to [0,\infty]$ medible. Entonces
+\[
+\int_{E} f(x) \, dx = \sup \left\{ \int_{E} \phi(x) \, dx :\ \phi\ \text{simple y medible},\ 0 \leq \phi \leq f\ \text{en } E \right\}.
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\subsection{Conjuntos nulos, desigualdad de Markov y funciones nulas}
+
+\begin{namedres}{Lema}{La integral sobre un conjunto de medida cero es nula}
+Sea $f : E \to [0,\infty]$ medible. Si $m(E) = 0$, entonces
+\[
+\int_{E} f(x) \, dx = 0.
+\]
+\end{namedres}
+\begin{proof}
+Sean $f_{k} = \sum_{i=1}^{m} a_{i} \ind_{A_{i}}$, con $A_{i} \cap A_{j} = \emptyset$ si $i \neq j$, funciones simples no negativas crecientes hacia $f$, de modo que, por el teorema de convergencia monótona,
+\[
+\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f(x) \, dx.
+\]
+Note que
+\[
+\int_{E} f_{k}(x) \, dx = \sum_{i=1}^{m} a_{i}\, m(A_{i}).
+\]
+Como $A_{i} \subseteq E$, entonces $m(A_{i}) = 0$ para $1 \leq i \leq m$, y cada $\int_{E} f_{k} \, dx = 0$. Concluimos que $\int_{E} f \, dx = 0$.
+\end{proof}
+
+\begin{namedres}{Teorema}{La integral respeta desigualdades c.p.d.}
+Sean $f, g : E \to [0,\infty]$ medibles tales que $g(x) \leq f(x)$ casi por doquier en $E$. Entonces vale que
+\[
+\int_{E} g(x) \, dx \leq \int_{E} f(x) \, dx.
+\]
+En particular, si $f = g$ c.p.d. en $E$, entonces
+\[
+\int_{E} g(x) \, dx = \int_{E} f(x) \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Sea
+\[
+A = \{ x \in E :\ g(x) \leq f(x) \}.
+\]
+Entonces $E = A \cup Z$ con $Z = E \setminus A$ de medida cero y $A \cap Z = \emptyset$. Así, por la aditividad del dominio y el lema anterior, tenemos
+\[
+\int_{E} f(x) \, dx = \int_{A} f(x) \, dx + \int_{Z} f(x) \, dx = \int_{A} f(x) \, dx,
+\]
+\[
+\int_{E} g(x) \, dx = \int_{A} g(x) \, dx + \int_{Z} g(x) \, dx = \int_{A} g(x) \, dx.
+\]
+Como $g \leq f$ puntualmente en $A$, la monotonía de la integral da $\int_{A} g \, dx \leq \int_{A} f \, dx$, y el resultado se sigue. Si además $f = g$ c.p.d., ambas desigualdades valen y se obtiene la igualdad.
+\end{proof}
+
+\begin{namedres}{Proposición}{Desigualdad de Markov}
+Sean $f : E \to [0,\infty]$ medible y $\alpha > 0$. Entonces
+\[
+m(\{ f \geq \alpha \}) \leq \frac{1}{\alpha} \int_{E} f(x) \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Como $f \geq 0$, tenemos las desigualdades puntuales
+\[
+\alpha \ind_{\{f \geq \alpha\}} \leq f \ind_{\{f \geq \alpha\}} \leq f.
+\]
+Integrando y usando la fórmula para funciones simples, la identidad $\int_{E} \ind_{E_{1}} f \, dx = \int_{E_{1}} f \, dx$ y la monotonía,
+\[
+\alpha\, m(\{ f \geq \alpha \}) \leq \int_{\{f \geq \alpha\}} f(x) \, dx \leq \int_{E} f(x) \, dx,
+\]
+y basta dividir por $\alpha > 0$.
+\end{proof}
+
+\begin{namedres}{Corolario}{Una función no negativa con integral nula es nula c.p.d.}
+Sea $f : E \to [0,\infty]$ medible tal que $\int_{E} f(x) \, dx = 0$. Entonces $f = 0$ casi por doquier.
+\end{namedres}
+\begin{proof}
+Por la desigualdad de Markov, para todo $\alpha > 0$ tenemos que
+\[
+m(\{ f \geq \alpha \}) \leq \frac{1}{\alpha} \int_{E} f(x) \, dx = 0.
+\]
+Luego
+\[
+\{ f > 0 \} = \bigcup_{k=1}^{\infty} \left\{ f \geq \frac{1}{k} \right\}
+\]
+es una unión numerable de conjuntos de medida cero, y por lo tanto es un conjunto de medida cero. Es decir, $f = 0$ c.p.d.
+\end{proof}
+
+\subsection{Linealidad}
+
+\begin{namedres}{Teorema}{Linealidad de la integral para funciones no negativas}
+Sean $f, g : E \to [0,\infty]$ medibles y $c \geq 0$. Entonces
+\[
+\int_{E} \big( c f(x) + g(x) \big) \, dx = c \int_{E} f(x) \, dx + \int_{E} g(x) \, dx.
+\]
+\end{namedres}
+\begin{proof}
+\textit{Homogeneidad.} Si $c = 0$, con la convención $0 \cdot \infty = 0$ tenemos $cf \equiv 0$ y ambos lados de la homogeneidad son nulos. Sea entonces $c > 0$; vamos a probar que
+\[
+\int_{E} c f(x) \, dx = c \int_{E} f(x) \, dx.
+\]
+Sea $\{f_{k}\}$ una sucesión de funciones simples no negativas tales que
+\[
+0 \leq f_{k} \leq f_{k+1} \qquad \text{y} \qquad \lim_{k \to \infty} f_{k} = f.
+\]
+Si
+\[
+f_{k} = \sum_{i=1}^{m_{k}} a_{i} \ind_{A_{i}},
+\]
+con los $A_{i}$ medibles y disjuntos dos a dos, tenemos que
+\[
+\lim_{k \to \infty} c f_{k} = \lim_{k \to \infty} \sum_{i=1}^{m_{k}} c a_{i} \ind_{A_{i}} = c f(x), \qquad c f_{k} \leq c f_{k+1}.
+\]
+Entonces, aplicando el teorema de convergencia monótona dos veces y la fórmula para simples,
+\[
+\int_{E} c f(x) \, dx = \lim_{k \to \infty} \int_{E} c f_{k}(x) \, dx = \lim_{k \to \infty} \sum_{i=1}^{m_{k}} c a_{i}\, m(A_{i}) = c \lim_{k \to \infty} \sum_{i=1}^{m_{k}} a_{i}\, m(A_{i}) = c \int_{E} f(x) \, dx.
+\]
+
+\textit{Aditividad.} Falta mostrar la aditividad. Para tal efecto tomemos $g_{k}$ una sucesión de funciones simples no negativas tales que
+\[
+g_{k} \leq g_{k+1}, \qquad \lim_{k \to \infty} g_{k} = g.
+\]
+Entonces se sigue que
+\[
+g_{k} + f_{k} \leq g_{k+1} + f_{k+1}, \qquad \lim_{k \to \infty} (g_{k} + f_{k}) = g + f.
+\]
+Vamos a mostrar primero la aditividad para las simples, es decir, que
+\[
+\int_{E} \big( g_{k}(x) + f_{k}(x) \big) \, dx = \int_{E} g_{k}(x) \, dx + \int_{E} f_{k}(x) \, dx.
+\]
+Sea
+\[
+g_{k} = \sum_{j=1}^{\ell_{k}} b_{j} \ind_{B_{j}}, \quad \text{con } E = \bigcup_{j=1}^{\ell_{k}} B_{j} \text{ disjuntos dos a dos},
+\]
+y recordemos que
+\[
+f_{k} = \sum_{i=1}^{m_{k}} a_{i} \ind_{A_{i}}, \quad \text{con } E = \bigcup_{i=1}^{m_{k}} A_{i} \text{ disjuntos dos a dos}.
+\]
+Note que, al ser ambas familias particiones de $E$,
+\[
+\ind_{A_{i}} = \sum_{j=1}^{\ell_{k}} \ind_{B_{j} \cap A_{i}}, \qquad \ind_{B_{j}} = \sum_{i=1}^{m_{k}} \ind_{B_{j} \cap A_{i}},
+\]
+entonces
+\[
+g_{k}(x) + f_{k}(x) = \sum_{j=1}^{\ell_{k}} \sum_{i=1}^{m_{k}} b_{j} \ind_{A_{i} \cap B_{j}} + \sum_{i=1}^{m_{k}} \sum_{j=1}^{\ell_{k}} a_{i} \ind_{A_{i} \cap B_{j}} = \sum_{j=1}^{\ell_{k}} \sum_{i=1}^{m_{k}} (b_{j} + a_{i}) \ind_{A_{i} \cap B_{j}},
+\]
+que es una función simple sobre la partición común $\{A_{i} \cap B_{j}\}$. Ahora, por aditividad finita de la medida,
+\[
+\sum_{i=1}^{m_{k}} m(A_{i} \cap B_{j}) = m\left( B_{j} \cap \bigcup_{i=1}^{m_{k}} A_{i} \right) = m(B_{j} \cap E) = m(B_{j}),
+\]
+y de igual forma tenemos
+\[
+\sum_{j=1}^{\ell_{k}} m(A_{i} \cap B_{j}) = m(A_{i}).
+\]
+Finalmente,
+\begin{align*}
+\int_{E} \big( f_{k}(x) + g_{k}(x) \big) \, dx &= \sum_{j=1}^{\ell_{k}} \sum_{i=1}^{m_{k}} (a_{i} + b_{j})\, m(A_{i} \cap B_{j}) \\
+&= \sum_{j=1}^{\ell_{k}} b_{j} \sum_{i=1}^{m_{k}} m(A_{i} \cap B_{j}) + \sum_{i=1}^{m_{k}} a_{i} \sum_{j=1}^{\ell_{k}} m(A_{i} \cap B_{j}) \\
+&= \sum_{j=1}^{\ell_{k}} b_{j}\, m(B_{j}) + \sum_{i=1}^{m_{k}} a_{i}\, m(A_{i}) \\
+&= \int_{E} g_{k}(x) \, dx + \int_{E} f_{k}(x) \, dx.
+\end{align*}
+Como $\{f_{k} + g_{k}\}$ es una sucesión creciente de simples que converge a $f + g$, el teorema de convergencia monótona aplicado tres veces nos da
+\[
+\int_{E} (f + g) \, dx = \lim_{k \to \infty} \int_{E} (f_{k} + g_{k}) \, dx = \lim_{k \to \infty} \left( \int_{E} f_{k} \, dx + \int_{E} g_{k} \, dx \right) = \int_{E} f \, dx + \int_{E} g \, dx.
+\]
+Combinando la homogeneidad con la aditividad, aplicadas a $cf$ y $g$, se concluye el enunciado.
+\end{proof}
+
+% =============================================================================
+\section{La integral de Lebesgue de funciones medibles}
+% =============================================================================
+
+\subsection{La definición y las funciones integrables}
+
+\begin{namedstd}{Definición}{Parte positiva, parte negativa y la integral general}
+Sea $f : E \to \overline{\R}$ una función medible. Entonces
+\[
+f = f^{+} - f^{-}
+\]
+con
+\[
+f^{+} = \max(0, f) \qquad \text{y} \qquad f^{-} = \max(0, -f).
+\]
+Sabemos que $f^{+}$ y $f^{-}$ son medibles y no negativas, entonces
+\[
+\int_{E} f^{+} \, dx, \qquad \int_{E} f^{-} \, dx
+\]
+están bien definidas. Por tanto podemos definir
+\[
+\int_{E} f \, dx = \int_{E} f^{+} \, dx - \int_{E} f^{-} \, dx
+\]
+siempre que
+\[
+\int_{E} f^{+} \, dx < \infty \qquad \text{o} \qquad \int_{E} f^{-} \, dx < \infty.
+\]
+En tal caso decimos que la integral de $f$ sobre $E$ \emph{existe} (con valor posiblemente $\pm\infty$).
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Función integrable y el espacio $L(E)$}
+Decimos que $f$ es \emph{integrable}, o bien que $f \in L(E)$, si
+\[
+\int_{E} f^{+} \, dx < \infty \qquad \text{y} \qquad \int_{E} f^{-} \, dx < \infty.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Desigualdad triangular integral y finitud c.p.d.}
+Como $|f| = f^{+} + f^{-}$, para $f \in L(E)$ tenemos que
+\[
+\left| \int_{E} f \, dx \right| \leq \int_{E} f^{+} \, dx + \int_{E} f^{-} \, dx = \int_{E} |f| \, dx,
+\]
+donde la última igualdad usa la linealidad para funciones no negativas. En particular, $f \in L(E)$ si y solo si $\int_{E} |f| \, dx < \infty$. Además, si $\int_{E} |f| \, dx < \infty$, entonces $f \in \R$ c.p.d., por la proposición sobre funciones con integral finita.
+\end{namedstd}
+
+\subsection{Monotonía y propiedades básicas}
+
+\begin{namedres}{Teorema}{Monotonía de la integral general}
+Sean $f : E \to \overline{\R}$ y $g : E \to \overline{\R}$ medibles tales que
+\[
+\int_{E} f \, dx \qquad \text{y} \qquad \int_{E} g \, dx
+\]
+existen. Si $f \leq g$ c.p.d. en $E$, entonces
+\[
+\int_{E} f \, dx \leq \int_{E} g \, dx.
+\]
+En particular, si $f = g$ c.p.d. en $E$, entonces
+\[
+\int_{E} f \, dx = \int_{E} g \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Note que si $f \leq g$ c.p.d., entonces, punto a punto donde vale la desigualdad,
+\[
+f^{+} = \max\{0, f\} \leq \max\{0, g\} = g^{+}, \qquad g^{-} = \max\{0, -g\} \leq \max\{0, -f\} = f^{-},
+\]
+es decir, $f^{+} \leq g^{+}$ y $g^{-} \leq f^{-}$ c.p.d. Luego, por la monotonía c.p.d. de la integral de funciones no negativas,
+\[
+\int_{E} f^{+} \, dx \leq \int_{E} g^{+} \, dx, \qquad \int_{E} g^{-} \, dx \leq \int_{E} f^{-} \, dx,
+\]
+y entonces, restando en el sentido extendido (la existencia de ambas integrales garantiza que no aparece la forma $\infty - \infty$),
+\[
+\int_{E} f \, dx = \int_{E} f^{+} \, dx - \int_{E} f^{-} \, dx \leq \int_{E} g^{+} \, dx - \int_{E} g^{-} \, dx = \int_{E} g \, dx.
+\]
+Si $f = g$ c.p.d., las dos desigualdades dan la igualdad.
+\end{proof}
+
+\begin{namedres}{Teorema}{Restricción del dominio, aditividad numerable y conjuntos nulos}
+Sea $f : E \to \overline{\R}$ medible tal que $\int_{E} f \, dx$ existe.
+\begin{enumerate}[label=(\roman*)]
+\item Si $E_{1} \subseteq E$ es medible, entonces $\int_{E_{1}} f \, dx$ existe.
+\item Si $E = \bigcup_{k=1}^{\infty} E_{k}$ con los $E_{k}$ medibles y disjuntos dos a dos, entonces
+\[
+\int_{E} f \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f \, dx.
+\]
+\item Si $E_{1} \subseteq E$ con $m(E_{1}) = 0$, entonces $\int_{E_{1}} f \, dx = 0$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (i), note que, por monotonía respecto al dominio para funciones no negativas,
+\[
+0 \leq \int_{E_{1}} f^{+} \, dx \leq \int_{E} f^{+} \, dx, \qquad 0 \leq \int_{E_{1}} f^{-} \, dx \leq \int_{E} f^{-} \, dx.
+\]
+Como alguna de las dos integrales sobre $E$ es finita, la correspondiente sobre $E_{1}$ también lo es, y $\int_{E_{1}} f \, dx$ existe.
+
+Para (ii), sabemos, por la aditividad del dominio para funciones no negativas, que
+\[
+\int_{E} f^{+} \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f^{+} \, dx, \qquad \int_{E} f^{-} \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f^{-} \, dx.
+\]
+Como
+\[
+\int_{E} f^{+} \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f^{+} \, dx < \infty \qquad \text{o} \qquad \int_{E} f^{-} \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f^{-} \, dx < \infty,
+\]
+al menos una de las dos series converge, y podemos restar término a término sin ambigüedad. Entonces
+\[
+\int_{E} f \, dx = \sum_{k=1}^{\infty} \int_{E_{k}} f^{+} \, dx - \sum_{k=1}^{\infty} \int_{E_{k}} f^{-} \, dx = \sum_{k=1}^{\infty} \left( \int_{E_{k}} f^{+} \, dx - \int_{E_{k}} f^{-} \, dx \right) = \sum_{k=1}^{\infty} \int_{E_{k}} f \, dx.
+\]
+
+Finalmente, para (iii), si $m(E_{1}) = 0$, el lema de la integral sobre conjuntos nulos aplicado a $f^{+}$ y $f^{-}$ da
+\[
+\int_{E_{1}} f \, dx = \int_{E_{1}} f^{+} \, dx - \int_{E_{1}} f^{-} \, dx = 0 - 0 = 0. \qedhere
+\]
+\end{proof}
+
+\subsection{Linealidad y diferencias de funciones}
+
+\begin{namedres}{Teorema}{Linealidad de la integral general}
+Sean $f, g : E \to \overline{\R}$ medibles tales que $\int_{E} f \, dx$ existe, y $c \in \R$. Entonces
+\[
+\int_{E} c f \, dx = c \int_{E} f \, dx.
+\]
+Además, si $f, g \in L(E)$, entonces $f + g \in L(E)$ y
+\[
+\int_{E} (f + g) \, dx = \int_{E} f \, dx + \int_{E} g \, dx.
+\]
+\end{namedres}
+\begin{proof}
+\textit{Homogeneidad.} Si $c \geq 0$, entonces $(cf)^{+} = c f^{+}$ y $(cf)^{-} = c f^{-}$, y el resultado se sigue de la homogeneidad para funciones no negativas. Si $c < 0$, entonces
+\[
+(cf)^{+} = -c f^{-}, \qquad (cf)^{-} = -c f^{+},
+\]
+pues $cf \geq 0$ exactamente donde $f \leq 0$. Entonces
+\[
+\int_{E} c f \, dx = \int_{E} (-c) f^{-} \, dx - \int_{E} (-c) f^{+} \, dx = -c \int_{E} f^{-} \, dx + c \int_{E} f^{+} \, dx = c \int_{E} f \, dx.
+\]
+
+\textit{Aditividad.} Si $f, g$ son integrables, entonces son finitas c.p.d., de modo que $f + g$ está definida c.p.d., y como $|f + g| \leq |f| + |g|$,
+\[
+0 \leq \int_{E} |f + g| \, dx \leq \int_{E} |f| \, dx + \int_{E} |g| \, dx < \infty,
+\]
+usando la monotonía y la linealidad para no negativas; es decir, $f + g \in L(E)$. Note que los siguientes conjuntos medibles, disjuntos dos a dos, cubren $E$ salvo un conjunto nulo (donde $f$ o $g$ toman valores infinitos):
+\begin{align*}
+&E_{1} = \{ f \geq 0,\ g \geq 0 \}, \\
+&E_{2} = \{ f < 0,\ g < 0 \}, \\
+&E_{3} = \{ f \geq 0,\ g < 0,\ f + g \geq 0 \}, \\
+&E_{4} = \{ f < 0,\ g \geq 0,\ f + g \geq 0 \}, \\
+&E_{5} = \{ f \geq 0,\ g < 0,\ f + g < 0 \}, \\
+&E_{6} = \{ f < 0,\ g \geq 0,\ f + g < 0 \}.
+\end{align*}
+Por la aditividad del dominio, basta probar la aditividad de la integral en cada $E_{i}$.
+
+En $E_{1}$ las tres funciones $f, g, f+g$ son no negativas, así que, por la linealidad para no negativas,
+\[
+\int_{E_{1}} (f + g) \, dx = \int_{E_{1}} (f^{+} + g^{+}) \, dx = \int_{E_{1}} f^{+} \, dx + \int_{E_{1}} g^{+} \, dx = \int_{E_{1}} f \, dx + \int_{E_{1}} g \, dx,
+\]
+y también, en $E_{2}$, donde las tres son negativas,
+\begin{align*}
+\int_{E_{2}} (f + g) \, dx &= \int_{E_{2}} -(f^{-} + g^{-}) \, dx = -\int_{E_{2}} (f^{-} + g^{-}) \, dx \\
+&= -\int_{E_{2}} f^{-} \, dx - \int_{E_{2}} g^{-} \, dx = \int_{E_{2}} f \, dx + \int_{E_{2}} g \, dx.
+\end{align*}
+En $E_{3}$ tenemos $f = (f + g) + (-g)$ con $f + g \geq 0$ y $-g > 0$; de esta manera, por la linealidad para no negativas,
+\[
+\int_{E_{3}} f \, dx = \int_{E_{3}} \big( (f+g) - g \big) \, dx = \int_{E_{3}} (f + g) \, dx + \int_{E_{3}} (-g) \, dx = \int_{E_{3}} (f + g) \, dx - \int_{E_{3}} g \, dx,
+\]
+donde el último paso usa la homogeneidad con $c = -1$ y que $g \in L(E_{3})$. Por lo tanto
+\[
+\int_{E_{3}} (f + g) \, dx = \int_{E_{3}} f \, dx + \int_{E_{3}} g \, dx.
+\]
+Además, en $E_{5}$ tenemos $-g = -(f+g) + f$ con $-(f+g) > 0$ y $f \geq 0$, entonces
+\[
+\int_{E_{5}} (-g) \, dx = \int_{E_{5}} \big( -(f+g) + f \big) \, dx = \int_{E_{5}} -(f+g) \, dx + \int_{E_{5}} f \, dx.
+\]
+Así, multiplicando por $-1$ y reordenando, tenemos que
+\[
+\int_{E_{5}} f \, dx + \int_{E_{5}} g \, dx = \int_{E_{5}} (f + g) \, dx.
+\]
+Los casos $E_{4}$ y $E_{6}$ son análogos, intercambiando los papeles de $f$ y $g$; terminar el resto de la prueba es un ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{Combinaciones lineales y una advertencia sobre la resta}
+Sean $f_{1}, \dots, f_{n} \in L(E)$ y $a_{1}, \dots, a_{n} \in \R$. Entonces, iterando el teorema anterior, $\sum_{k=1}^{n} a_{k} f_{k} \in L(E)$ y
+\[
+\int_{E} \left( \sum_{k=1}^{n} a_{k} f_{k} \right) \, dx = \sum_{k=1}^{n} a_{k} \int_{E} f_{k} \, dx.
+\]
+Ojo: cuando las integrales no son finitas, en general \emph{no} es cierto que
+\[
+\int_{E} (f - g) \, dx = \int_{E} f \, dx - \int_{E} g \, dx.
+\]
+Por ejemplo, considere $f = \ind_{[n,\infty)}$ y $g = \ind_{[n+1,\infty)}$: la resta $f - g = \ind_{[n,n+1)}$ tiene integral $1$, pero $\int f \, dx = \int g \, dx = \infty$ y la diferencia $\infty - \infty$ no está definida.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Resta de una minorante integrable}
+Sean $f$ y $\phi$ medibles en $E$ tales que $\phi \leq f$ c.p.d. y $\phi \in L(E)$. Entonces $\int_{E} f \, dx$ y $\int_{E} (f - \phi) \, dx$ existen y
+\[
+\int_{E} (f - \phi) \, dx = \int_{E} f \, dx - \int_{E} \phi \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Como $\phi \leq f$ c.p.d., tenemos $-f \leq -\phi$ c.p.d. y entonces
+\[
+f^{-} = \max(0, -f) \leq \max(0, -\phi) = \phi^{-} \quad \text{c.p.d.},
+\]
+de donde
+\[
+0 \leq \int_{E} f^{-} \, dx \leq \int_{E} \phi^{-} \, dx < \infty.
+\]
+Es decir, $\int_{E} f \, dx$ existe, con valor en $(-\infty, \infty]$, y quedan dos casos según el valor de $\int_{E} f^{+} \, dx$.
+
+Si $\int_{E} f^{+} \, dx < \infty$, entonces $f \in L(E)$, y como también $-\phi \in L(E)$, la linealidad da directamente
+\[
+\int_{E} (f - \phi) \, dx = \int_{E} f \, dx - \int_{E} \phi \, dx.
+\]
+
+Ahora, si $\int_{E} f^{+} \, dx = \infty$, es decir $f \notin L(E)$, afirmamos que $f - \phi \notin L(E)$. En efecto, donde ambas son finitas vale $f = \phi + (f - \phi) \leq \phi^{+} + (f - \phi)$, y como el lado derecho es no negativo,
+\[
+f^{+} \leq \phi^{+} + (f - \phi) \quad \text{c.p.d.}
+\]
+Integrando, por monotonía c.p.d. y linealidad para no negativas,
+\[
+\infty = \int_{E} f^{+} \, dx \leq \int_{E} \phi^{+} \, dx + \int_{E} (f - \phi) \, dx,
+\]
+y como $\int_{E} \phi^{+} \, dx < \infty$, se sigue que $\int_{E} (f - \phi) \, dx = \infty$. Además $f - \phi \geq 0$ c.p.d., así que
+\[
+\int_{E} (f - \phi) \, dx = \int_{E} (f - \phi)^{+} \, dx = \infty.
+\]
+Concluimos que, en este caso, ambos lados valen $\infty$:
+\[
+\int_{E} (f - \phi) \, dx = \infty = \int_{E} f \, dx - \int_{E} \phi \, dx,
+\]
+pues $\int_{E} f \, dx = \infty$ y $\int_{E} \phi \, dx \in \R$.
+\end{proof}
+
+\begin{namedstd}{Nota}{Productos de funciones integrables}
+Las condiciones para que $fg$ sea integrable son más complejas que para la suma. Por ejemplo, si $f \in L(E)$ y $g$ es medible con $|g(x)| \leq M$ para $x \in E$, entonces $fg \in L(E)$, pues $|fg| \leq M |f|$ y la monotonía da $\int_{E} |fg| \, dx \leq M \int_{E} |f| \, dx < \infty$.
+\end{namedstd}
+
+\subsection{Los teoremas de convergencia}
+
+\begin{namedres}{Teorema}{Convergencia monótona con minorante o mayorante integrable}
+Sea $\{f_{k}\}_{k=1}^{\infty}$ una sucesión de funciones medibles en $E$, tales que $\lim_{k \to \infty} f_{k} = f$ c.p.d. en $E$.
+\begin{enumerate}[label=(\roman*)]
+\item Si existe $\phi \in L(E)$ tal que $\phi \leq f_{k} \leq f_{k+1}$ c.p.d. para todo $k \geq 1$, entonces
+\[
+\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f \, dx.
+\]
+\item Si existe $\phi \in L(E)$ tal que $f_{k+1} \leq f_{k} \leq \phi$ c.p.d. para todo $k \geq 1$, entonces
+\[
+\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f \, dx.
+\]
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Solo probaremos el caso creciente; la parte (ii) se deja como ejercicio a la persona lectora. Si se cumple la primera condición, entonces
+\[
+f_{k} - \phi \geq 0 \qquad \text{y} \qquad f_{k+1} - \phi \geq f_{k} - \phi \quad \text{c.p.d.}
+\]
+para $k \geq 1$, y además $f_{k} - \phi \to f - \phi$ c.p.d. Entonces, por el teorema de convergencia monótona para funciones no negativas,
+\[
+\lim_{k \to \infty} \int_{E} (f_{k} - \phi) \, dx = \int_{E} (f - \phi) \, dx.
+\]
+Por la proposición de la resta de una minorante integrable, aplicada a cada $f_{k}$ y a $f$ (con minorante $\phi$),
+\[
+\int_{E} (f_{k} - \phi) \, dx = \int_{E} f_{k} \, dx - \int_{E} \phi \, dx, \qquad \int_{E} (f - \phi) \, dx = \int_{E} f \, dx - \int_{E} \phi \, dx.
+\]
+Es decir,
+\[
+\lim_{k \to \infty} \int_{E} f_{k} \, dx - \int_{E} \phi \, dx = \int_{E} f \, dx - \int_{E} \phi \, dx,
+\]
+y como $\int_{E} \phi \, dx \in \R$, podemos cancelar y concluir que $\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f \, dx$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Integración término a término de series de funciones no negativas}
+Sean $f_{k} : E \to [0,\infty]$ medibles para $k \geq 1$. Entonces, si llamamos
+\[
+g_{m} = \sum_{k=1}^{m} f_{k},
+\]
+tenemos que $0 \leq g_{m} \leq g_{m+1}$. Luego, por el teorema de convergencia monótona y la linealidad,
+\begin{align*}
+\int_{E} \left( \sum_{k=1}^{\infty} f_{k} \right) \, dx &= \int_{E} \lim_{m \to \infty} g_{m}(x) \, dx = \lim_{m \to \infty} \int_{E} g_{m}(x) \, dx \\
+&= \lim_{m \to \infty} \int_{E} \sum_{k=1}^{m} f_{k}(x) \, dx = \lim_{m \to \infty} \sum_{k=1}^{m} \int_{E} f_{k}(x) \, dx = \sum_{k=1}^{\infty} \int_{E} f_{k}(x) \, dx.
+\end{align*}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Una sucesión que converge a cero con integrales constantes}
+Sea $E = [0,1]$ y definamos
+\[
+f_{k}(x) =
+\begin{cases}
+k & \text{si } 0 \leq x \leq \frac{1}{k}, \\
+0 & \text{si } \frac{1}{k} < x \leq 1.
+\end{cases}
+\]
+Entonces
+\[
+\int_{E} f_{k}(x) \, dx = k \cdot m\left( \left[0, \tfrac{1}{k}\right] \right) = 1 \quad \text{para todo } k,
+\]
+pero $\lim_{k \to \infty} f_{k} = 0$ c.p.d. en $[0,1]$: para $x > 0$, $f_{k}(x) = 0$ apenas $k > \tfrac{1}{x}$. Nos preguntamos:
+\begin{center}
+¿Cuándo $\displaystyle \lim_{k \to \infty} \int_{E} f_{k}(x) \, dx = \int_{E} \lim_{k \to \infty} f_{k}(x) \, dx$?
+\end{center}
+Este ejemplo muestra que alguna hipótesis adicional (monotonía, dominación, etc.) es necesaria.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Lema de Fatou}
+Sea $f_{k} : E \to [0,\infty]$ una sucesión de funciones medibles no negativas. Entonces
+\[
+\int_{E} \liminf_{k \to \infty} f_{k} \, dx \leq \liminf_{k \to \infty} \int_{E} f_{k} \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Recordemos que
+\[
+\liminf_{k \to \infty} f_{k} = \sup_{k \geq 1} \inf_{m \geq k} f_{m} = \lim_{k \to \infty} \inf_{m \geq k} f_{m}.
+\]
+Considere
+\[
+g_{k} = \inf_{m \geq k} f_{m};
+\]
+entonces $\{g_{k}\}$ es una sucesión creciente de funciones medibles no negativas con $g_{k} \to \liminf_{k \to \infty} f_{k}$. Por el teorema de convergencia monótona,
+\[
+\int_{E} \Big( \liminf_{k \to \infty} f_{k} \Big) \, dx = \lim_{k \to \infty} \int_{E} \inf_{m \geq k} f_{m} \, dx.
+\]
+Note que
+\[
+\inf_{m \geq k} f_{m} \leq f_{n} \quad \text{para } n \geq k \geq 1.
+\]
+Entonces, por monotonía, para $n \geq k$,
+\[
+\int_{E} \inf_{m \geq k} f_{m}(x) \, dx \leq \int_{E} f_{n}(x) \, dx,
+\]
+y tomando el ínfimo sobre $n \geq k$,
+\[
+\int_{E} \inf_{m \geq k} f_{m}(x) \, dx \leq \inf_{n \geq k} \int_{E} f_{n}(x) \, dx.
+\]
+Tomando ahora el límite cuando $k \to \infty$ en ambos lados,
+\[
+\lim_{k \to \infty} \int_{E} \inf_{m \geq k} f_{m}(x) \, dx \leq \lim_{k \to \infty} \inf_{n \geq k} \int_{E} f_{n}(x) \, dx = \liminf_{k \to \infty} \int_{E} f_{k}(x) \, dx.
+\]
+Combinando con la primera identidad, concluimos que
+\[
+\int_{E} \liminf_{k \to \infty} f_{k} \, dx \leq \liminf_{k \to \infty} \int_{E} f_{k} \, dx. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Nota}{Cota uniforme de integrales y el límite inferior}
+Note que si $f_{k} : E \to [0,\infty]$ es medible para cada $k$ y
+\[
+\int_{E} f_{k}(x) \, dx \leq M \quad \text{para todo } k,
+\]
+entonces, por el lema de Fatou,
+\[
+\int_{E} \liminf_{k \to \infty} f_{k} \, dx \leq M.
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Convergencia dominada de Lebesgue para funciones no negativas}
+Sea $\{f_{k}\}_{k=1}^{\infty}$ una sucesión de funciones medibles no negativas tales que
+\[
+\lim_{k \to \infty} f_{k} = f
+\]
+c.p.d. en $E$. Si existe $\phi$ medible con
+\[
+0 \leq f_{k} \leq \phi \quad \text{c.p.d. para todo } k \geq 1, \qquad \int_{E} \phi(x) \, dx < \infty,
+\]
+entonces
+\[
+\lim_{k \to \infty} \int_{E} f_{k}(x) \, dx = \int_{E} f(x) \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Como $f = \liminf_{k \to \infty} f_{k}$ c.p.d., el lema de Fatou y la igualdad c.p.d. de las integrales dan
+\[
+\int_{E} f(x) \, dx \leq \liminf_{k \to \infty} \int_{E} f_{k} \, dx.
+\]
+Note además que $0 \leq f \leq \phi$ c.p.d., entonces $f, f_{k} \in L(E)$, pues sus integrales están dominadas por $\int_{E} \phi \, dx < \infty$.
+
+Considere ahora $h_{k} = \phi - f_{k} \geq 0$ c.p.d. Por el lema de Fatou aplicado a $\{h_{k}\}$,
+\[
+\int_{E} \liminf_{k \to \infty} (\phi - f_{k}) \, dx \leq \liminf_{k \to \infty} \int_{E} (\phi - f_{k}) \, dx.
+\]
+Note que, como el límite de $f_{k}$ existe c.p.d.,
+\[
+\liminf_{k \to \infty} (\phi - f_{k}) = \lim_{k \to \infty} (\phi - f_{k}) = \phi - f \quad \text{c.p.d.}
+\]
+Por otro lado, usando la linealidad (todas las funciones involucradas son integrables), tenemos que
+\[
+\liminf_{k \to \infty} \int_{E} (\phi - f_{k})(x) \, dx = \liminf_{k \to \infty} \left( \int_{E} \phi(x) \, dx - \int_{E} f_{k}(x) \, dx \right) = \int_{E} \phi(x) \, dx - \limsup_{k \to \infty} \int_{E} f_{k}(x) \, dx.
+\]
+La última igualdad vale porque $\liminf_{k}(-a_{k}) = -\limsup_{k} a_{k}$ para toda sucesión real $\{a_{k}\}$, y sumar la constante finita $\int_{E} \phi \, dx$ conmuta con el límite inferior. Combinando las tres relaciones anteriores y cancelando $\int_{E} \phi \, dx \in \R$, concluimos que
+\[
+\limsup_{k \to \infty} \int_{E} f_{k}(x) \, dx \leq \int_{E} f(x) \, dx \leq \liminf_{k \to \infty} \int_{E} f_{k}(x) \, dx,
+\]
+es decir, el límite existe y $\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f \, dx$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Convergencia uniforme en dominios de medida finita}
+Sea $f_{k} \in L(E)$ para $k \geq 1$. Si $\lim_{k \to \infty} f_{k} = f$ uniformemente en $E$ con $m(E) < \infty$, entonces $f \in L(E)$ y
+\[
+\lim_{k \to \infty} \int_{E} f_{k} \, dx = \int_{E} f \, dx.
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{La hipótesis de medida finita es esencial en la convergencia uniforme}
+Note que $f_{k}(x) = \frac{1}{k}$ converge a cero uniformemente en $\R$, pero
+\[
+\int_{\R} f_{k} \, dx = \infty
+\]
+para todo $k$, así que la conclusión del teorema anterior falla sin la hipótesis $m(E) < \infty$.
+\end{namedstd}
+
+% =============================================================================
+\section{La relación entre las integrales de Riemann y Lebesgue}
+% =============================================================================
+
+\subsection{Particiones y funciones escalonadas}
+
+\begin{namedstd}{Notación}{Particiones y funciones escalonadas asociadas}
+Sea $f : [a,b] \to \R$ acotada por $M$, es decir $|f(x)| \leq M$ en $[a,b]$, y sea
+\[
+\Gamma_{k} = \{ a = x_{0}^{k} < x_{1}^{k} < \dots < x_{n_{k}}^{k} = b \}
+\]
+una sucesión de particiones de $[a,b]$ tales que $\Gamma_{k} \subseteq \Gamma_{k+1}$ (cada una refina a la anterior) y cuya malla $|\Gamma_{k}| = \max_{i} (x_{i}^{k} - x_{i-1}^{k})$ tiende a cero. Escribiendo $x_{i} = x_{i}^{k}$ y $n = n_{k}$ para aligerar la notación, consideremos:
+\begin{enumerate}[label=(\alph*)]
+\item si $m_{i} = \inf_{[x_{i-1},x_{i}]} f(x)$, la \emph{escalonada inferior}
+\[
+\ell_{k}(x) = \sum_{i=1}^{n-1} m_{i} \ind_{[x_{i-1},x_{i})} + m_{n} \ind_{[x_{n-1},x_{n}]};
+\]
+\item si $M_{i} = \sup_{[x_{i-1},x_{i}]} f(x)$, la \emph{escalonada superior}
+\[
+u_{k}(x) = \sum_{i=1}^{n-1} M_{i} \ind_{[x_{i-1},x_{i})} + M_{n} \ind_{[x_{n-1},x_{n}]}.
+\]
+\end{enumerate}
+Las integrales de estas funciones simples son las sumas de Darboux:
+\[
+\int_{[a,b]} \ell_{k}(x) \, dx = \sum_{i=1}^{n} m_{i} (x_{i} - x_{i-1}), \qquad \int_{[a,b]} u_{k}(x) \, dx = \sum_{i=1}^{n} M_{i} (x_{i} - x_{i-1}).
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Monotonía de las escalonadas bajo refinamiento}
+Note que
+\[
+\ell_{k}(x) \leq f(x) \leq u_{k}(x) \quad \text{para todo } x \in [a,b].
+\]
+Recordemos que si $\Gamma_{k} \subseteq \Gamma_{k+1}$, entonces
+\begin{enumerate}[label=(\roman*)]
+\item $\ell_{k} \leq \ell_{k+1}$;
+\item $u_{k} \geq u_{k+1}$.
+\end{enumerate}
+Como $|f(x)| \leq M$ para $x \in [a,b]$, entonces $|\ell_{k}| \leq M$ y $|u_{k}| \leq M$ en $[a,b]$. Por monotonía y acotación, existen los límites puntuales
+\[
+\ell = \lim_{k \to \infty} \ell_{k}, \qquad u = \lim_{k \to \infty} u_{k},
+\]
+que son medibles por ser límites de medibles, y satisfacen $\ell(x) \leq f(x) \leq u(x)$ para todo $x \in [a,b]$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Las sumas de Darboux convergen a las integrales de $\ell$ y $u$}
+Con la notación anterior,
+\[
+\lim_{k \to \infty} \int_{[a,b]} \ell_{k}(x) \, dx = \int_{[a,b]} \ell(x) \, dx, \qquad \lim_{k \to \infty} \int_{[a,b]} u_{k}(x) \, dx = \int_{[a,b]} u(x) \, dx.
+\]
+Es decir, estas integrales son el límite de las sumas inferiores y superiores de Darboux. Además,
+\[
+\int_{[a,b]} u(x) \, dx = \int_{[a,b]} \ell(x) \, dx \iff \int_{[a,b]} \big( u(x) - \ell(x) \big) \, dx = 0 \iff u = \ell \ \text{c.p.d.}
+\]
+\end{namedres}
+\begin{proof}
+Las funciones $\ell_{k} + M$ y $u_{k} + M$ son medibles, no negativas, convergen puntualmente a $\ell + M$ y $u + M$ respectivamente, y están dominadas por la constante $2M$, que es integrable en $[a,b]$ pues $m([a,b]) = b - a < \infty$. El teorema de convergencia dominada implica entonces que
+\[
+\lim_{k \to \infty} \int_{[a,b]} (\ell_{k} + M) \, dx = \int_{[a,b]} (\ell + M) \, dx,
+\]
+y restando la constante $M(b-a)$ de ambos lados (linealidad) se obtiene la afirmación para $\ell_{k}$; el argumento para $u_{k}$ es idéntico.
+
+Para las equivalencias: como $u - \ell \geq 0$ y ambas son integrables (están acotadas por $M$ en un dominio de medida finita), la linealidad da
+\[
+\int_{[a,b]} u \, dx - \int_{[a,b]} \ell \, dx = \int_{[a,b]} (u - \ell) \, dx,
+\]
+así que la primera equivalencia es inmediata. La segunda es el corolario de la desigualdad de Markov: una función no negativa tiene integral nula si y solo si es nula c.p.d.
+\end{proof}
+
+\begin{namedstd}{Nota}{Si las sumas coinciden, la integral de Riemann es la de Lebesgue}
+Concluimos que, si las sumas inferiores y superiores de Darboux convergen al mismo valor, entonces
+\[
+u = \ell = f \quad \text{c.p.d.}
+\]
+(pues $\ell \leq f \leq u$), la función $f$ es medible por coincidir c.p.d. con la función medible $\ell$, y por lo tanto
+\[
+\lim_{k \to \infty} \sum_{i=1}^{n} m_{i} (x_{i} - x_{i-1}) = \lim_{k \to \infty} \sum_{i=1}^{n} M_{i} (x_{i} - x_{i-1}) = \int_{[a,b]} f(x) \, dx,
+\]
+donde la integral es la de Lebesgue. Es decir, cuando $f$ es Riemann integrable, su integral de Riemann coincide con su integral de Lebesgue.
+\end{namedstd}
+
+\subsection{La caracterización de Lebesgue de la integrabilidad de Riemann}
+
+\begin{namedres}{Teorema}{Criterio de Lebesgue: Riemann integrable equivale a continua c.p.d.}
+Sea $f : [a,b] \to \R$ acotada. Entonces son equivalentes:
+\begin{enumerate}[label=(\roman*)]
+\item $f$ es Riemann integrable;
+\item $f$ es continua c.p.d. en $[a,b]$.
+\end{enumerate}
+En tal caso, las integrales de Riemann y de Lebesgue de $f$ sobre $[a,b]$ coinciden.
+\end{namedres}
+\begin{proof}
+Fijamos una sucesión de particiones $\Gamma_{k}$ con $\Gamma_{k} \subseteq \Gamma_{k+1}$ y $\lim_{k \to \infty} |\Gamma_{k}| = 0$, y usamos la notación de la subsección anterior.
+
+\textit{(i) implica (ii).} Comenzamos asumiendo que $f$ es Riemann integrable; entonces las sumas inferiores y superiores convergen ambas a la integral de Riemann, y por la proposición anterior $u = \ell = f$ c.p.d. Sea
+\[
+Z = \{ \ell \neq f \} \cup \{ \ell \neq u \} \cup \{ f \neq u \} \cup \bigcup_{k=1}^{\infty} \Gamma_{k}.
+\]
+Entonces $m(Z) = 0$, pues es unión numerable de conjuntos nulos: los tres primeros por lo anterior, y cada $\Gamma_{k}$ por ser finito. Si $x \notin Z$, entonces
+\[
+u(x) = \ell(x) = f(x), \qquad x \notin \Gamma_{k} \ \text{para todo } k \geq 1.
+\]
+Afirmamos que $f$ es continua en cada $x \notin Z$. Supongamos que $f$ no es continua en $x$. Entonces existe un $\varepsilon > 0$ tal que para todo $\delta > 0$ existe $x_{\delta}$ con
+\[
+|x_{\delta} - x| < \delta \qquad \text{y} \qquad |f(x) - f(x_{\delta})| > \varepsilon.
+\]
+Dado $k$, como $x \notin \Gamma_{k}$, existen nodos consecutivos $x_{i-1}^{k}, x_{i}^{k}$ tales que $x \in (x_{i-1}^{k}, x_{i}^{k})$, que es abierto. Tomemos $\delta > 0$ tal que
+\[
+(x - \delta, x + \delta) \subseteq (x_{i-1}^{k}, x_{i}^{k}).
+\]
+Entonces $x_{\delta} \in (x_{i-1}^{k}, x_{i}^{k})$ y, como ambos puntos pertenecen al mismo subintervalo de la partición,
+\[
+\varepsilon < |f(x) - f(x_{\delta})| \leq M_{i} - m_{i} = u_{k}(x) - \ell_{k}(x).
+\]
+Como esto vale para todo $k$, haciendo $k \to \infty$ obtenemos
+\[
+u(x) - \ell(x) \geq \varepsilon > 0,
+\]
+lo que contradice $u(x) = \ell(x)$. Concluimos que $f$ es continua en todo punto fuera del conjunto nulo $Z$, es decir, $f$ es continua c.p.d.
+
+\textit{(ii) implica (i).} Asumamos ahora que
+\[
+Z = \{ x \in [a,b] :\ f\ \text{es discontinua en } x \}
+\]
+es de medida cero. Sean $x \notin Z \cup \{a, b\}$ y $\varepsilon > 0$. Por continuidad de $f$ en $x$, existe $\delta > 0$ tal que
+\[
+|x - y| < \delta \implies |f(x) - f(y)| < \frac{\varepsilon}{2}.
+\]
+Tome ahora $k_{0}$ tal que
+\[
+|\Gamma_{k}| < \frac{\delta}{2} \quad \text{si } k \geq k_{0}.
+\]
+Para $k \geq k_{0}$, sea $i$ tal que $x \in [x_{i-1}, x_{i})$. Entonces todo punto $y$ del subintervalo cerrado $[x_{i-1}, x_{i}]$ satisface $|y - x| \leq x_{i} - x_{i-1} \leq |\Gamma_{k}| < \delta$, es decir,
+\[
+[x_{i-1}, x_{i}] \subseteq (x - \delta, x + \delta).
+\]
+Por lo tanto,
+\[
+f(x) - \frac{\varepsilon}{2} \leq f(y) \leq f(x) + \frac{\varepsilon}{2} \quad \text{para } y \in [x_{i-1}, x_{i}],
+\]
+y tomando ínfimo y supremo sobre ese subintervalo,
+\[
+f(x) - \frac{\varepsilon}{2} \leq m_{i} \leq M_{i} \leq f(x) + \frac{\varepsilon}{2}.
+\]
+Es decir, para $k \geq k_{0}$,
+\[
+|u_{k}(x) - f(x)| \leq \frac{\varepsilon}{2} < \varepsilon, \qquad |\ell_{k}(x) - f(x)| \leq \frac{\varepsilon}{2} < \varepsilon.
+\]
+Lo anterior nos dice que
+\[
+\lim_{k \to \infty} \ell_{k}(x) = f(x), \qquad \lim_{k \to \infty} u_{k}(x) = f(x)
+\]
+para todo $x$ fuera del conjunto nulo $Z \cup \{a,b\}$, es decir, $\ell = u = f$ c.p.d.; en particular $f$ es medible. Por el teorema de convergencia dominada (aplicado como en la proposición anterior, con dominación por la constante $M$ en el dominio de medida finita $[a,b]$), se cumple que
+\[
+\lim_{k \to \infty} \int_{[a,b]} \ell_{k}(x) \, dx = \int_{[a,b]} f(x) \, dx, \qquad \lim_{k \to \infty} \int_{[a,b]} u_{k}(x) \, dx = \int_{[a,b]} f(x) \, dx.
+\]
+Es decir, las sumas inferiores y superiores de Darboux convergen ambas al mismo valor; en particular, dado $\varepsilon > 0$ existe una partición cuya suma superior y suma inferior difieren en menos de $\varepsilon$, y por el criterio de Darboux $f$ es Riemann integrable. En conclusión, $f$ es Riemann integrable y las integrales de Riemann y Lebesgue concuerdan.
+\end{proof}
+
+\appendix
+% =============================================================================
+\section{Anexo: caracterizaciones y teoremas clave}
+% =============================================================================
+
+A lo largo de este parcial, varios conceptos clave admiten \emph{múltiples caracterizaciones equivalentes} o vienen empaquetados en teoremas con hipótesis precisas que conviene tener juntas a la vista. Este anexo recopila esos paquetes en cajas autocontenidas, una por concepto. Cada caja indica además dónde se prueba cada afirmación dentro del documento.
+
+\anexogroup{Egorov y Lusin}
+
+\begin{equivbox}{blue}{Teorema de Egorov --- convergencia casi uniforme}
+Sean $E \subseteq \R^{d}$ medible con $m(E) < \infty$, $\{f_{k}\}$ medibles, $f_{k} \to f$ c.p.d. y $|f| < \infty$ c.p.d. en $E$. Entonces, para todo $\varepsilon > 0$ existe $F_{\varepsilon} \subseteq E$ \emph{cerrado} con:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item $m(E \setminus F_{\varepsilon}) < \varepsilon$; \hfill\textit{Teorema 1.1.5.}
+\item $f_{k} \to f$ uniformemente en $F_{\varepsilon}$.
+\end{enumerate}
+\textbf{Hipótesis esenciales:} $m(E) < \infty$ (contraejemplo: $f_{k} = \ind_{B(0,k)}$ en $\R^{d}$, Ejemplo 1.1.2) y $|f| < \infty$ c.p.d.
+\end{equivbox}
+
+\begin{equivbox}{teal}{Teorema de Lusin --- caracterización de la medibilidad}
+Sea $f : E \to \R$ con $E$ medible. Las siguientes son equivalentes (Teorema 1.2.4):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(medibilidad)}\; $f$ es medible.
+\item \textbf{(propiedad $C$)}\; Para todo $\varepsilon > 0$ existe $F \subseteq E$ cerrado con $m(E \setminus F) < \varepsilon$ y $f|_{F}$ continua. \hfill\textit{Definición 1.2.1.}
+\end{enumerate}
+\textbf{Cadena de la prueba:} simples tienen propiedad $C$ (Lema 1.2.3) $\to$ caso $m(E) < \infty$ vía Egorov $\to$ caso $m(E) = \infty$ vía anillos $E_{k} = E \cap \{k-1 \leq |x| < k\}$.
+\end{equivbox}
+
+\anexogroup{Modos de convergencia}
+
+\begin{equivbox}{violet}{Relaciones entre los modos de convergencia}
+Sean $f, f_{n} : E \to \overline{\R}$ medibles y finitas c.p.d.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Uniforme $\Rightarrow$ puntual $\Rightarrow$ c.p.d. (siempre).
+\item C.p.d. $+$ $m(E) < \infty$ $\Rightarrow$ en medida. \hfill\textit{Teorema 2.1.3.}
+\item En medida $\Rightarrow$ existe subsucesión que converge c.p.d. \hfill\textit{Teorema 2.1.5.}
+\item Cauchy en medida $\Rightarrow$ convergente en medida. \hfill\textit{Lema 2.2.2 (ejercicio).}
+\item C.p.d. $\not\Rightarrow$ en medida si $m(E) = \infty$ (e.g., $f_{k} = \ind_{[k,k+1]}$ en $\R$).
+\item En medida $\not\Rightarrow$ c.p.d. (máquina de escribir, Ejemplo 2.1.4).
+\item C.p.d. $\not\Rightarrow$ uniforme, pero Egorov da uniformidad fuera de un conjunto pequeño si $m(E) < \infty$.
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{La integral de funciones no negativas}
+
+\begin{equivbox}{purple}{Tres caracterizaciones de $\int_{E} f \, dx$ para $f \geq 0$}
+Sea $f : E \to [0,\infty]$ medible. Las siguientes cantidades coinciden:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(geométrica)}\; $m(R(f,E))$, la medida de la región bajo el gráfico. \hfill\textit{Definición 3.3.1.}
+\item \textbf{(sumas inferiores)}\; $\sup \big\{ \sum_{i} (\inf_{E_{i}} f)\, m(E_{i}) :\ E = \bigcup_{i=1}^{N} E_{i}$ partición medible finita$\big\}$. \hfill\textit{Teorema 4.3.2.}
+\item \textbf{(funciones simples)}\; $\sup \big\{ \int_{E} \phi \, dx :\ \phi$ simple medible, $0 \leq \phi \leq f \big\}$. \hfill\textit{Corolario 4.3.3.}
+\end{enumerate}
+\textbf{Insumos geométricos:} $m(A \times [0,a]) = a\,m(A)$ (Lema 3.1.3); $m_{e}(\Gamma(f,E)) = 0$ (Lema 3.2.1); $R(f,E)$ medible (Teorema 3.2.4).
+\end{equivbox}
+
+\begin{equivbox}{orange!85!black}{Propiedades básicas de la integral no negativa}
+Sean $f, g : E \to [0,\infty]$ medibles y $c \geq 0$.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Monotonía:} $g \leq f$ c.p.d. $\Rightarrow$ $\int_{E} g \leq \int_{E} f$; y $E_{1} \subseteq E_{2}$ $\Rightarrow$ $\int_{E_{1}} f \leq \int_{E_{2}} f$. \hfill\textit{3.3.3 y 4.4.2.}
+\item \textbf{Linealidad:} $\int_{E} (cf + g) = c \int_{E} f + \int_{E} g$. \hfill\textit{Teorema 4.5.1.}
+\item \textbf{Aditividad del dominio:} $E = \bigcup_{k} E_{k}$ disjuntos $\Rightarrow$ $\int_{E} f = \sum_{k} \int_{E_{k}} f$. \hfill\textit{Proposición 4.2.1.}
+\item \textbf{Markov:} $m(\{f \geq \alpha\}) \leq \frac{1}{\alpha} \int_{E} f \, dx$ para $\alpha > 0$. \hfill\textit{Proposición 4.4.3.}
+\item \textbf{Anulación:} $\int_{E} f = 0 \iff f = 0$ c.p.d.; $m(E) = 0 \Rightarrow \int_{E} f = 0$. \hfill\textit{Corolario 4.4.4 y Lema 4.4.1.}
+\item \textbf{Finitud:} $\int_{E} f < \infty \Rightarrow f < \infty$ c.p.d. \hfill\textit{Proposición 4.1.3.}
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{La integral general y $L(E)$}
+
+\begin{equivbox}{brown!85!black}{La integral de funciones con signo}
+Sea $f : E \to \overline{\R}$ medible, $f = f^{+} - f^{-}$.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $\int_{E} f$ \emph{existe} si $\int f^{+} < \infty$ o $\int f^{-} < \infty$; $f \in L(E)$ si ambas son finitas. \hfill\textit{5.1.1 y 5.1.2.}
+\item $f \in L(E) \iff \int_{E} |f| \, dx < \infty$, y en tal caso $\big| \int_{E} f \big| \leq \int_{E} |f|$ y $f$ es finita c.p.d. \hfill\textit{Nota 5.1.3.}
+\item \textbf{Monotonía:} $f \leq g$ c.p.d. y ambas integrales existen $\Rightarrow$ $\int_{E} f \leq \int_{E} g$. \hfill\textit{Teorema 5.2.1.}
+\item \textbf{Linealidad en $L(E)$:} $\int cf = c \int f$; $\int (f+g) = \int f + \int g$. \hfill\textit{Teorema 5.3.1.}
+\item \textbf{Resta con minorante:} $\phi \leq f$ c.p.d., $\phi \in L(E)$ $\Rightarrow$ $\int (f - \phi) = \int f - \int \phi$. \hfill\textit{Proposición 5.3.3.}
+\item \textbf{Cuidado:} $\int (f - g) = \int f - \int g$ puede fallar si las integrales no son finitas. \hfill\textit{Nota 5.3.2.}
+\item \textbf{Productos:} $f \in L(E)$, $|g| \leq M$ medible $\Rightarrow fg \in L(E)$. \hfill\textit{Nota 5.3.4.}
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{Riemann y Lebesgue}
+
+\begin{equivbox}{red!75!black}{Criterio de Lebesgue para la integrabilidad de Riemann}
+Sea $f : [a,b] \to \R$ acotada. Las siguientes son equivalentes (Teorema 6.2.1):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(Riemann)}\; $f$ es Riemann integrable.
+\item \textbf{(continuidad c.p.d.)}\; El conjunto de discontinuidades de $f$ tiene medida cero.
+\end{enumerate}
+En tal caso, la integral de Riemann de $f$ coincide con su integral de Lebesgue $\int_{[a,b]} f \, dx$.
+\par\medskip
+\textbf{Mecanismo:} escalonadas $\ell_{k} \leq f \leq u_{k}$ sobre particiones refinadas con malla $\to 0$; TCD da $\int \ell_{k} \to \int \ell$, $\int u_{k} \to \int u$; y $f$ Riemann integrable $\iff u = \ell = f$ c.p.d. (Proposición 6.1.3 y Nota 6.1.4).
+\par\medskip
+\textbf{Contraejemplo canónico:} la función de Dirichlet $\ind_{\Q \cap [0,1]}$ es discontinua en todo punto: no es Riemann integrable, pero es Lebesgue integrable con $\int_{[0,1]} \ind_{\Q} \, dx = 0$.
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: contraejemplos canónicos}
+% =============================================================================
+
+Esta tabla recopila los contraejemplos más útiles para el examen --- cada uno responde a una pregunta del estilo ``¿es necesariamente \textit{X}?'' con \textit{no, esta sucesión/función cumple A pero no B}.
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.30\textwidth} p{0.32\textwidth} p{0.30\textwidth}}
+\hline
+\textbf{Propiedad afirmativa} & \textbf{Contraejemplo a la implicación} & \textbf{Comentario / referencia} \\
+\hline
+\endhead
+
+Convergencia c.p.d. $\Rightarrow$ casi uniforme (Egorov) sin $m(E) < \infty$ & $f_{k} = \ind_{B(0,k)} \to 1$ puntualmente en $\R^{d}$; no hay convergencia uniforme en ningún cerrado con complemento de medida finita. & La medida finita es esencial en Egorov (Ejemplo 1.1.2). \\
+\hline
+Convergencia c.p.d. $\Rightarrow$ en medida & $f_{k} = \ind_{[k,k+1]} \to 0$ puntualmente en $\R$, pero $m\{|f_{k}| > \tfrac{1}{2}\} = 1$ para todo $k$. & Requiere $m(E) < \infty$ (Teorema 2.1.3). \\
+\hline
+Convergencia en medida $\Rightarrow$ c.p.d. & Máquina de escribir: indicadoras diádicas $I_{n,i}$ en $[0,1]$; $\xrightarrow{m} 0$ pero no converge en ningún punto. & Solo se rescata una subsucesión c.p.d. (Ejemplo 2.1.4, Teorema 2.1.5). \\
+\hline
+$\lim_{k} \int f_{k} = \int \lim_{k} f_{k}$ sin hipótesis extra & $f_{k} = k \ind_{[0,1/k]}$ en $[0,1]$: $\int f_{k} = 1$ pero $f_{k} \to 0$ c.p.d. & Falta dominación: $\sup_{k} f_{k}(x) \approx \tfrac{1}{x} \notin L([0,1])$ (Ejemplo 5.4.3). \\
+\hline
+Desigualdad de Fatou con igualdad & $f_{k} = \ind_{[k,k+1]}$: $\int \liminf f_{k} = 0 < 1 = \liminf \int f_{k}$. & Fatou solo da ``$\leq$'' (Teorema 5.4.4). \\
+\hline
+TCM decreciente sin mayorante integrable & $f_{k} = \ind_{[k,\infty)} \downarrow 0$ puntualmente, pero $\int_{\R} f_{k} = \infty \not\to 0$. & En 5.4.1(ii) la mayorante $\phi \in L(E)$ es esencial. \\
+\hline
+Convergencia uniforme $\Rightarrow$ $\lim \int = \int \lim$ sin $m(E) < \infty$ & $f_{k} = \tfrac{1}{k} \to 0$ uniformemente en $\R$, pero $\int_{\R} f_{k} = \infty$. & La medida finita es esencial en 5.4.7 (Nota 5.4.8). \\
+\hline
+$\int (f - g) = \int f - \int g$ sin integrabilidad & $f = \ind_{[n,\infty)}$, $g = \ind_{[n+1,\infty)}$: $\int (f-g) = 1$, pero $\int f - \int g = \infty - \infty$. & La linealidad requiere $f, g \in L(E)$ (Nota 5.3.2). \\
+\hline
+Acotada $\Rightarrow$ Riemann integrable & Dirichlet $\ind_{\Q \cap [0,1]}$: acotada, Lebesgue integrable con integral $0$, pero discontinua en todo punto. & Criterio de Lebesgue (Teorema 6.2.1). \\
+\hline
+Integral finita $\Rightarrow$ función finita en todo punto & $f = \infty \cdot \ind_{Z}$ con $m(Z) = 0$: $\int f = 0$ pero $f = \infty$ en $Z$. & Solo se obtiene finitud c.p.d. (Proposición 4.1.3). \\
+\hline
+$\int_{E} f = 0 \Rightarrow f = 0$ en todo punto & $f = \ind_{Z}$ con $m(Z) = 0$, $Z \neq \emptyset$. & Solo $f = 0$ c.p.d. (Corolario 4.4.4). \\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+\newpage
+% =============================================================================
+\section{Anexo: los teoremas de convergencia en un vistazo}
+% =============================================================================
+
+Mapa rápido para decidir qué teorema permite intercambiar $\lim$ e $\int$. Cada bloque indica hipótesis, conclusión y qué falla si se quita una hipótesis (ver \emph{Anexo: contraejemplos canónicos}).
+
+\medskip
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.22\textwidth} p{0.36\textwidth} p{0.34\textwidth}}
+\hline
+\textbf{Teorema} & \textbf{Hipótesis} & \textbf{Conclusión} \\
+\hline
+\endhead
+
+TCM no negativo (4.2.2) & $0 \leq f_{k} \leq f_{k+1}$ en $E$; $f_{k} \to f$ c.p.d. & $\int_{E} f_{k} \, dx \to \int_{E} f \, dx$ (posiblemente $= \infty$). \\
+\hline
+TCM con minorante / mayorante (5.4.1) & $\phi \in L(E)$; $\phi \leq f_{k} \leq f_{k+1}$ c.p.d. (o bien $f_{k+1} \leq f_{k} \leq \phi$); $f_{k} \to f$ c.p.d. & $\int_{E} f_{k} \, dx \to \int_{E} f \, dx$. \\
+\hline
+Series no negativas (5.4.2) & $f_{k} \geq 0$ medibles. & $\int_{E} \sum_{k} f_{k} \, dx = \sum_{k} \int_{E} f_{k} \, dx$. \\
+\hline
+Lema de Fatou (5.4.4) & $f_{k} \geq 0$ medibles. & $\int_{E} \liminf f_{k} \, dx \leq \liminf \int_{E} f_{k} \, dx$ (solo desigualdad). \\
+\hline
+TCD (5.4.6) & $0 \leq f_{k} \leq \phi$ c.p.d.; $\int_{E} \phi \, dx < \infty$; $f_{k} \to f$ c.p.d. & $\int_{E} f_{k} \, dx \to \int_{E} f \, dx$. \\
+\hline
+Convergencia uniforme (5.4.7) & $f_{k} \in L(E)$; $f_{k} \to f$ \emph{uniformemente}; $m(E) < \infty$. & $f \in L(E)$ y $\int_{E} f_{k} \, dx \to \int_{E} f \, dx$ (prueba: ejercicio). \\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\begin{equivbox}{olive!80!black}{Implicaciones y advertencias alrededor de la convergencia}
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Monotonía creciente $+$ no negatividad $\Rightarrow$ vale TCM sin más hipótesis. \hfill\textit{Teorema 4.2.2.}
+\item Dominación integrable $\Rightarrow$ vale TCD. \hfill\textit{Teorema 5.4.6.}
+\item Solo no negatividad $\Rightarrow$ vale Fatou (desigualdad). \hfill\textit{Teorema 5.4.4.}
+\item $\int_{E} f_{k} \, dx \leq M$ para todo $k$ $\Rightarrow$ $\int_{E} \liminf f_{k} \, dx \leq M$. \hfill\textit{Nota 5.4.5.}
+\end{itemize}
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Convergencia puntual $\not\Rightarrow$ $\lim \int = \int \lim$ (e.g., $k \ind_{[0,1/k]}$; $\ind_{[k,k+1]}$).
+\item Fatou con igualdad $\not\Rightarrow$ (e.g., $\ind_{[k,k+1]}$: $0 < 1$).
+\item Convergencia uniforme $\not\Rightarrow$ $\lim \int = \int \lim$ si $m(E) = \infty$ (e.g., $f_{k} = \tfrac{1}{k}$ en $\R$).
+\item Monotonía decreciente sin mayorante integrable $\not\Rightarrow$ TCM (e.g., $\ind_{[k,\infty)}$).
+\end{itemize}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: estrategias de demostración}
+% =============================================================================
+
+Patrones meta de demostración que recurren a lo largo de este parcial. Cuando un problema de examen pida ``muestre que \dots'', revise estos patrones antes de empezar a escribir.
+
+\newtcolorbox{strategybox}[1]{%
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=blue!50!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#1},
+  arc=3pt,
+  boxrule=0.6pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt,
+}
+
+\begin{strategybox}{1.\ Para probar que algo vale c.p.d.: hacer pequeño el conjunto malo}
+\textbf{Patrón:} \textit{exprese el conjunto malo como unión numerable de conjuntos que puede controlar.}
+\begin{itemize}[leftmargin=1.5em]
+\item $\{f > 0\} = \bigcup_{k} \{f \geq \tfrac{1}{k}\}$ y controle cada pieza con Markov.
+\item Conjuntos $H_{m} = \bigcup_{j \geq m} A_{j}$ decrecientes con $m(H_{m}) \leq \sum_{j \geq m} m(A_{j}) \to 0$ cuando $\sum m(A_{j}) < \infty$ (estilo Borel-Cantelli); el conjunto malo es $\bigcap_{m} H_{m}$.
+\item Presupueste con series geométricas: pida $m(\cdot) < \varepsilon / 2^{k}$ en el paso $k$.
+\end{itemize}
+\textbf{Apariciones:} subsucesión c.p.d. de convergencia en medida (§2.1), $\int f = 0 \Rightarrow f = 0$ c.p.d. (§4.4), Egorov (§1.1).
+\end{strategybox}
+
+\begin{strategybox}{2.\ Para intercambiar límite e integral: lista de chequeo}
+\textbf{Patrón:} \textit{identifique cuál teorema de convergencia encaja con los datos.}
+\begin{itemize}[leftmargin=1.5em]
+\item ¿La sucesión es monótona y no negativa (o con minorante/mayorante en $L(E)$)? $\Rightarrow$ TCM.
+\item ¿Hay una dominante $\phi$ con $\int \phi < \infty$? $\Rightarrow$ TCD.
+\item ¿Solo necesita una desigualdad? $\Rightarrow$ Fatou (recuerde: $\liminf$ adentro $\leq$ $\liminf$ afuera).
+\item ¿Convergencia uniforme y $m(E) < \infty$? $\Rightarrow$ teorema de convergencia uniforme.
+\item Si nada aplica, sospeche del resultado: busque contraejemplo tipo $k \ind_{[0,1/k]}$ o $\ind_{[k,k+1]}$.
+\end{itemize}
+\textbf{Apariciones:} sumas de Darboux (§6.1), series término a término (§5.4), TCD vía Fatou (§5.4).
+\end{strategybox}
+
+\begin{strategybox}{3.\ Para probar propiedades de la integral: simple $\to$ no negativa $\to$ general}
+\textbf{Patrón:} \textit{pruebe primero para funciones simples, suba por TCM, y separe $f = f^{+} - f^{-}$.}
+\begin{itemize}[leftmargin=1.5em]
+\item Para simples: use la partición común $\{A_{i} \cap B_{j}\}$ y la aditividad finita de $m$.
+\item Para no negativas: tome simples $\phi_{k} \uparrow f$ (aproximación diádica) y aplique TCM.
+\item Para generales: aplique lo anterior a $f^{+}$ y $f^{-}$ y reste, cuidando que no aparezca $\infty - \infty$.
+\end{itemize}
+\textbf{Apariciones:} linealidad (§4.5 y §5.3), monotonía general (§5.2), homogeneidad (§4.5).
+\end{strategybox}
+
+\begin{strategybox}{4.\ Para construir cerrados donde pasa algo bueno: regularidad $+$ presupuesto geométrico}
+\textbf{Patrón:} \textit{regularidad interna da $F_{k}$ cerrado dentro de cada pieza con $m(\cdot \setminus F_{k}) < \varepsilon/2^{k}$; luego combine.}
+\begin{itemize}[leftmargin=1.5em]
+\item Intersección numerable $\bigcap F_{k}$: sigue siendo cerrada y pierde a lo sumo $\sum \varepsilon/2^{k} = \varepsilon$ de medida (Egorov, Lusin caso finito).
+\item Unión numerable $\bigcup F_{k}$: no es cerrada en general, pero sí lo es si los $F_{k}$ viven en anillos $\{k - 1 \leq |x| < k\}$ (localmente finita): toda sucesión convergente cae en finitos $F_{k}$ (Lusin caso infinito).
+\item Para continuidad relativa a una unión finita de cerrados disjuntos: una sucesión convergente eventualmente permanece en el cerrado que contiene al límite (§1.2).
+\end{itemize}
+\textbf{Apariciones:} lema técnico de Egorov (§1.1), propiedad $C$ de simples y Lusin (§1.2).
+\end{strategybox}
+
+\begin{strategybox}{5.\ Para pasar de medida finita a infinita (y de acotado a no acotado)}
+\textbf{Patrón:} \textit{trocee el dominio y use continuidad de la medida.}
+\begin{itemize}[leftmargin=1.5em]
+\item Anillos: $E_{k} = E \cap \{k-1 \leq |x| < k\}$, disjuntos, de medida finita, con $E = \bigcup_{k} E_{k}$.
+\item Truncamiento creciente: $A_{k} = A \cap B(0,k) \uparrow A$ y $m(A) = \lim m(A_{k})$ (continuidad desde abajo).
+\item Reparta el error: pida $\varepsilon/2^{k}$ en la pieza $k$-ésima.
+\end{itemize}
+\textbf{Apariciones:} Lusin (§1.2), medida de $A \times [0,a]$ (§3.1), gráfico de medida cero (§3.2, ejercicio).
+\end{strategybox}
+
+\begin{strategybox}{6.\ Para trabajar con $R(f,E)$: geometría de la integral}
+\textbf{Patrón:} \textit{traduzca afirmaciones sobre integrales a afirmaciones sobre medidas de regiones.}
+\begin{itemize}[leftmargin=1.5em]
+\item Monotonía de la integral $=$ monotonía de la medida: $g \leq f \Rightarrow R(g,E) \subseteq R(f,E)$.
+\item Aditividad del dominio $=$ aditividad de la medida: dominios disjuntos dan regiones disjuntas.
+\item TCM $=$ continuidad desde abajo: $R(f_{k},E) \uparrow$ y $R(f,E) = \Gamma(f,E) \cup \bigcup_{k} R(f_{k},E)$ con $m(\Gamma) = 0$.
+\item Restricción: $\int_{E_{1}} f = \int_{E} \ind_{E_{1}} f$ porque las regiones difieren en un conjunto nulo.
+\end{itemize}
+\textbf{Apariciones:} definición de la integral y sus propiedades (§3.3, §4.2).
+\end{strategybox}
+
+\begin{strategybox}{7.\ Para usar Egorov / Lusin en pruebas de convergencia}
+\textbf{Patrón:} \textit{cambie ``c.p.d.'' por ``uniforme en un cerrado grande'' y pague $\eta$ de medida.}
+\begin{itemize}[leftmargin=1.5em]
+\item Egorov: si $m(E) < \infty$ y $f_{n} \to f$ c.p.d., hay $F$ cerrado con $m(E \setminus F) < \eta$ y convergencia uniforme en $F$.
+\item Con la uniformidad, los conjuntos $\{|f_{n} - f| > \varepsilon\}$ acaban dentro de $E \setminus F$: así se prueba la convergencia en medida (§2.1).
+\item Lusin: cambie ``$f$ medible'' por ``$f$ continua en un cerrado grande'' cuando necesite continuidad.
+\end{itemize}
+\textbf{Apariciones:} c.p.d. $\Rightarrow$ en medida (§2.1), Lusin desde Egorov (§1.2).
+\end{strategybox}
+
+\newpage
+% =============================================================================
+\section{Anexo: resumen de fórmulas}
+% =============================================================================
+
+\begin{equivbox}{orange}{Resumen rápido --- todas las fórmulas en un vistazo}
+Sean $f, g : E \to [0,\infty]$ (o $\overline{\R}$ donde tenga sentido) medibles, $c \in \R$, $\alpha > 0$, $\phi$ simple.
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Definición:} $\int_{E} f \, dx = m(R(f,E))$ para $f \geq 0$; $\int_{E} f \, dx = \int_{E} f^{+} \, dx - \int_{E} f^{-} \, dx$ en general.
+\item \textbf{Simples:} $\int_{E} \sum_{i} a_{i} \ind_{A_{i}} \, dx = \sum_{i} a_{i}\, m(A_{i})$ ($A_{i}$ disjuntos).
+\item \textbf{Producto:} $m(A \times [0,a]) = a\, m(A)$; $m_{e}(\Gamma(f,E)) = 0$.
+\item \textbf{Supremos:} $\int_{E} f \, dx = \sup \sum_{i} (\inf_{E_{i}} f)\, m(E_{i}) = \sup \{ \int_{E} \phi \, dx : 0 \leq \phi \leq f \}$.
+\item \textbf{Restricción:} $\int_{E_{1}} f \, dx = \int_{E} \ind_{E_{1}} f \, dx$; dominio nulo $\Rightarrow$ integral nula.
+\item \textbf{Aditividad:} $E = \bigcup_{k} E_{k}$ disjuntos $\Rightarrow$ $\int_{E} f = \sum_{k} \int_{E_{k}} f$.
+\item \textbf{Linealidad:} $\int (cf + g) = c \int f + \int g$ (para $f, g \geq 0$ con $c \geq 0$, o $f, g \in L(E)$).
+\item \textbf{Markov:} $m(\{f \geq \alpha\}) \leq \frac{1}{\alpha} \int_{E} f \, dx$.
+\item \textbf{Anulación:} $\int_{E} |f| \, dx = 0 \iff f = 0$ c.p.d.
+\item \textbf{Triangular:} $|\int_{E} f \, dx| \leq \int_{E} |f| \, dx$; $f \in L(E) \iff \int |f| < \infty$.
+\item \textbf{TCM:} $0 \leq f_{k} \uparrow f$ c.p.d. $\Rightarrow$ $\int f_{k} \to \int f$; con minorante $\phi \in L(E)$ también.
+\item \textbf{Fatou:} $\int \liminf f_{k} \leq \liminf \int f_{k}$ ($f_{k} \geq 0$).
+\item \textbf{TCD:} $0 \leq f_{k} \leq \phi$, $\int \phi < \infty$, $f_{k} \to f$ c.p.d. $\Rightarrow$ $\int f_{k} \to \int f$.
+\item \textbf{Series:} $f_{k} \geq 0 \Rightarrow \int \sum_{k} f_{k} = \sum_{k} \int f_{k}$.
+\item \textbf{En medida:} $f_{n} \xrightarrow{m} f \iff m\{|f_{n} - f| > \varepsilon\} \to 0\ \forall \varepsilon > 0$; c.p.d. $+$ $m(E) < \infty$ $\Rightarrow$ en medida; en medida $\Rightarrow$ subsucesión c.p.d.
+\item \textbf{Egorov:} $m(E) < \infty$ $\Rightarrow$ convergencia c.p.d. es uniforme fuera de un cerrado de medida $< \varepsilon$.
+\item \textbf{Lusin:} $f$ medible $\iff$ $f$ continua relativa a un cerrado $F$ con $m(E \setminus F) < \varepsilon$, $\forall \varepsilon$.
+\item \textbf{Riemann:} $f$ acotada en $[a,b]$ es Riemann integrable $\iff$ continua c.p.d.; en tal caso ambas integrales coinciden.
+\end{itemize}
+\end{equivbox}
+
+\end{document}

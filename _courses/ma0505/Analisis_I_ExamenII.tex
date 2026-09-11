@@ -1,0 +1,1742 @@
+% =============================================================================
+%  Notas de Análisis I — MA0505 — II Parcial
+%  Compilar con: pdflatex Analisis_I_ExamenII.tex (dos veces para que el TOC
+%  y los thumb-tabs recojan las entradas y referencias de página de cada
+%  definición, teorema, lema, etc.)
+% =============================================================================
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{XCharter}
+\usepackage[libertine,charter]{newtxmath}
+\usepackage[spanish,es-noshorthands]{babel}
+% Renombramos elementos al español manualmente (no requiere texlive-lang-spanish)
+\addto\captionsenglish{%
+  \renewcommand{\contentsname}{\'Indice}%
+  \renewcommand{\refname}{Referencias}%
+}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit}
+\usepackage{eso-pic}
+\usepackage{etoolbox}
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={Notas de Análisis I --- MA0505 --- II Parcial},
+  pdfauthor={Sebastián Fernández Rivera}
+}
+
+% Mostrar entradas hasta nivel "subsubsection" en el índice
+% (cada teorema/definición/etc. aparece en el TOC con nombre y página).
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+
+\renewcommand{\proofname}{\textbf{Prueba}}
+\allowdisplaybreaks
+
+% -----------------------------------------------------------------------------
+%  Contador y entornos para resultados (definiciones, teoremas, etc.)
+% -----------------------------------------------------------------------------
+\newcounter{result}[subsection]
+\renewcommand{\theresult}{\thesubsection.\arabic{result}}
+
+% Cuerpo en cursiva (para teoremas, proposiciones, lemas, corolarios)
+\newenvironment{namedres}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+% -----------------------------------------------------------------------------
+%  Caja coloreada para el resumen final de equivalencias.
+% -----------------------------------------------------------------------------
+\newtcolorbox{equivbox}[2]{%
+  enhanced,
+  breakable,
+  colback=#1!6!white,
+  colframe=#1!72!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#2},% braces protect commas in the title from tcolorbox key parser
+  arc=4pt,
+  boxrule=0.8pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  before skip=4pt, after skip=8pt,
+}
+
+% Encabezado compacto para los sub-grupos de un Anexo.
+\newcommand{\anexogroup}[1]{%
+  \par\addvspace{0.7\baselineskip}%
+  \noindent{\bfseries\large #1}\par\nobreak
+  \addcontentsline{toc}{subsection}{#1}%
+  \vspace{4pt}\nopagebreak
+}
+
+% Cuerpo en redonda (para definiciones, ejemplos, ejercicios, notas, notación)
+\newenvironment{namedstd}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+% Subrayado HTML <u>...</u> -> \uline
+\newcommand{\hlu}[1]{\underline{#1}}
+
+% Operadores y abreviaturas
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\ind}{\mathbf{1}}                 % función indicadora
+\newcommand{\Rext}{\overline{\mathbb{R}}}     % recta real extendida
+
+% =============================================================================
+%  Cabecera y pie de página (fancyhdr)
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{MA0505 --- An\'alisis I, II Parcial}}
+\fancyfoot[C]{\small Página \thepage{} de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% =============================================================================
+%  Tabs de color en el borde exterior (índice rápido por sección)
+% =============================================================================
+\definecolor{sec1col}{HTML}{1F77B4}   % Variación acotada
+\definecolor{sec2col}{HTML}{2CA02C}   % Riemann-Stieltjes
+\definecolor{sec3col}{HTML}{17BECF}   % Medida exterior
+\definecolor{sec4col}{HTML}{9467BD}   % Medida de Lebesgue
+\definecolor{sec5col}{HTML}{FF7F0E}   % Funciones medibles
+\definecolor{sec6col}{HTML}{8C564B}   % Anexo A
+\definecolor{sec7col}{HTML}{E377C2}   % Anexo B
+\definecolor{sec8col}{HTML}{BCBD22}   % Anexo C
+\definecolor{sec9col}{HTML}{D62728}   % Anexo D
+\definecolor{sec10col}{HTML}{555555}  % Anexo E
+
+\newcounter{thumbsec}
+\pretocmd{\section}{\stepcounter{thumbsec}}{}{}
+
+% Bandera para evitar que los thumb-tabs aparezcan en la portada y el índice.
+\newif\ifdrawthumb
+\drawthumbfalse
+
+\newcommand{\drawthumbtab}{%
+  \ifdrawthumb%
+  \ifnum\value{thumbsec}>0%
+    \ifnum\value{thumbsec}<6%  5 secciones principales: tabs solo para 1..5
+      \begin{tikzpicture}[remember picture, overlay]%
+        \pgfmathsetmacro{\toppadcm}{4.0}%
+        \pgfmathsetmacro{\tabHcm}{1.6}%
+        \pgfmathsetmacro{\ypos}{-\toppadcm - (\value{thumbsec} - 1) * \tabHcm}%
+        \ifodd\value{page}%
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north east)
+            rectangle ++(-0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=-0.35cm, yshift=\ypos cm - 0.6cm]current page.north east)
+            {\arabic{thumbsec}};
+        \else%
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north west)
+            rectangle ++(0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=0.35cm, yshift=\ypos cm - 0.6cm]current page.north west)
+            {\arabic{thumbsec}};
+        \fi%
+      \end{tikzpicture}%
+    \fi%
+  \fi%
+  \fi%
+}
+\AddToShipoutPictureFG{\drawthumbtab}
+
+\begin{document}
+
+% =============================================================================
+% PORTADA
+% =============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.5cm}
+
+{\scshape\Large Universidad de Costa Rica\par}
+\vspace{0.3cm}
+{\scshape\large Escuela de Matem\'atica\par}
+
+\vspace{1.2cm}
+
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{0.6cm}
+
+{\Huge\bfseries Notas de An\'alisis I\par}
+
+\vspace{0.5cm}
+
+{\Large\itshape Resumen de definiciones, teoremas y resultados\par}
+
+\vspace{0.4cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+
+\vspace{1.4cm}
+
+{\Large\bfseries MA0505 --- An\'alisis I\par}
+
+\vspace{2.2cm}
+
+\begin{tabular}{rl}
+\textbf{Autor:}              & Sebasti\'{a}n Fern\'{a}ndez Rivera \\[4pt]
+\textbf{Curso:}              & MA0505 --- An\'alisis I \\[4pt]
+\textbf{Documento:}          & Notas para el II Parcial \\[4pt]
+\textbf{Temario:}            & Variaci\'on acotada, Riemann--Stieltjes, medida e integraci\'on de Lebesgue \\[4pt]
+\textbf{Resultados numerados:} & 92 \\[4pt]
+\textbf{Fecha:}              & \today
+\end{tabular}
+
+\vfill
+
+\begin{minipage}{0.85\textwidth}
+\centering
+\itshape
+Este documento re\'{u}ne las definiciones, teoremas, proposiciones, lemas, corolarios, ejemplos, notas, ejercicios y notaciones presentadas en la segunda parte del curso: funciones de variaci\'on acotada, la integral de Riemann--Stieltjes, la medida exterior, la medida de Lebesgue y las funciones medibles. Cada resultado est\'a numerado de la forma \texttt{seccion.subseccion.resultado} y aparece en el \'{\i}ndice con su p\'{a}gina correspondiente para una consulta r\'{a}pida durante el examen.
+\end{minipage}
+
+\vspace{1cm}
+
+{\color{blue!50!black}\rule{0.5\textwidth}{0.6pt}}
+
+\end{titlepage}
+
+% =============================================================================
+% \'INDICE
+% =============================================================================
+\thispagestyle{empty}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+\setcounter{thumbsec}{0}
+\drawthumbtrue   % Activa los thumb-tabs a partir de aquí (cuerpo del documento).
+
+% =============================================================================
+\section{Funciones de variaci\'on acotada}
+% =============================================================================
+
+\subsection{Motivaci\'on: longitud de curvas y masa de un alambre}
+
+Dos problemas geom\'etricos muestran la necesidad de ampliar la clase de funciones tratables con la integral de Riemann. Consid\'erese una curva continua $\gamma : [a,b] \to \R^{2}$, $\gamma(t) = (\gamma_{1}(t), \gamma_{2}(t))$. Dada una partici\'on $a = t_{0} < t_{1} < \dots < t_{n} = b$, la poligonal de v\'ertices $\gamma(t_{i})$ aproxima la curva, y su longitud es
+\[
+\sum_{i=0}^{n-1} \|\gamma(t_{i+1}) - \gamma(t_{i})\|.
+\]
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \draw[thick, blue!70!black] plot[smooth, tension=0.9]
+    coordinates {(0,0) (1,1.2) (2,0.5) (3,1.4) (4,0.8) (5,1.5)};
+  \draw[red!80!black, thick] (0,0) -- (1,1.2) -- (2,0.5) -- (3,1.4) -- (4,0.8) -- (5,1.5);
+  \foreach \p in {(0,0),(1,1.2),(2,0.5),(3,1.4),(4,0.8),(5,1.5)} \fill \p circle (1.6pt);
+  \node[below] at (0,0) {\scriptsize $\gamma(a)$};
+  \node[below] at (2,0.5) {\scriptsize $\gamma(t_{2})$};
+  \node[right] at (5,1.5) {\scriptsize $\gamma(b)$};
+\end{tikzpicture}
+\end{center}
+
+\noindent Si $\gamma_{1}, \gamma_{2}$ son diferenciables con derivada Riemann-integrable, el teorema del valor medio sugiere que la longitud es $\int_{a}^{b} \|\gamma'(t)\|\,dt$; pero en general no es claro siquiera que el conjunto de longitudes poligonales sea acotado. Un fen\'omeno an\'alogo aparece al calcular la masa de un alambre de densidad $\rho$, que se aproxima por sumas $\sum_{i} \rho(t_{i})\, A\, \|\gamma(t_{i+1}) - \gamma(t_{i})\|$. En ambos casos la cantidad relevante es el supremo de sumas de incrementos $\sum |f(t_{i+1}) - f(t_{i})|$ sobre todas las particiones; las funciones para las que ese supremo es finito son el objeto de esta secci\'on.
+
+\subsection{Definici\'on y primeros ejemplos}
+
+\begin{namedstd}{Definición}{Funci\'on de variaci\'on acotada y suma de incrementos}
+Sea $f : [a,b] \to \R$. Para una partici\'on $\Gamma = \{ a = t_{0} < t_{1} < \dots < t_{n} = b\}$ se define la \emph{suma de incrementos}
+\[
+S(f, \Gamma) = \sum_{i=0}^{n-1} |f(t_{i+1}) - f(t_{i})|.
+\]
+Decimos que $f$ es de \emph{variaci\'on acotada} si existe $M > 0$ tal que $S(f, \Gamma) \leq M$ para toda partici\'on $\Gamma$; equivalentemente, si
+\[
+\sup_{\Gamma} S(f, \Gamma) < \infty.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Toda funci\'on mon\'otona es de variaci\'on acotada}
+Si $f$ es creciente, los incrementos $f(t_{i+1}) - f(t_{i})$ son no negativos y la suma telescopia:
+\[
+S(f, \Gamma) = \sum_{i=0}^{n-1} \big(f(t_{i+1}) - f(t_{i})\big) = f(b) - f(a).
+\]
+An\'alogamente, si $f$ es decreciente, $S(f, \Gamma) = f(a) - f(b)$ para toda $\Gamma$. En ambos casos $S(f, \Gamma)$ no depende de $\Gamma$, de modo que $f$ es de variaci\'on acotada.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La indicadora de los irracionales no es de variaci\'on acotada}
+Sea $\varphi : [0,1] \to \R$ con $\varphi(x) = 0$ si $x \in \Q$ y $\varphi(x) = 1$ si $x \notin \Q$. Dado $n$, escoja una partici\'on $\{x_{k}\}_{k=0}^{2n}$ con $x_{0} = 0$, $x_{2n} = 1$, $x_{2k} \in \Q$ y $x_{2k+1} \notin \Q$. Cada incremento $|\varphi(x_{k+1}) - \varphi(x_{k})|$ vale $1$, de modo que
+\[
+S(\varphi, \Gamma) = \sum_{k=0}^{2n-1} |\varphi(x_{k+1}) - \varphi(x_{k})| = 2n.
+\]
+Como $n$ es arbitrario, $\sup_{\Gamma} S(\varphi, \Gamma) = \infty$ y $\varphi$ no es de variaci\'on acotada.
+\end{namedstd}
+
+\subsection{La variaci\'on total}
+
+\begin{namedstd}{Definición}{Variaci\'on total}
+Si $f : [a,b] \to \R$ es de variaci\'on acotada, su \emph{variaci\'on total} sobre $[a,b]$ es
+\[
+\Var(f, [a,b]) = \sup_{\Gamma} S(f, \Gamma).
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Monoton\'ia de la variaci\'on sobre subintervalos}
+Sea $f : [a,b] \to \R$ de variaci\'on acotada y $[a_{1}, b_{1}] \subseteq [a,b]$. Entonces la restricci\'on de $f$ a $[a_{1}, b_{1}]$ es de variaci\'on acotada y
+\[
+\Var(f, [a_{1}, b_{1}]) \leq \Var(f, [a,b]).
+\]
+\end{namedres}
+\begin{proof}
+Sea $\Gamma_{1}$ una partici\'on de $[a_{1}, b_{1}]$ y considere la partici\'on $\Gamma = \Gamma_{1} \cup \{a, b\}$ de $[a,b]$. Al a\~nadir los extremos s\'olo se agregan sumandos no negativos, de modo que
+\[
+S(f, \Gamma_{1}) \leq S(f, \Gamma_{1}) + |f(a_{1}) - f(a)| + |f(b) - f(b_{1})| = S(f, \Gamma) \leq \Var(f, [a,b]).
+\]
+Tomando supremo sobre $\Gamma_{1}$ se obtiene $\Var(f, [a_{1}, b_{1}]) \leq \Var(f, [a,b]) < \infty$.
+\end{proof}
+
+\begin{namedres}{Proposición}{Las funciones de variaci\'on acotada son acotadas}
+Si $f : [a,b] \to \R$ es de variaci\'on acotada, entonces para todo $x \in [a,b]$
+\[
+2|f(x)| \leq \Var(f, [a,b]) + |f(a)| + |f(b)|.
+\]
+En particular $f$ es acotada.
+\end{namedres}
+\begin{proof}
+Para $x \in (a,b)$, la partici\'on $\{a, x, b\}$ da
+\[
+|f(x) - f(a)| + |f(b) - f(x)| \leq \Var(f, [a,b]).
+\]
+Por la desigualdad triangular inversa, $|f(x)| - |f(a)| \leq |f(x) - f(a)|$ y $|f(x)| - |f(b)| \leq |f(b) - f(x)|$. Sumando,
+\[
+2|f(x)| - |f(a)| - |f(b)| \leq \Var(f, [a,b]),
+\]
+que es la desigualdad buscada (trivial en $x = a, b$). Luego $|f(x)| \leq \tfrac{1}{2}\big(\Var(f,[a,b]) + |f(a)| + |f(b)|\big)$ para todo $x$.
+\end{proof}
+
+\begin{namedres}{Lema}{Propiedades algebraicas de las funciones de variaci\'on acotada}
+Sean $f, g : [a,b] \to \R$ de variaci\'on acotada. Entonces:
+\begin{enumerate}[label=(\roman*)]
+\item $cf + g$ es de variaci\'on acotada para todo $c \in \R$;
+\item $fg$ es de variaci\'on acotada;
+\item si existe $\varepsilon > 0$ con $|g(x)| \geq \varepsilon$ para todo $x \in [a,b]$, entonces $1/g$ es de variaci\'on acotada;
+\item $f$ y $g$ son acotadas.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedres}{Lema}{Aditividad de la variaci\'on sobre subintervalos}
+Sea $f : [a,b] \to \R$ de variaci\'on acotada y $a < c < b$. Entonces
+\[
+\Var(f, [a,b]) = \Var(f, [a,c]) + \Var(f, [c,b]).
+\]
+\end{namedres}
+\begin{proof}
+\emph{($\leq$).} Sea $\Gamma = \{a = x_{0} < \dots < x_{n} = b\}$ y sea $\Gamma' = \Gamma \cup \{c\}$, con $x_{m_{0}} \leq c < x_{m_{0}+1}$. Refinar a\~nadiendo $c$ no disminuye la suma de incrementos:
+\[
+S(f, \Gamma) \leq S(f, \Gamma') = S(f, \Gamma_{1}) + S(f, \Gamma_{2}),
+\]
+donde $\Gamma_{1} = (\Gamma' \cap [a,c]) \cup \{c\}$ y $\Gamma_{2} = \{c\} \cup (\Gamma' \cap [c,b])$ son particiones de $[a,c]$ y $[c,b]$ respectivamente. Luego $S(f, \Gamma) \leq \Var(f, [a,c]) + \Var(f, [c,b])$, y tomando supremo sobre $\Gamma$,
+\[
+\Var(f, [a,b]) \leq \Var(f, [a,c]) + \Var(f, [c,b]).
+\]
+\emph{($\geq$).} Si $\Gamma_{1}$ y $\Gamma_{2}$ son particiones de $[a,c]$ y $[c,b]$, entonces $\Gamma = \Gamma_{1} \cup \Gamma_{2}$ es una partici\'on de $[a,b]$ y $S(f, \Gamma_{1}) + S(f, \Gamma_{2}) = S(f, \Gamma) \leq \Var(f, [a,b])$. Tomando supremo primero en $\Gamma_{1}$ y luego en $\Gamma_{2}$,
+\[
+\Var(f, [a,c]) + \Var(f, [c,b]) \leq \Var(f, [a,b]). \qedhere
+\]
+\end{proof}
+
+\subsection{La descomposici\'on de Jordan}
+
+\begin{namedstd}{Notación}{Parte positiva y negativa; variaciones positiva y negativa}
+Para $x \in \R$ se define $x^{+} = \max\{x, 0\}$ y $x^{-} = \max\{-x, 0\}$; ambas son no negativas y
+\[
+x^{+} + x^{-} = |x|, \qquad x^{+} - x^{-} = x.
+\]
+Dada $f : [a,b] \to \R$ y una partici\'on $\Gamma = \{a = t_{0} < \dots < t_{n} = b\}$, se definen
+\[
+P(f, \Gamma) = \sum_{i=0}^{n-1} \big(f(t_{i+1}) - f(t_{i})\big)^{+}, \qquad
+N(f, \Gamma) = \sum_{i=0}^{n-1} \big(f(t_{i+1}) - f(t_{i})\big)^{-},
+\]
+y las \emph{variaciones positiva y negativa} $P(f, [a,b]) = \sup_{\Gamma} P(f, \Gamma)$, $N(f, [a,b]) = \sup_{\Gamma} N(f, \Gamma)$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Relaci\'on entre variaci\'on total y variaciones positiva y negativa}
+Sea $f : [a,b] \to \R$ de variaci\'on acotada. Entonces
+\[
+P(f, [a,b]) - N(f, [a,b]) = f(b) - f(a), \qquad P(f, [a,b]) + N(f, [a,b]) = \Var(f, [a,b]).
+\]
+Equivalentemente,
+\[
+P(f, [a,b]) = \tfrac{1}{2}\big(\Var(f, [a,b]) + f(b) - f(a)\big), \quad
+N(f, [a,b]) = \tfrac{1}{2}\big(\Var(f, [a,b]) - f(b) + f(a)\big).
+\]
+\end{namedres}
+\begin{proof}
+Para cada partici\'on $\Gamma$, usando $x^{+} + x^{-} = |x|$ y $x^{+} - x^{-} = x$ sobre cada incremento,
+\[
+P(f, \Gamma) + N(f, \Gamma) = S(f, \Gamma), \qquad
+P(f, \Gamma) - N(f, \Gamma) = \sum_{i=0}^{n-1}\big(f(t_{i+1}) - f(t_{i})\big) = f(b) - f(a).
+\]
+De la segunda identidad, $f(a) + P(f, \Gamma) = f(b) + N(f, \Gamma)$; como el lado izquierdo y el derecho difieren en la constante $f(b) - f(a)$, tomar supremo en $\Gamma$ da $f(a) + P(f, [a,b]) = f(b) + N(f, [a,b])$, esto es, $P(f, [a,b]) - N(f, [a,b]) = f(b) - f(a)$. Adem\'as, de $P(f,\Gamma) - N(f,\Gamma) = f(b) - f(a)$ se obtiene $S(f, \Gamma) = 2P(f, \Gamma) - (f(b) - f(a))$; tomando supremo,
+\[
+\Var(f, [a,b]) = 2P(f, [a,b]) - (f(b) - f(a)),
+\]
+y combinando con $P - N = f(b) - f(a)$ resultan $P + N = \Var(f, [a,b])$ y las f\'ormulas cerradas para $P$ y $N$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Caracterizaci\'on de Jordan de la variaci\'on acotada}
+Una funci\'on $f : [a,b] \to \R$ es de variaci\'on acotada si y s\'olo si $f$ es diferencia de dos funciones crecientes. Las funciones pueden tomarse, adem\'as, no negativas.
+\end{namedres}
+\begin{proof}
+\emph{($\Rightarrow$).} Defina $P(x) = P(f, [a,x])$ y $N(x) = N(f, [a,x])$ (con $P(a) = N(a) = 0$). Por el lema anterior aplicado a $[a,x]$,
+\[
+f(x) - f(a) = P(x) - N(x), \qquad \text{es decir} \qquad f(x) = \big(f(a) + P(x)\big) - N(x).
+\]
+Por la monoton\'ia de la variaci\'on sobre subintervalos, $P$ y $N$ son crecientes y no negativas. Eligiendo una constante $c \geq \max\{0, -f(a)\}$, las funciones $g = c + f(a) + P$ y $h = c + N$ son crecientes, no negativas y $f = g - h$.
+
+\emph{($\Leftarrow$).} Si $f = g - h$ con $g, h$ crecientes, entonces $g$ y $h$ son de variaci\'on acotada (toda funci\'on mon\'otona lo es) y, por el lema de propiedades algebraicas, $f = g - h$ tambi\'en lo es.
+\end{proof}
+
+\subsection{Discontinuidades y refinamiento de particiones}
+
+\begin{namedres}{Teorema}{Las funciones de variaci\'on acotada tienen discontinuidades a lo sumo contables}
+Sea $f : [a,b] \to \R$ de variaci\'on acotada. Entonces $f$ tiene a lo sumo un n\'umero contable de discontinuidades, y cada una es de salto o removible (esto es, existen los l\'imites laterales $f(x^{+})$ y $f(x^{-})$ en todo punto).
+\end{namedres}
+\begin{proof}
+Por la caracterizaci\'on de Jordan, $f = f_{1} - f_{2}$ con $f_{1}, f_{2}$ crecientes; basta probar el enunciado para una funci\'on creciente $g$, pues la uni\'on de dos conjuntos contables es contable y los l\'imites laterales de $g$ existen por monoton\'ia. Para $k \geq 1$ sea
+\[
+D_{k} = \big\{ x \in [a,b] : g(x^{+}) - g(x^{-}) \geq \tfrac{1}{k}\big\}.
+\]
+Si $x_{0} < x_{1} < \dots < x_{m}$ son puntos de $D_{k}$, se pueden intercalar $y_{i}, z_{i}$ con $y_{i} < x_{i} < z_{i} = y_{i+1}$, de modo que los saltos en los $x_{i}$ quedan dominados por incrementos disjuntos de $g$:
+\[
+\frac{m+1}{k} \leq \sum_{i=0}^{m} \big(g(z_{i}) - g(y_{i})\big) \leq g(b) - g(a).
+\]
+Por tanto $D_{k}$ es finito, con a lo sumo $k\,(g(b) - g(a))$ elementos. El conjunto de discontinuidades de $g$ es $\bigcup_{k \geq 1} D_{k}$, uni\'on contable de conjuntos finitos, luego contable.
+\end{proof}
+
+\begin{namedres}{Teorema}{Aproximaci\'on de la variaci\'on total por particiones finas}
+Sea $f : [a,b] \to \R$ continua y de variaci\'on acotada, y sea $V = \Var(f, [a,b])$. Para todo $M < V$ existe $\delta > 0$ tal que
+\[
+M < S(f, \Gamma) \leq V \qquad \text{para toda partici\'on } \Gamma \text{ con } |\Gamma| < \delta,
+\]
+donde $|\Gamma|$ denota la norma (mayor longitud de subintervalo) de $\Gamma$.
+\end{namedres}
+\begin{proof}
+La cota $S(f, \Gamma) \leq V$ es la definici\'on de $V$. Fije $\mu > 0$ con $M + \mu < V$ y una partici\'on $\Gamma_{1} = \{a = \tilde{x}_{0} < \dots < \tilde{x}_{k} = b\}$ tal que $M + \mu < S(f, \Gamma_{1})$. Como $f$ es uniformemente continua, existe $\delta_{1} > 0$ con
+\[
+|x - y| < \delta_{1} \implies |f(x) - f(y)| < \frac{\mu}{2(k+1)}.
+\]
+Sea $\gamma = \min_{0 \leq j \leq k-1} |\tilde{x}_{j+1} - \tilde{x}_{j}|$ y tome cualquier $\Gamma$ con $|\Gamma| < \min\{\delta_{1}, \gamma\}$. Entonces cada subintervalo de $\Gamma$ contiene a lo sumo un punto de $\Gamma_{1}$. Sea $\Gamma_{2} = \Gamma \cup \Gamma_{1}$; al pasar de $\Gamma$ a $\Gamma_{2}$ se insertan a lo sumo $k+1$ puntos, y cada inserci\'on de un punto $\tilde{x}$ en un subintervalo $[x_{j-1}, x_{j}]$ reemplaza $|f(x_{j}) - f(x_{j-1})|$ por $|f(x_{j}) - f(\tilde{x})| + |f(\tilde{x}) - f(x_{j-1})|$, aumentando la suma en a lo sumo $2\cdot \frac{\mu}{2(k+1)}$. Por tanto
+\[
+S(f, \Gamma_{2}) \leq S(f, \Gamma) + (k+1)\cdot \frac{2\mu}{2(k+1)} = S(f, \Gamma) + \mu.
+\]
+Como $\Gamma_{2}$ refina a $\Gamma_{1}$, $S(f, \Gamma_{1}) \leq S(f, \Gamma_{2})$, de donde
+\[
+M < S(f, \Gamma_{1}) - \mu \leq S(f, \Gamma_{2}) - \mu \leq S(f, \Gamma). \qedhere
+\]
+\end{proof}
+
+\begin{namedres}{Corolario}{Variaci\'on total y derivada}
+Sea $f : [a,b] \to \R$ con $f'$ continua en $[a,b]$. Entonces
+\[
+\Var(f, [a,b]) = \int_{a}^{b} |f'(x)|\,dx, \qquad
+P(f, [a,b]) = \int_{a}^{b} \big(f'(x)\big)^{+} dx, \qquad
+N(f, [a,b]) = \int_{a}^{b} \big(f'(x)\big)^{-} dx.
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+% =============================================================================
+\section{La integral de Riemann--Stieltjes}
+% =============================================================================
+
+\subsection{Sumas y definici\'on de la integral}
+
+\begin{namedstd}{Definición}{Suma de Riemann--Stieltjes}
+Sean $f, \phi : [a,b] \to \R$ con $f$ acotada. Dada una partici\'on $\Gamma = \{a = x_{0} < x_{1} < \dots < x_{n} = b\}$ y puntos intermedios $\xi_{i} \in [x_{i-1}, x_{i}]$ para $1 \leq i \leq n$, la \emph{suma de Riemann--Stieltjes} de $f$ respecto de $\phi$ es
+\[
+R(f, \Gamma, \phi) = \sum_{i=1}^{n} f(\xi_{i})\,\big[\phi(x_{i}) - \phi(x_{i-1})\big].
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Integral de Riemann--Stieltjes}
+Decimos que $f$ es \emph{Riemann--Stieltjes integrable} respecto de $\phi$ en $[a,b]$ si existe $I \in \R$ tal que para todo $\varepsilon > 0$ existe $\delta > 0$ con
+\[
+|\Gamma| < \delta \implies |R(f, \Gamma, \phi) - I| < \varepsilon
+\]
+para cualquier elecci\'on de puntos intermedios $\xi_{1}, \dots, \xi_{n}$, donde $|\Gamma| = \max_{i}(x_{i} - x_{i-1})$. En tal caso se escribe $I = \int_{a}^{b} f \, d\phi$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Criterio de Cauchy para la integrabilidad de Riemann--Stieltjes}
+Pruebe que $f$ es Riemann--Stieltjes integrable respecto de $\phi$ si y s\'olo si para todo $\varepsilon > 0$ existe $\delta > 0$ tal que
+\[
+|\Gamma| < \delta \ \text{ y }\ |\Gamma'| < \delta \implies |R(f, \Gamma, \phi) - R(f, \Gamma', \phi)| < \varepsilon
+\]
+para cualesquiera elecciones de puntos intermedios.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Una discontinuidad com\'un impide la integrabilidad}
+Sean $\phi : [a,b] \to \R$ y $f : [a,b] \to \R$ acotada. Si existe $z_{0} \in (a,b)$ donde tanto $f$ como $\phi$ son discontinuas, entonces $f$ no es Riemann--Stieltjes integrable respecto de $\phi$.
+\end{namedres}
+\begin{proof}
+Se muestra que falla el criterio de Cauchy. Como $f$ y $\phi$ son discontinuas en $z_{0}$, existe $\varepsilon > 0$ tal que, para todo $\delta > 0$, hay un punto $w_{\delta}$ con $0 < |w_{\delta} - z_{0}| < \delta$ y $|\phi(w_{\delta}) - \phi(z_{0})| \geq \sqrt{\varepsilon}$, y un punto $\xi_{\delta}$ con $|\xi_{\delta} - z_{0}| < |w_{\delta} - z_{0}|$ y $|f(\xi_{\delta}) - f(z_{0})| \geq \sqrt{\varepsilon}$; en particular $\xi_{\delta}$ queda estrictamente entre $z_{0}$ y $w_{\delta}$. Tome una partici\'on $\Gamma$ con $|\Gamma| < \delta$ que tenga a $z_{0}$ y a $w_{\delta}$ como nodos consecutivos $x_{i_{0}-1} = z_{0}$, $x_{i_{0}} = w_{\delta}$, de modo que $\xi_{\delta} \in (x_{i_{0}-1}, x_{i_{0}})$. Construya dos sumas de Riemann--Stieltjes con la misma $\Gamma$ y los mismos puntos intermedios salvo en el subintervalo $[x_{i_{0}-1}, x_{i_{0}}]$, donde una toma $\xi_{i_{0}} = \xi_{\delta}$ y la otra $\xi_{i_{0}} = z_{0}$. Entonces
+\[
+|R(f, \Gamma, \phi) - R'(f, \Gamma, \phi)| = |f(\xi_{\delta}) - f(z_{0})|\,|\phi(x_{i_{0}}) - \phi(x_{i_{0}-1})| = |f(\xi_{\delta}) - f(z_{0})|\,|\phi(w_{\delta}) - \phi(z_{0})| \geq \sqrt{\varepsilon}\cdot\sqrt{\varepsilon} = \varepsilon.
+\]
+As\'i, para todo $\delta > 0$ hay sumas con norma menor que $\delta$ que difieren en al menos $\varepsilon$, y el criterio de Cauchy falla. El caso en que los testigos $w_{\delta}$ (de $\phi$) y $\xi_{\delta}$ (de $f$) no pueden tomarse del mismo lado de $z_{0}$ se trata de forma an\'aloga y queda como ejercicio.
+\end{proof}
+
+\subsection{Sumas superiores e inferiores}
+
+\begin{namedstd}{Definición}{Sumas inferior y superior de Darboux--Stieltjes}
+Sea $f : [a,b] \to \R$ acotada y $\Gamma = \{a = x_{0} < \dots < x_{n} = b\}$. Para $1 \leq i \leq n$ sean
+\[
+m_{i} = \inf_{x_{i-1} \leq \xi \leq x_{i}} f(\xi), \qquad M_{i} = \sup_{x_{i-1} \leq \xi \leq x_{i}} f(\xi).
+\]
+Las \emph{sumas inferior y superior} respecto de $\phi$ son
+\[
+L(f, \Gamma, \phi) = \sum_{i=1}^{n} m_{i}\,\big[\phi(x_{i}) - \phi(x_{i-1})\big], \qquad
+U(f, \Gamma, \phi) = \sum_{i=1}^{n} M_{i}\,\big[\phi(x_{i}) - \phi(x_{i-1})\big].
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Encaje de las sumas y caso de Riemann}
+Si $\phi$ es creciente, entonces $\phi(x_{i}) - \phi(x_{i-1}) \geq 0$ y para toda elecci\'on de puntos intermedios
+\[
+L(f, \Gamma, \phi) \leq R(f, \Gamma, \phi) \leq U(f, \Gamma, \phi).
+\]
+Si $\phi(x) = x$ se recuperan las sumas y la integral de Riemann usuales.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Propiedades de monoton\'ia de las sumas de Darboux--Stieltjes}
+Sea $f : [a,b] \to \R$ acotada y $\phi : [a,b] \to \R$ creciente.
+\begin{enumerate}[label=(\arabic*)]
+\item Si $\Gamma_{1} \subseteq \Gamma_{2}$ (refinamiento), entonces $L(f, \Gamma_{1}, \phi) \leq L(f, \Gamma_{2}, \phi)$ y $U(f, \Gamma_{2}, \phi) \leq U(f, \Gamma_{1}, \phi)$.
+\item Para cualesquiera particiones $\Gamma_{1}, \Gamma_{2}$, $\ L(f, \Gamma_{1}, \phi) \leq U(f, \Gamma_{2}, \phi)$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\emph{(1).} Basta insertar un punto $y$ en un subintervalo $[x_{i-1}, x_{i}]$ de $\Gamma_{1}$. Como
+\[
+\sup_{[x_{i-1}, y]} f, \ \sup_{[y, x_{i}]} f \ \leq\ \sup_{[x_{i-1}, x_{i}]} f,
+\]
+y $\phi(y) - \phi(x_{i-1}) \geq 0$, $\phi(x_{i}) - \phi(y) \geq 0$ con suma $\phi(x_{i}) - \phi(x_{i-1})$, se obtiene
+\[
+\big(\textstyle\sup_{[x_{i-1}, y]} f\big)\big(\phi(y) - \phi(x_{i-1})\big) + \big(\textstyle\sup_{[y, x_{i}]} f\big)\big(\phi(x_{i}) - \phi(y)\big) \leq \big(\textstyle\sup_{[x_{i-1}, x_{i}]} f\big)\big(\phi(x_{i}) - \phi(x_{i-1})\big),
+\]
+es decir, el refinamiento s\'olo puede disminuir $U$. Iterando sobre los puntos a\~nadidos, $U(f, \Gamma_{2}, \phi) \leq U(f, \Gamma_{1}, \phi)$. El argumento para $L$ (con \'infimos) es sim\'etrico y da $L(f, \Gamma_{1}, \phi) \leq L(f, \Gamma_{2}, \phi)$.
+
+\emph{(2).} Sea $\Gamma = \Gamma_{1} \cup \Gamma_{2}$, refinamiento com\'un. Por (1) y la nota anterior,
+\[
+L(f, \Gamma_{1}, \phi) \leq L(f, \Gamma, \phi) \leq U(f, \Gamma, \phi) \leq U(f, \Gamma_{2}, \phi). \qedhere
+\]
+\end{proof}
+
+\subsection{Existencia de la integral}
+
+\begin{namedstd}{Nota}{Reducci\'on al integrador creciente}
+A partir de la definici\'on se verifica que si $\int_{a}^{b} f\,d\phi_{1}$ y $\int_{a}^{b} f\,d\phi_{2}$ existen y $\phi = \phi_{1} - \phi_{2}$, entonces $\int_{a}^{b} f\,d\phi$ existe y
+\[
+\int_{a}^{b} f\,d\phi = \int_{a}^{b} f\,d\phi_{1} - \int_{a}^{b} f\,d\phi_{2}.
+\]
+Como toda funci\'on de variaci\'on acotada es diferencia de dos funciones crecientes (caracterizaci\'on de Jordan), el estudio de la integrabilidad respecto de un integrador de variaci\'on acotada se reduce al caso en que $\phi$ es creciente.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Existencia de la integral para integrando continuo e integrador de variaci\'on acotada}
+Sea $f : [a,b] \to \R$ continua y $\phi : [a,b] \to \R$ de variaci\'on acotada. Entonces $\int_{a}^{b} f\,d\phi$ existe y
+\[
+\left| \int_{a}^{b} f\,d\phi \right| \leq \Big(\sup_{[a,b]} |f|\Big)\,\Var(\phi, [a,b]).
+\]
+\end{namedres}
+\begin{proof}
+Por la nota anterior basta probar la existencia cuando $\phi$ es creciente; si $\phi$ es constante toda suma es nula y la integral vale $0$, as\'i que suponemos $\phi(b) > \phi(a)$. Sea $\varepsilon > 0$. Como $f$ es uniformemente continua, existe $\delta_{1} > 0$ tal que
+\[
+|x - y| < \delta_{1} \implies |f(x) - f(y)| < \frac{\varepsilon}{2\big(\phi(b) - \phi(a)\big)}.
+\]
+
+\emph{Las sumas superior e inferior se aproximan.} Si $|\Gamma| < \delta_{1}$, por continuidad existen $\xi_{i}, \eta_{i} \in [x_{i-1}, x_{i}]$ con $f(\xi_{i}) = M_{i}$, $f(\eta_{i}) = m_{i}$; como $|\xi_{i} - \eta_{i}| \leq |\Gamma| < \delta_{1}$,
+\[
+U(f, \Gamma, \phi) - L(f, \Gamma, \phi) = \sum_{i=1}^{n} (M_{i} - m_{i})\big(\phi(x_{i}) - \phi(x_{i-1})\big) \leq \frac{\varepsilon}{2(\phi(b) - \phi(a))}\big(\phi(b) - \phi(a)\big) = \frac{\varepsilon}{2}.
+\]
+
+\emph{Estabilidad de $U$.} Si $|\Gamma| < \delta_{1}$ y $|\Gamma'| < \delta_{1}$, usando $U - L \leq \varepsilon/2$ y $L(f, \cdot, \phi) \leq U(f, \cdot, \phi)$ entre particiones distintas,
+\[
+U(f, \Gamma, \phi) \leq L(f, \Gamma, \phi) + \tfrac{\varepsilon}{2} \leq U(f, \Gamma', \phi) + \tfrac{\varepsilon}{2},
+\]
+y sim\'etricamente, de modo que $|U(f, \Gamma, \phi) - U(f, \Gamma', \phi)| \leq \varepsilon/2$.
+
+\emph{Construcci\'on del l\'imite.} Tome particiones $\{\Gamma_{k}\}_{k=1}^{\infty}$ con $|\Gamma_{k}| \to 0$ y sea $\Gamma_{k}' = \bigcup_{j=1}^{k} \Gamma_{j}$, de modo que $\Gamma_{k}' \subseteq \Gamma_{k+1}'$ y $\Gamma_{k} \subseteq \Gamma_{k}'$. Por la monoton\'ia (1), $\{U(f, \Gamma_{k}', \phi)\}_{k}$ es decreciente y acotada inferiormente (por cualquier suma inferior), as\'i que
+\[
+U := \inf_{k \geq 1} U(f, \Gamma_{k}', \phi) = \lim_{k \to \infty} U(f, \Gamma_{k}', \phi)
+\]
+existe. Dado $\varepsilon$, sea $k_{0}$ con $0 \leq U(f, \Gamma_{k}', \phi) - U < \varepsilon/2$ para $k \geq k_{0}$, y $k_{1}$ con $|\Gamma_{k}| < \delta_{1}$ para $k \geq k_{1}$. Como $\Gamma_{k} \subseteq \Gamma_{k}'$ y ambas tienen norma $< \delta_{1}$, la estabilidad de $U$ da $|U(f, \Gamma_{k}, \phi) - U(f, \Gamma_{k}', \phi)| \leq \varepsilon/2$, luego para $k \geq \max\{k_{0}, k_{1}\}$,
+\[
+|U(f, \Gamma_{k}, \phi) - U| \leq |U(f, \Gamma_{k}, \phi) - U(f, \Gamma_{k}', \phi)| + |U(f, \Gamma_{k}', \phi) - U| < \varepsilon.
+\]
+
+\emph{Independencia de la sucesi\'on.} Si $\{\widetilde{\Gamma}_{k}\}$ es otra sucesi\'on con $|\widetilde{\Gamma}_{k}| \to 0$, para $k$ grande ambas normas son $< \delta_{1}$ y la estabilidad de $U$ da $|U(f, \Gamma_{k}, \phi) - U(f, \widetilde{\Gamma}_{k}, \phi)| \leq \varepsilon/2$; luego $U(f, \widetilde{\Gamma}_{k}, \phi) \to U$ tambi\'en. As\'i, $U(f, \Gamma, \phi) \to U$ cuando $|\Gamma| \to 0$.
+
+\emph{Conclusi\'on.} Ya se mostr\'o que $U(f, \Gamma, \phi) \to U$ cuando $|\Gamma| \to 0$. Adem\'as, para $|\Gamma| < \delta_{1}$ se tiene $L(f, \Gamma, \phi) \geq U(f, \Gamma, \phi) - \tfrac{\varepsilon}{2}$, de modo que tambi\'en $L(f, \Gamma, \phi) \to U$. El encaje $L(f, \Gamma, \phi) \leq R(f, \Gamma, \phi) \leq U(f, \Gamma, \phi)$ da entonces $R(f, \Gamma, \phi) \to U$ cuando $|\Gamma| \to 0$. Por tanto $\int_{a}^{b} f\,d\phi = U$ existe. Finalmente, para $\phi$ de variaci\'on acotada y cualquier $\Gamma$,
+\[
+|R(f, \Gamma, \phi)| \leq \Big(\sup_{[a,b]}|f|\Big)\sum_{i=1}^{n}|\phi(x_{i}) - \phi(x_{i-1})| \leq \Big(\sup_{[a,b]}|f|\Big)\Var(\phi, [a,b]),
+\]
+y pasando al l\'imite se obtiene la cota anunciada.
+\end{proof}
+
+\subsection{Propiedades: linealidad, valor medio e integraci\'on por partes}
+
+\begin{namedres}{Teorema}{Linealidad de la integral de Riemann--Stieltjes}
+Sean $f_{1}, f_{2} : [a,b] \to \R$ Riemann--Stieltjes integrables respecto de $\phi_{1}, \phi_{2} : [a,b] \to \R$, $c \in \R$ y $a < c' < b$. Entonces:
+\begin{enumerate}[label=(\alph*)]
+\item $\displaystyle \int_{a}^{b}(c f_{1} + f_{2})\,d\phi_{1} = c\int_{a}^{b} f_{1}\,d\phi_{1} + \int_{a}^{b} f_{2}\,d\phi_{1}$;
+\item $\displaystyle \int_{a}^{b} f_{1}\,d(c\phi_{1}) = c\int_{a}^{b} f_{1}\,d\phi_{1}$;
+\item $\displaystyle \int_{a}^{b} f_{1}\,d(\phi_{1} + \phi_{2}) = \int_{a}^{b} f_{1}\,d\phi_{1} + \int_{a}^{b} f_{1}\,d\phi_{2}$;
+\item $\displaystyle \int_{a}^{b} f_{1}\,d\phi_{1} = \int_{a}^{c'} f_{1}\,d\phi_{1} + \int_{c'}^{b} f_{1}\,d\phi_{1}$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{Cotas por el supremo y el \'infimo del integrando}
+Si $\phi$ es creciente, de $L(f, \Gamma, \phi) \leq R(f, \Gamma, \phi) \leq U(f, \Gamma, \phi)$, $U(f, \Gamma, \phi) \leq (\phi(b) - \phi(a))\sup_{[a,b]} f$ y $L(f, \Gamma, \phi) \geq (\phi(b) - \phi(a))\inf_{[a,b]} f$ se obtiene, pasando al l\'imite,
+\[
+\Big(\inf_{[a,b]} f\Big)\big(\phi(b) - \phi(a)\big) \leq \int_{a}^{b} f\,d\phi \leq \Big(\sup_{[a,b]} f\Big)\big(\phi(b) - \phi(a)\big).
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{Teorema del valor medio para la integral de Riemann--Stieltjes}
+Sean $f : [a,b] \to \R$ continua y $\phi : [a,b] \to \R$ creciente, con $f$ Riemann--Stieltjes integrable respecto de $\phi$. Entonces existe $\xi \in [a,b]$ tal que
+\[
+\int_{a}^{b} f\,d\phi = f(\xi)\big(\phi(b) - \phi(a)\big).
+\]
+\end{namedres}
+\begin{proof}
+Si $\phi(b) = \phi(a)$, las cotas de la nota anterior dan $\int_{a}^{b} f\,d\phi = 0$ y cualquier $\xi$ sirve. Si $\phi(b) > \phi(a)$, dividiendo las mismas cotas entre $\phi(b) - \phi(a)$,
+\[
+\inf_{[a,b]} f \ \leq\ \frac{1}{\phi(b) - \phi(a)}\int_{a}^{b} f\,d\phi \ \leq\ \sup_{[a,b]} f.
+\]
+Como $f$ es continua en el compacto $[a,b]$, alcanza su \'infimo y su supremo, y por el teorema del valor intermedio toma todo valor entre ellos; en particular existe $\xi \in [a,b]$ donde $f(\xi)$ iguala el cociente anterior, lo que da la identidad.
+\end{proof}
+
+\begin{namedres}{Teorema}{Integraci\'on por partes}
+Si $\int_{a}^{b} f\,d\phi$ existe, entonces $\int_{a}^{b} \phi\,df$ existe y
+\[
+\int_{a}^{b} f\,d\phi + \int_{a}^{b} \phi\,df = f(b)\phi(b) - f(a)\phi(a).
+\]
+\end{namedres}
+\begin{proof}
+Sea $\Gamma = \{a = x_{0} < \dots < x_{n} = b\}$ con puntos intermedios $\xi_{i} \in [x_{i-1}, x_{i}]$. Considere los puntos $\xi_{0} = a$, $\xi_{n+1} = b$ y la partici\'on $\Gamma' = \{\xi_{0}, \xi_{1}, \dots, \xi_{n+1}\}$, que satisface $x_{i-1} \leq \xi_{i} \leq x_{i} \leq \xi_{i+1}$, de modo que cada $x_{i}$ es un punto intermedio v\'alido de $\Gamma'$. Por sumaci\'on por partes (Abel),
+\[
+R(f, \Gamma, \phi) = \sum_{i=1}^{n} f(\xi_{i})\big(\phi(x_{i}) - \phi(x_{i-1})\big) = -\sum_{i=0}^{n} \phi(x_{i})\big(f(\xi_{i+1}) - f(\xi_{i})\big) + f(b)\phi(b) - f(a)\phi(a),
+\]
+es decir, $R(f, \Gamma, \phi) = -R(\phi, \Gamma', f) + f(b)\phi(b) - f(a)\phi(a)$, donde $R(\phi, \Gamma', f)$ es una suma de Riemann--Stieltjes de $\phi$ respecto de $f$ con la partici\'on $\Gamma'$ y puntos intermedios $x_{i}$. Como $\xi_{i} \in [x_{i-1}, x_{i}]$, cada brecha cumple $\xi_{i+1} - \xi_{i} \leq x_{i+1} - x_{i-1} \leq 2|\Gamma|$, de modo que $|\Gamma'| \leq 2|\Gamma| \to 0$. Como $\int_{a}^{b} f\,d\phi$ existe, $R(f, \Gamma, \phi) \to \int_{a}^{b} f\,d\phi$ cuando $|\Gamma| \to 0$, y la identidad algebraica anterior fuerza $R(\phi, \Gamma', f) \to f(b)\phi(b) - f(a)\phi(a) - \int_{a}^{b} f\,d\phi$. Como $|\Gamma'| \to 0$ y este l\'imite no depende de la sucesi\'on de particiones elegida, $\int_{a}^{b} \phi\,df$ existe e iguala $f(b)\phi(b) - f(a)\phi(a) - \int_{a}^{b} f\,d\phi$, que es la identidad buscada.
+\end{proof}
+
+\subsection{Paso al l\'imite bajo el signo integral}
+
+\begin{namedstd}{Ejemplo}{Una sucesi\'on creciente de funciones Riemann-integrables con l\'imite no integrable}
+Sea $\{r_{n}\}_{n=1}^{\infty}$ una enumeraci\'on de $\Q \cap [0,1]$ y
+\[
+f_{n} : [0,1] \to \R, \qquad f_{n}(x) = \begin{cases} 1, & x \in \{r_{1}, \dots, r_{n}\},\\ 0, & \text{en otro caso.}\end{cases}
+\]
+Entonces $f_{n} \leq f_{n+1}$ y $f_{n} \to f = \ind_{\Q \cap [0,1]}$ puntualmente. Es un ejercicio comprobar que $\int_{0}^{1} f_{n}(x)\,dx = 0$ para todo $n$, mientras que $f$ no es Riemann integrable. As\'i, el l\'imite puntual de funciones Riemann-integrables puede no serlo, lo que motiva una noci\'on de integral m\'as flexible.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Paso al l\'imite bajo convergencia uniforme}
+Sea $\phi : [a,b] \to \R$ de variaci\'on acotada y $\{f_{n}\}_{n=1}^{\infty}$ una sucesi\'on de funciones Riemann--Stieltjes integrables respecto de $\phi$. Si $f_{n} \to f$ uniformemente en $[a,b]$ y $f$ es Riemann--Stieltjes integrable respecto de $\phi$, entonces
+\[
+\lim_{n \to \infty} \int_{a}^{b} f_{n}\,d\phi = \int_{a}^{b} f\,d\phi.
+\]
+\end{namedres}
+\begin{proof}
+Para cualquier funci\'on $g$ Riemann--Stieltjes integrable respecto de $\phi$ y toda partici\'on $\Gamma$,
+\[
+|R(g, \Gamma, \phi)| \leq \Big(\sup_{[a,b]}|g|\Big)\sum_{i}|\phi(x_{i}) - \phi(x_{i-1})| \leq \Big(\sup_{[a,b]}|g|\Big)\Var(\phi, [a,b]),
+\]
+y pasando al l\'imite, $\big|\int_{a}^{b} g\,d\phi\big| \leq (\sup_{[a,b]}|g|)\Var(\phi, [a,b])$. Aplicando esto a $g = f_{n} - f$ (integrable, por serlo $f_{n}$ y $f$) y usando la linealidad,
+\[
+\left| \int_{a}^{b} f_{n}\,d\phi - \int_{a}^{b} f\,d\phi \right| = \left| \int_{a}^{b} (f_{n} - f)\,d\phi \right| \leq \Big(\sup_{[a,b]}|f_{n} - f|\Big)\Var(\phi, [a,b]).
+\]
+Como $f_{n} \to f$ uniformemente, $\sup_{[a,b]}|f_{n} - f| \to 0$, y el lado derecho tiende a cero.
+\end{proof}
+
+% =============================================================================
+\section{La medida exterior}
+% =============================================================================
+
+\subsection{Motivaci\'on: medir longitudes y \'areas}
+
+La longitud de un segmento $[a,b)$ es $b - a$; la de una uni\'on finita de intervalos disjuntos $[a_{i}, b_{i})$ es $\sum_{i} (b_{i} - a_{i})$.
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+  \draw[->] (-0.3,0) -- (6.2,0);
+  \draw[very thick, blue!70!black] (1,0) -- (4,0);
+  \fill (1,0) circle (1.4pt) node[below] {\scriptsize $a$};
+  \fill (4,0) circle (1.4pt) node[below] {\scriptsize $b$};
+  \node at (2.5,0.32) {\scriptsize $\ell([a,b)) = b - a$};
+\end{tikzpicture}
+\end{center}
+
+\noindent Un punto tiene longitud cero, pues $\{a\} \subseteq [a, a + \varepsilon)$ da $\ell(\{a\}) \leq \varepsilon$ para todo $\varepsilon > 0$. En consecuencia, toda uni\'on finita de puntos tiene longitud cero. Pero, ¿cu\'al es la ``longitud'' de $\Q \cap [0,1]$? Si se enumeran $\Q \cap [0,1] = \{q_{n}\}_{n=1}^{\infty}$, cada $\bigcup_{i=1}^{n}\{q_{i}\}$ tiene longitud $0$; formalmente, $\ind_{\Q \cap [0,1]} = \lim_{n} \ind_{\bigcup_{i=1}^{n}\{q_{i}\}}$, y si pudiera intercambiarse l\'imite e integral se obtendr\'ia ``$\int_{0}^{1} \ind_{\Q \cap [0,1]} = 0$''. El problema es que $\ind_{\Q \cap [0,1]}$ no es Riemann integrable. La \emph{medida exterior} captura esta idea de tama\~no sin depender de la integral de Riemann.
+
+\subsection{La medida elemental y la medida exterior en \texorpdfstring{$\R$}{R}}
+
+\begin{namedstd}{Definición}{Familia de intervalos y medida elemental}
+Sea
+\[
+S = \{[a,b] : a < b\} \cup \{(-\infty, b] : b \in \R\} \cup \{[a, \infty) : a \in \R\} \cup \{\emptyset\}.
+\]
+Se define $m : S \to [0, \infty]$ por $m([a,b]) = b - a$ (si $a < b$), $m((-\infty, b]) = m([a, \infty)) = \infty$ y $m(\emptyset) = 0$. Sobre uniones finitas de intervalos con interiores disjuntos se extiende aditivamente: si los $\mathring{I_{i}}$ son disjuntos dos a dos e $I_{i} = [a_{i}, b_{i}]$, entonces $m\big(\bigcup_{i=1}^{k} I_{i}\big) = \sum_{i=1}^{k}(b_{i} - a_{i})$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Monoton\'ia de la medida elemental sobre cubrimientos}
+Pruebe que si $\bigcup_{k=1}^{n} I_{k} \subseteq \bigcup_{\ell=1}^{m} J_{\ell}$ con los interiores $\mathring{I_{k}}$ disjuntos dos a dos, entonces
+\[
+\sum_{k=1}^{n} m(I_{k}) \leq \sum_{\ell=1}^{m} m(J_{\ell}).
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Medida exterior}
+Dado $E \subseteq \R$, su \emph{medida exterior} es
+\[
+m_{e}(E) = \inf\left\{ \sum_{k=1}^{\infty} m(I_{k}) : E \subseteq \bigcup_{k=1}^{\infty} I_{k},\ I_{k} \in S \right\}.
+\]
+De la definici\'on se sigue inmediatamente la \emph{monoton\'ia}: si $E_{1} \subseteq E_{2}$, entonces $m_{e}(E_{1}) \leq m_{e}(E_{2})$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Medida exterior de un intervalo}
+Para $a < b$, $m_{e}([a,b]) = b - a$.
+\end{namedres}
+\begin{proof}
+Como $[a,b] \in S$ se cubre a s\'i mismo, $m_{e}([a,b]) \leq b - a$. Para la cota inferior, sea $\{I_{k}\} \subseteq S$ con $[a,b] \subseteq \bigcup_{k} I_{k}$ y fije $\varepsilon > 0$. Si alg\'un $I_{k}$ es no acotado (de la forma $(-\infty, b]$ o $[a, \infty)$), entonces $\sum_{k} m(I_{k}) = \infty \geq b - a$ y ese cubrimiento no restringe el \'infimo; podemos pues suponer cada $I_{k} = [a_{k}, b_{k}]$ finito. Para cada $k$ elija un intervalo abierto $I_{k}^{\ast} \supseteq I_{k}$ con $m(\overline{I_{k}^{\ast}}) \leq (1 + \varepsilon)\, m(I_{k})$. Entonces $[a,b] \subseteq \bigcup_{k} I_{k}^{\ast}$ y, por compacidad de $[a,b]$, existe $k_{0}$ con $[a,b] \subseteq \bigcup_{k=1}^{k_{0}} I_{k}^{\ast} \subseteq \bigcup_{k=1}^{k_{0}} \overline{I_{k}^{\ast}}$. Como un intervalo cubierto por finitos intervalos tiene longitud a lo sumo la suma de las longitudes,
+\[
+b - a \leq \sum_{k=1}^{k_{0}} m(\overline{I_{k}^{\ast}}) \leq (1 + \varepsilon)\sum_{k=1}^{k_{0}} m(I_{k}) \leq (1 + \varepsilon)\sum_{k=1}^{\infty} m(I_{k}).
+\]
+Por tanto $\frac{b - a}{1 + \varepsilon} \leq \sum_{k} m(I_{k})$; tomando \'infimo sobre los cubrimientos, $\frac{b - a}{1 + \varepsilon} \leq m_{e}([a,b])$, y haciendo $\varepsilon \to 0$, $b - a \leq m_{e}([a,b])$.
+\end{proof}
+
+\begin{namedres}{Lema}{Subaditividad numerable de la medida exterior}
+Sean $E_{k} \subseteq \R$ para $k \geq 1$. Entonces
+\[
+m_{e}\left(\bigcup_{k=1}^{\infty} E_{k}\right) \leq \sum_{k=1}^{\infty} m_{e}(E_{k}).
+\]
+\end{namedres}
+\begin{proof}
+Si alg\'un $m_{e}(E_{k}) = \infty$ la desigualdad es trivial, as\'i que suponemos $m_{e}(E_{k}) < \infty$ para todo $k$. Sea $\varepsilon > 0$. Por definici\'on de medida exterior, para cada $k$ existen $\{I_{i}^{k}\}_{i=1}^{\infty} \subseteq S$ con $E_{k} \subseteq \bigcup_{i} I_{i}^{k}$ y
+\[
+\sum_{i=1}^{\infty} m(I_{i}^{k}) \leq m_{e}(E_{k}) + \frac{\varepsilon}{2^{k}}.
+\]
+La familia numerable $\{I_{i}^{k}\}_{i,k}$ cubre $\bigcup_{k} E_{k}$, luego
+\[
+m_{e}\left(\bigcup_{k} E_{k}\right) \leq \sum_{k=1}^{\infty}\sum_{i=1}^{\infty} m(I_{i}^{k}) \leq \sum_{k=1}^{\infty}\left( m_{e}(E_{k}) + \frac{\varepsilon}{2^{k}}\right) = \sum_{k=1}^{\infty} m_{e}(E_{k}) + \varepsilon.
+\]
+Como $\varepsilon > 0$ es arbitrario, se concluye.
+\end{proof}
+
+\subsection{La medida exterior en \texorpdfstring{$\R^{d}$}{Rd}}
+
+\begin{namedstd}{Definición}{Medida exterior en $\R^{d}$}
+Sea $S_{d} = \{[a_{1}, b_{1}] \times \dots \times [a_{d}, b_{d}] : a_{k} \leq b_{k}\} \cup \{\emptyset\}$ y $m\big([a_{1}, b_{1}] \times \dots \times [a_{d}, b_{d}]\big) = \prod_{k=1}^{d}(b_{k} - a_{k})$. Para $E \subseteq \R^{d}$,
+\[
+m_{e}(E) = \inf\left\{ \sum_{k=1}^{\infty} m(I_{k}) : E \subseteq \bigcup_{k=1}^{\infty} I_{k},\ I_{k} \in S_{d} \right\}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{Medida exterior de una caja}
+Sea $I = [a_{1}, b_{1}] \times \dots \times [a_{d}, b_{d}]$. Entonces $m_{e}(I) = \prod_{k=1}^{d}(b_{k} - a_{k})$.
+\end{namedres}
+\begin{proof}
+La cota $m_{e}(I) \leq \prod_{k}(b_{k} - a_{k})$ es inmediata pues $I \in S_{d}$. La cota inferior repite el argumento del caso unidimensional: dado un cubrimiento $\{I_{k}\} \subseteq S_{d}$ de $I$ y $\varepsilon > 0$, se dilatan los $I_{k}$ a cajas abiertas $I_{k}^{\ast} \supseteq I_{k}$ con $m(\overline{I_{k}^{\ast}}) \leq (1 + \varepsilon) m(I_{k})$; por compacidad de $I$ basta un subcubrimiento finito, y la aditividad finita del volumen sobre cajas (con interiores disjuntos, tras subdividir) da $\prod_{k}(b_{k} - a_{k}) \leq (1 + \varepsilon)\sum_{k} m(I_{k})$. Se concluye haciendo $\varepsilon \to 0$.
+\end{proof}
+
+\begin{namedres}{Lema}{Subaditividad numerable en $\R^{d}$}
+Sean $E_{i} \subseteq \R^{d}$ para $i \geq 1$. Entonces $m_{e}\big(\bigcup_{i} E_{i}\big) \leq \sum_{i} m_{e}(E_{i})$.
+\end{namedres}
+\begin{proof}
+La demostraci\'on del caso unidimensional no usa la dimensi\'on: cubriendo cada $E_{i}$ por cajas de $S_{d}$ con suma de vol\'umenes menor que $m_{e}(E_{i}) + \varepsilon/2^{i}$ y reuniendo los cubrimientos, se obtiene $m_{e}\big(\bigcup_{i} E_{i}\big) \leq \sum_{i} m_{e}(E_{i}) + \varepsilon$ para todo $\varepsilon > 0$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Conjuntos de medida exterior cero}
+\begin{enumerate}[label=(\alph*)]
+\item Si $m_{e}(E_{i}) = 0$ para todo $i \geq 1$, por subaditividad $m_{e}\big(\bigcup_{i} E_{i}\big) \leq \sum_{i} m_{e}(E_{i}) = 0$.
+\item Para $x = (x_{1}, \dots, x_{d})$, $\{x\} \subseteq [x_{1}, x_{1} + \varepsilon] \times \dots \times [x_{d}, x_{d} + \varepsilon]$ da $m_{e}(\{x\}) \leq \varepsilon^{d}$, luego $m_{e}(\{x\}) = 0$. Por (a), todo conjunto numerable tiene medida exterior cero; en particular $m_{e}(\Q^{d}) = 0$.
+\end{enumerate}
+\end{namedstd}
+
+\subsection{Aproximaci\'on por abiertos y conjuntos \texorpdfstring{$G_{\delta}$}{G-delta}}
+
+\begin{namedres}{Lema}{Aproximaci\'on de la medida exterior por abiertos}
+Sean $E \subseteq \R^{d}$ y $\varepsilon > 0$. Entonces existe un abierto $G \subseteq \R^{d}$ con $E \subseteq G$ y
+\[
+m_{e}(E) \leq m_{e}(G) \leq m_{e}(E) + \varepsilon.
+\]
+\end{namedres}
+\begin{proof}
+La cota $m_{e}(E) \leq m_{e}(G)$ es la monoton\'ia. Suponga $m_{e}(E) < \infty$ (si no, $G = \R^{d}$ sirve). Tome $\{I_{i}\}_{i=1}^{\infty} \subseteq S_{d}$ con $E \subseteq \bigcup_{i} I_{i}$ y $\sum_{i} m(I_{i}) \leq m_{e}(E) + \varepsilon/2$. Para cada $i$ elija una caja $I_{i}^{\ast}$ con $I_{i} \subseteq \mathring{I_{i}^{\ast}}$ y $m(I_{i}^{\ast}) \leq m(I_{i}) + \varepsilon/2^{i+1}$. Entonces $G = \bigcup_{i} \mathring{I_{i}^{\ast}}$ es abierto, $E \subseteq G$ y, por subaditividad,
+\[
+m_{e}(G) \leq \sum_{i=1}^{\infty} m_{e}(\mathring{I_{i}^{\ast}}) \leq \sum_{i=1}^{\infty} m(I_{i}^{\ast}) \leq \sum_{i=1}^{\infty}\left(m(I_{i}) + \frac{\varepsilon}{2^{i+1}}\right) \leq m_{e}(E) + \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = m_{e}(E) + \varepsilon. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Definición}{Conjunto $G_{\delta}$}
+Un conjunto $H \subseteq \R^{d}$ es de tipo \emph{$G_{\delta}$} si es intersecci\'on numerable de abiertos: $H = \bigcap_{k=1}^{\infty} G_{k}$ con cada $G_{k}$ abierto.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Envoltura $G_{\delta}$ de igual medida exterior}
+Para todo $E \subseteq \R^{d}$ existe un conjunto $G_{\delta}$, $H \supseteq E$, con $m_{e}(E) = m_{e}(H)$.
+\end{namedres}
+\begin{proof}
+Por el lema anterior, para cada $k \geq 1$ existe un abierto $G_{k} \supseteq E$ con $m_{e}(E) \leq m_{e}(G_{k}) \leq m_{e}(E) + \tfrac{1}{k}$. Sea $H = \bigcap_{k} G_{k}$, conjunto $G_{\delta}$ con $E \subseteq H$. Por monoton\'ia, $m_{e}(H) \leq m_{e}(G_{k}) \leq m_{e}(E) + \tfrac{1}{k}$ para todo $k$, luego $m_{e}(H) \leq m_{e}(E)$; la desigualdad opuesta es la monoton\'ia $m_{e}(E) \leq m_{e}(H)$.
+\end{proof}
+
+\subsection{Conjuntos Lebesgue medibles}
+
+\begin{namedstd}{Definición}{Conjunto Lebesgue medible}
+$E \subseteq \R^{d}$ es \emph{Lebesgue medible} si para todo $\varepsilon > 0$ existe un abierto $G \supseteq E$ con $m_{e}(G \setminus E) < \varepsilon$. Si $E$ es medible se define su \emph{medida de Lebesgue} como $m(E) = m_{e}(E)$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Intervalos y conjuntos de medida exterior cero son medibles}
+Si $E = [a,b]$, tomando $G = (a - \tfrac{\varepsilon}{2}, b + \tfrac{\varepsilon}{2})$ se tiene $m_{e}(G \setminus E) = m_{e}\big((a - \tfrac{\varepsilon}{2}, a) \cup (b, b + \tfrac{\varepsilon}{2})\big) \leq \varepsilon$; an\'alogamente $[a,b)$, $(a,b]$ y $(a,b)$ son medibles, con $m([a,b]) = b - a$. Si $m_{e}(E) = 0$, por aproximaci\'on existe un abierto $G \supseteq E$ con $m_{e}(G) < \varepsilon$, y entonces $m_{e}(G \setminus E) \leq m_{e}(G) < \varepsilon$; por tanto todo conjunto de medida exterior cero es medible.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Uni\'on numerable de conjuntos medibles es medible}
+Sea $\{E_{i}\}_{i=1}^{\infty}$ una familia de conjuntos medibles. Entonces $E = \bigcup_{i=1}^{\infty} E_{i}$ es medible.
+\end{namedres}
+\begin{proof}
+Sea $\varepsilon > 0$. Para cada $i$ existe un abierto $G_{i} \supseteq E_{i}$ con $m_{e}(G_{i} \setminus E_{i}) < \varepsilon/2^{i}$. Entonces $G = \bigcup_{i} G_{i}$ es abierto, $E \subseteq G$ y
+\[
+G \setminus E = \Big(\bigcup_{i} G_{i}\Big) \setminus E \subseteq \bigcup_{i} (G_{i} \setminus E_{i}),
+\]
+pues si $x \in G_{i}$ pero $x \notin E$ entonces $x \notin E_{i}$. Por subaditividad y monoton\'ia,
+\[
+m_{e}(G \setminus E) \leq \sum_{i=1}^{\infty} m_{e}(G_{i} \setminus E_{i}) < \sum_{i=1}^{\infty}\frac{\varepsilon}{2^{i}} = \varepsilon. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{Aditividad de la medida exterior sobre cajas con interiores disjuntos}
+Sea $I_{j} = I_{1}^{j} \times \dots \times I_{d}^{j}$ con cada $I_{i}^{j}$ un intervalo finito y $\mathring{I_{i}} \cap \mathring{I_{j}} = \emptyset$ para $i \neq j$. Pruebe que
+\[
+m_{e}\left(\bigcup_{j=1}^{m} I_{j}\right) = \sum_{j=1}^{m} m_{e}(I_{j}).
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{Aditividad para conjuntos a distancia positiva}
+Si $E_{1}, E_{2} \subseteq \R^{d}$ satisfacen $d(E_{1}, E_{2}) > 0$, entonces
+\[
+m_{e}(E_{1} \cup E_{2}) = m_{e}(E_{1}) + m_{e}(E_{2}).
+\]
+\end{namedres}
+\begin{proof}
+La desigualdad $\leq$ es la subaditividad. Para $\geq$, sea $\varepsilon > 0$ y $\{I_{k}\} \subseteq S_{d}$ con $E_{1} \cup E_{2} \subseteq \bigcup_{k} I_{k}$ y $\sum_{k} m(I_{k}) \leq m_{e}(E_{1} \cup E_{2}) + \varepsilon$. Subdividiendo cada caja si es necesario (lo que no altera la suma de vol\'umenes, por la aditividad finita del volumen sobre cajas con interiores disjuntos, cf.\ el ejercicio anterior), puede suponerse $\diam(I_{k}) < \tfrac{1}{2} d(E_{1}, E_{2})$. Entonces ninguna caja corta a la vez a $E_{1}$ y a $E_{2}$: si $I_{k} \cap E_{1} \neq \emptyset$, entonces $I_{k} \cap E_{2} = \emptyset$. Separando el cubrimiento en las cajas $\{J_{\ell}\}$ que cortan a $E_{1}$ y las $\{\widetilde{J}_{\ell}\}$ que cortan a $E_{2}$,
+\[
+m_{e}(E_{1}) + m_{e}(E_{2}) \leq \sum_{\ell} m(J_{\ell}) + \sum_{\ell} m(\widetilde{J}_{\ell}) \leq \sum_{k} m(I_{k}) \leq m_{e}(E_{1} \cup E_{2}) + \varepsilon.
+\]
+Como $\varepsilon$ es arbitrario, $m_{e}(E_{1}) + m_{e}(E_{2}) \leq m_{e}(E_{1} \cup E_{2})$.
+\end{proof}
+
+% =============================================================================
+\section{La medida de Lebesgue}
+% =============================================================================
+
+\subsection{Cerrados, complementos y la \texorpdfstring{$\sigma$}{sigma}-\'algebra de los medibles}
+
+\begin{namedstd}{Ejercicio}{Descomposici\'on de un abierto en cajas casi disjuntas}
+Pruebe que todo abierto $G \subseteq \R^{d}$ se escribe como $G = \bigcup_{k=1}^{\infty} I_{k}$, con $I_{k} = [a_{1}^{k}, b_{1}^{k}] \times \dots \times [a_{d}^{k}, b_{d}^{k}]$ cajas cerradas de interiores disjuntos dos a dos.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Todo conjunto cerrado es medible}
+Sea $F \subseteq \R^{d}$ cerrado. Entonces $F$ es medible.
+\end{namedres}
+\begin{proof}
+\emph{Caso compacto.} Suponga primero $F$ compacto, de modo que $m_{e}(F) < \infty$. Dado $\varepsilon > 0$, por aproximaci\'on existe un abierto $G \supseteq F$ con $m_{e}(G) \leq m_{e}(F) + \tfrac{\varepsilon}{2}$. El abierto $G \setminus F$ se descompone como uni\'on numerable de cajas cerradas $\{I_{k}\}$ de interiores disjuntos. Para cada $\ell$, los compactos disjuntos $F$ y $\bigcup_{k=1}^{\ell} I_{k}$ est\'an a distancia positiva, luego por aditividad a distancia positiva
+\[
+m_{e}(F) + m_{e}\Big(\bigcup_{k=1}^{\ell} I_{k}\Big) = m_{e}\Big(F \cup \bigcup_{k=1}^{\ell} I_{k}\Big) \leq m_{e}(G),
+\]
+de donde $\sum_{k=1}^{\ell} m_{e}(I_{k}) = m_{e}\big(\bigcup_{k=1}^{\ell} I_{k}\big) \leq m_{e}(G) - m_{e}(F) \leq \tfrac{\varepsilon}{2}$ para todo $\ell$. Por tanto $\sum_{k=1}^{\infty} m_{e}(I_{k}) \leq \tfrac{\varepsilon}{2}$ y, por subaditividad, $m_{e}(G \setminus F) \leq \sum_{k} m_{e}(I_{k}) < \varepsilon$. As\'i $F$ es medible.
+
+\emph{Caso general.} Si $F$ es cerrado cualquiera, $F = \bigcup_{k=1}^{\infty} F_{k}$ con $F_{k} = F \cap \overline{B(0,k)}$ compacto; cada $F_{k}$ es medible y, por ser uni\'on numerable de medibles, $F$ es medible.
+\end{proof}
+
+\begin{namedres}{Teorema}{El complemento de un conjunto medible es medible}
+Si $E \subseteq \R^{d}$ es medible, entonces $E^{c}$ es medible.
+\end{namedres}
+\begin{proof}
+Para cada $k \geq 1$ existe un abierto $G_{k} \supseteq E$ con $m_{e}(G_{k} \setminus E) < \tfrac{1}{k}$. Cada $G_{k}^{c}$ es cerrado, luego medible, y $H = \bigcup_{k} G_{k}^{c}$ es medible con
+\[
+H = \bigcup_{k} G_{k}^{c} = \Big(\bigcap_{k} G_{k}\Big)^{c} \subseteq E^{c}.
+\]
+Adem\'as $E^{c} \setminus H \subseteq E^{c} \setminus G_{k}^{c} = E^{c} \cap G_{k} = G_{k} \setminus E$, de modo que $m_{e}(E^{c} \setminus H) \leq \tfrac{1}{k}$ para todo $k$; luego $Z = E^{c} \setminus H$ tiene medida exterior cero (y es medible). Finalmente $E^{c} = H \cup Z$ es uni\'on de medibles, luego medible.
+\end{proof}
+
+\begin{namedstd}{Definición}{$\sigma$-\'algebra}
+Sea $\Omega$ un conjunto. Una \emph{$\sigma$-\'algebra} $\mathcal{F} \subseteq 2^{\Omega}$ satisface:
+\begin{enumerate}[label=(\roman*)]
+\item $\Omega \in \mathcal{F}$;
+\item si $E \in \mathcal{F}$, entonces $E^{c} \in \mathcal{F}$;
+\item si $\{F_{k}\}_{k=1}^{\infty} \subseteq \mathcal{F}$, entonces $\bigcup_{k} F_{k} \in \mathcal{F}$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Lema}{Cerradura de una $\sigma$-\'algebra bajo intersecciones y diferencias}
+Sea $\mathcal{F}$ una $\sigma$-\'algebra y $\{E_{k}\}_{k=1}^{\infty} \subseteq \mathcal{F}$. Entonces $\bigcap_{k} E_{k} \in \mathcal{F}$, $E_{1} \setminus E_{2} \in \mathcal{F}$ y $\emptyset \in \mathcal{F}$.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedres}{Lema}{Los conjuntos medibles forman una $\sigma$-\'algebra}
+La familia $\mathcal{M} = \{E \subseteq \R^{d} : E \text{ medible}\}$ es una $\sigma$-\'algebra.
+\end{namedres}
+\begin{proof}
+$\R^{d}$ es abierto, luego medible. La cerradura bajo complemento y bajo uni\'on numerable son los dos teoremas anteriores. Por tanto $\mathcal{M}$ satisface las tres condiciones; en particular contiene intersecciones numerables y diferencias $E_{1} \setminus E_{2} = E_{1} \cap E_{2}^{c}$ de medibles.
+\end{proof}
+
+\begin{namedstd}{Definición}{$\sigma$-\'algebra generada}
+Dada $\mathcal{S} \subseteq 2^{\Omega}$, la \emph{$\sigma$-\'algebra generada por $\mathcal{S}$} es
+\[
+\sigma(\mathcal{S}) = \bigcap_{\substack{\mathcal{F}\ \sigma\text{-\'algebra} \\ \mathcal{S} \subseteq \mathcal{F}}} \mathcal{F},
+\]
+la menor $\sigma$-\'algebra que contiene a $\mathcal{S}$ (la intersecci\'on de $\sigma$-\'algebras es una $\sigma$-\'algebra).
+\end{namedstd}
+
+\subsection{Borelianos y caracterizaci\'on por cerrados}
+
+\begin{namedstd}{Definición}{$\sigma$-\'algebra de Borel}
+La \emph{$\sigma$-\'algebra de Borel} $\mathcal{B}$ es la $\sigma$-\'algebra generada por los abiertos de $\R^{d}$. Por ser $\sigma$-\'algebra, $\mathcal{B}$ contiene a los cerrados, a los conjuntos $G_{\delta}$ y $F_{\sigma}$, y $\mathcal{B} \subseteq \mathcal{M}$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Caracterizaci\'on de la medibilidad por cerrados interiores}
+Sea $E \subseteq \R^{d}$. Entonces $E$ es medible si y s\'olo si para todo $\varepsilon > 0$ existe un cerrado $F \subseteq E$ con $m_{e}(E \setminus F) < \varepsilon$.
+\end{namedres}
+\begin{proof}
+$E$ es medible si y s\'olo si $E^{c}$ lo es. Dado $\varepsilon > 0$, si $E^{c}$ es medible existe un abierto $G \supseteq E^{c}$ con $m_{e}(G \setminus E^{c}) < \varepsilon$. Tome $F = G^{c}$, cerrado y $F \subseteq E$. Entonces
+\[
+m_{e}(E \setminus F) = m_{e}(E \cap F^{c}) = m_{e}(E \cap G) = m_{e}(G \setminus E^{c}) < \varepsilon.
+\]
+Rec\'iprocamente, si existen tales cerrados $F \subseteq E$, entonces sus complementos abiertos $F^{c} \supseteq E^{c}$ cumplen $m_{e}(F^{c} \setminus E^{c}) = m_{e}(E \setminus F) < \varepsilon$, de modo que $E^{c}$ es medible y por tanto $E$ tambi\'en.
+\end{proof}
+
+\subsection{\texorpdfstring{$\sigma$}{sigma}-aditividad y continuidad de la medida}
+
+\begin{namedres}{Teorema}{$\sigma$-aditividad de la medida de Lebesgue}
+Sea $\{E_{k}\}_{k=1}^{\infty}$ una familia numerable de conjuntos medibles disjuntos dos a dos. Entonces
+\[
+m\left(\bigcup_{k=1}^{\infty} E_{k}\right) = \sum_{k=1}^{\infty} m(E_{k}).
+\]
+\end{namedres}
+\begin{proof}
+La desigualdad $\leq$ es la subaditividad. Para $\geq$, suponga primero cada $E_{k}$ acotado. Dado $\varepsilon > 0$, por la caracterizaci\'on por cerrados existe un cerrado (y acotado, luego compacto) $F_{k} \subseteq E_{k}$ con $m(E_{k} \setminus F_{k}) < \varepsilon/2^{k}$. Los $F_{k}$ son compactos disjuntos, luego a distancia positiva dos a dos, y por aditividad a distancia positiva (e inducci\'on),
+\[
+\sum_{i=1}^{m} m(F_{i}) = m\Big(\bigcup_{i=1}^{m} F_{i}\Big) \leq m\Big(\bigcup_{i=1}^{\infty} E_{i}\Big) \qquad \text{para todo } m,
+\]
+de donde $\sum_{i=1}^{\infty} m(F_{i}) \leq m\big(\bigcup_{i} E_{i}\big)$. Como $m(E_{k}) \leq m(F_{k}) + \varepsilon/2^{k}$,
+\[
+\sum_{i=1}^{\infty} m(E_{i}) - \varepsilon \leq \sum_{i=1}^{\infty} m(F_{i}) \leq m\Big(\bigcup_{i} E_{i}\Big),
+\]
+y haciendo $\varepsilon \to 0$ se obtiene $\sum_{i} m(E_{i}) \leq m\big(\bigcup_{i} E_{i}\big)$. El caso general (conjuntos no acotados) se reduce a este partiendo cada $E_{k}$ en las coronas $E_{k} \cap (\overline{B(0,n)} \setminus B(0,n-1))$ y queda como ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{Monoton\'ia y resta de medidas}
+Si $E_{1} \subseteq E_{2}$ son medibles, entonces $m(E_{2}) = m(E_{1}) + m(E_{2} \setminus E_{1})$; en particular $m(E_{1}) \leq m(E_{2})$, y si $m(E_{1}) < \infty$,
+\[
+m(E_{2} \setminus E_{1}) = m(E_{2}) - m(E_{1}).
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Continuidad de la medida}
+Sea $\{E_{k}\}_{k=1}^{\infty}$ una sucesi\'on de conjuntos medibles.
+\begin{enumerate}[label=(\roman*)]
+\item Si $E_{i} \subseteq E_{i+1}$ para todo $i$, entonces $\displaystyle m\Big(\bigcup_{i=1}^{\infty} E_{i}\Big) = \lim_{k \to \infty} m(E_{k})$.
+\item Si $E_{i+1} \subseteq E_{i}$ para todo $i$ y existe $i_{0}$ con $m(E_{i_{0}}) < \infty$, entonces $\displaystyle m\Big(\bigcap_{i=1}^{\infty} E_{i}\Big) = \lim_{i \to \infty} m(E_{i})$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\emph{(i).} Con $E_{0} = \emptyset$, los conjuntos $E_{i} \setminus E_{i-1}$ son medibles, disjuntos y $\bigcup_{i} E_{i} = \bigsqcup_{i} (E_{i} \setminus E_{i-1})$. Por $\sigma$-aditividad y telescopaje,
+\[
+m\Big(\bigcup_{i} E_{i}\Big) = \sum_{i=1}^{\infty} m(E_{i} \setminus E_{i-1}) = \lim_{n \to \infty}\sum_{i=1}^{n}\big(m(E_{i}) - m(E_{i-1})\big) = \lim_{n \to \infty} m(E_{n}),
+\]
+donde el telescopaje es v\'alido cuando los $m(E_{i})$ son finitos; si alg\'un $m(E_{n}) = \infty$, ambos lados valen $\infty$ por monoton\'ia.
+
+\emph{(ii).} Descartando los primeros t\'erminos se puede suponer $i_{0} = 1$, de modo que $m(E_{i}) \leq m(E_{1}) < \infty$ para todo $i$. Sea $E = \bigcap_{i} E_{i}$. Entonces $E_{1} = E \sqcup \bigsqcup_{i \geq 1}(E_{i} \setminus E_{i+1})$, as\'i que
+\[
+m(E_{1}) = m(E) + \sum_{i=1}^{\infty}\big(m(E_{i}) - m(E_{i+1})\big) = m(E) + \lim_{n \to \infty}\big(m(E_{1}) - m(E_{n})\big) = m(E) + m(E_{1}) - \lim_{n} m(E_{n}).
+\]
+Como $m(E_{1}) < \infty$ se cancela, y $m(E) = \lim_{n} m(E_{n})$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{La finitud es necesaria en la continuidad por arriba}
+La hip\'otesis $m(E_{i_{0}}) < \infty$ no puede omitirse: con $E_{k} = [-k, k]^{c} \subseteq \R$ se tiene $E_{k+1} \subseteq E_{k}$, $m(E_{k}) = \infty$ para todo $k$, pero $\bigcap_{k} E_{k} = \emptyset$, de modo que $m\big(\bigcap_{k} E_{k}\big) = 0 \neq \infty = \lim_{k} m(E_{k})$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Continuidad exterior por abajo para conjuntos arbitrarios}
+Si $E_{k} \subseteq E_{k+1} \subseteq \R^{d}$ para todo $k$ (sin suponerlos medibles), entonces
+\[
+m_{e}\left(\bigcup_{k=1}^{\infty} E_{k}\right) = \lim_{k \to \infty} m_{e}(E_{k}).
+\]
+\end{namedres}
+\begin{proof}
+Para cada $k$ tome un conjunto $G_{\delta}$, $G_{k} \supseteq E_{k}$, con $m_{e}(E_{k}) = m(G_{k})$. Los $G_{k}$ no tienen por qu\'e estar encajados, as\'i que se define $V_{k} = \bigcap_{j=k}^{\infty} G_{j}$, medible y con $V_{k} \subseteq V_{k+1}$. Como $E_{k} \subseteq E_{k+\ell} \subseteq G_{k+\ell}$ para todo $\ell \geq 0$, resulta $E_{k} \subseteq \bigcap_{j \geq k} G_{j} = V_{k}$. Por monoton\'ia, $m_{e}(E_{k}) \leq m(V_{k}) \leq m(G_{k}) = m_{e}(E_{k})$, luego $m(V_{k}) = m_{e}(E_{k})$. Finalmente, usando $\bigcup_{k} E_{k} \subseteq \bigcup_{k} V_{k}$ y la continuidad por abajo (para los medibles $V_{k}$),
+\[
+m_{e}\Big(\bigcup_{k} E_{k}\Big) \leq m\Big(\bigcup_{k} V_{k}\Big) = \lim_{k \to \infty} m(V_{k}) = \lim_{k \to \infty} m_{e}(E_{k}).
+\]
+La desigualdad opuesta es la monoton\'ia: $m_{e}(E_{m}) \leq m_{e}\big(\bigcup_{k} E_{k}\big)$ para todo $m$, luego $\lim_{m} m_{e}(E_{m}) \leq m_{e}\big(\bigcup_{k} E_{k}\big)$.
+\end{proof}
+
+\subsection{Caracterizaciones de la medibilidad}
+
+\begin{namedres}{Teorema}{Caracterizaci\'on por $G_{\delta}$ y $F_{\sigma}$ m\'odulo medida cero}
+Sea $E \subseteq \R^{d}$. Las siguientes condiciones son equivalentes:
+\begin{enumerate}[label=(\roman*)]
+\item $E$ es medible;
+\item $E = H \setminus Z$, donde $H$ es de tipo $G_{\delta}$ y $m_{e}(Z) = 0$;
+\item $E = H \cup Z$, donde $H$ es de tipo $F_{\sigma}$ y $m_{e}(Z) = 0$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(ii) \Rightarrow (i)$ y $(iii) \Rightarrow (i)$ son inmediatas, pues los conjuntos $G_{\delta}$ y $F_{\sigma}$ son medibles y los de medida exterior cero tambi\'en, y $\mathcal{M}$ es cerrada bajo diferencias y uniones. Probamos $(i) \Rightarrow (ii)$. Si $E$ es medible, para cada $k$ existe un abierto $G_{k} \supseteq E$ con $m_{e}(G_{k} \setminus E) < \tfrac{1}{k}$. Sea $H = \bigcap_{k} G_{k}$, de tipo $G_{\delta}$ con $E \subseteq H$. Entonces $m_{e}(H \setminus E) \leq m_{e}(G_{k} \setminus E) < \tfrac{1}{k}$ para todo $k$, luego $m_{e}(H \setminus E) = 0$ y $E = H \setminus Z$ con $Z = H \setminus E$. La implicaci\'on $(i) \Rightarrow (iii)$ es an\'aloga (usando la caracterizaci\'on por cerrados interiores) y queda como ejercicio.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{Caracterizaci\'on por casi-uniones de intervalos}
+Sea $E \subseteq \R^{d}$ con $m_{e}(E) < \infty$. Pruebe que $E$ es medible si y s\'olo si para todo $\varepsilon > 0$ existen $\widetilde{S}, N_{1}, N_{2}$ tales que $E = (\widetilde{S} \cup N_{1}) \setminus N_{2}$, con $\widetilde{S} = \bigcup_{k} I_{k}$ ($I_{k} \in S_{d}$), $m_{e}(N_{1}) < \varepsilon$ y $m_{e}(N_{2}) < \varepsilon$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Criterio de Carath\'eodory}
+$E \subseteq \R^{d}$ es medible si y s\'olo si para todo $A \subseteq \R^{d}$
+\[
+m_{e}(A) = m_{e}(A \cap E) + m_{e}(A \setminus E).
+\]
+\end{namedres}
+\begin{proof}
+\emph{($\Rightarrow$).} Sea $E$ medible y $A \subseteq \R^{d}$. Tome un $G_{\delta}$, $H \supseteq A$, con $m_{e}(A) = m(H)$. Como $H$ y $E$ son medibles, $H \cap E$ y $H \setminus E$ son medibles, disjuntos y de uni\'on $H$, de modo que $m(H) = m(H \cap E) + m(H \setminus E)$. Usando $A \cap E \subseteq H \cap E$ y $A \setminus E \subseteq H \setminus E$,
+\[
+m_{e}(A) = m(H) = m(H \cap E) + m(H \setminus E) \geq m_{e}(A \cap E) + m_{e}(A \setminus E).
+\]
+La desigualdad opuesta es la subaditividad, as\'i que hay igualdad.
+
+\emph{($\Leftarrow$).} Suponga que la identidad vale para todo $A$. Si $m_{e}(E) < \infty$, tome un $G_{\delta}$, $H \supseteq E$, con $m(H) = m_{e}(E)$ y aplique la hip\'otesis a $A = H$: como $E \subseteq H$, $H \cap E = E$ y
+\[
+m_{e}(H) = m_{e}(E) + m_{e}(H \setminus E),
+\]
+de donde $m_{e}(H \setminus E) = 0$. Entonces $H \setminus E$ es medible y $E = H \setminus (H \setminus E)$ es medible. Si $m_{e}(E) = \infty$, sea $E_{k} = E \cap B(0,k)$ y $H_{k}$ un $G_{\delta}$ con $E_{k} \subseteq H_{k}$, $m(H_{k}) = m_{e}(E_{k})$. Aplicando la hip\'otesis a $A = H_{k}$ y usando $E_{k} \subseteq H_{k} \cap E$,
+\[
+m_{e}(H_{k}) = m_{e}(H_{k} \cap E) + m_{e}(H_{k} \setminus E) \geq m_{e}(E_{k}) + m_{e}(H_{k} \setminus E),
+\]
+y como $m_{e}(H_{k}) = m_{e}(E_{k})$, resulta $m_{e}(H_{k} \setminus E) = 0$. Con $H = \bigcup_{k} H_{k}$ (medible, $E \subseteq H$) se tiene $m_{e}(H \setminus E) \leq \sum_{k} m_{e}(H_{k} \setminus E) = 0$, luego $E = H \setminus Z$ con $Z = H \setminus E$ de medida cero, y $E$ es medible.
+\end{proof}
+
+\begin{namedres}{Corolario}{Aditividad respecto de un conjunto medible}
+Sea $E$ medible con $E \subseteq A \subseteq \R^{d}$. Entonces $m_{e}(A) = m(E) + m_{e}(A \setminus E)$. Si adem\'as $m(E) < \infty$, entonces $m_{e}(A \setminus E) = m_{e}(A) - m(E)$.
+\end{namedres}
+\begin{proof}
+Por el criterio de Carath\'eodory aplicado a $A$ y como $E \subseteq A$ implica $A \cap E = E$,
+\[
+m_{e}(A) = m_{e}(A \cap E) + m_{e}(A \setminus E) = m(E) + m_{e}(A \setminus E).
+\]
+Si $m(E) < \infty$ se despeja $m_{e}(A \setminus E) = m_{e}(A) - m(E)$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Envoltura $G_{\delta}$ que respeta intersecciones con medibles}
+Para todo $E \subseteq \R^{d}$ existe un conjunto $G_{\delta}$, $H \supseteq E$, tal que $m(H \cap M) = m_{e}(E \cap M)$ para todo conjunto medible $M$.
+\end{namedres}
+\begin{proof}
+\emph{Caso $m_{e}(E) < \infty$.} Sea $H$ de tipo $G_{\delta}$ con $E \subseteq H$ y $m(H) = m_{e}(E)$. Para $M$ medible, por Carath\'eodory (aplicado a $H$ y a $E$ respectivamente),
+\[
+m(H) = m(H \cap M) + m(H \setminus M), \qquad m_{e}(E) = m_{e}(E \cap M) + m_{e}(E \setminus M).
+\]
+Como $E \cap M \subseteq H \cap M$ y $E \setminus M \subseteq H \setminus M$ dan $m_{e}(E \cap M) \leq m(H \cap M)$ y $m_{e}(E \setminus M) \leq m(H \setminus M)$, y $m(H) = m_{e}(E)$, las dos descomposiciones suman lo mismo con cada t\'ermino dominado: forzosamente $m(H \cap M) = m_{e}(E \cap M)$.
+
+\emph{Caso general.} Sea $E_{k} = E \cap B(0,k)$ y, por el caso anterior, $G_{k}$ de tipo $G_{\delta}$ con $E_{k} \subseteq G_{k}$ y $m(G_{k} \cap M) = m_{e}(E_{k} \cap M)$ para todo medible $M$. Poniendo $H_{k} = \bigcap_{j \geq k} G_{j}$ se obtiene $E_{k} \subseteq H_{k}$ y $m_{e}(E_{k} \cap M) = m_{e}(H_{k} \cap M)$. Como $E_{k} \cap M \uparrow E \cap M$ y $H_{k} \cap M \uparrow$, la continuidad por abajo da
+\[
+m_{e}(E \cap M) = \lim_{k} m_{e}(E_{k} \cap M) = \lim_{k} m_{e}(H_{k} \cap M) = m_{e}\Big(\bigcup_{k} H_{k} \cap M\Big).
+\]
+El conjunto $\widetilde{H} = \bigcup_{k} H_{k}$ es medible; escribi\'endolo como $\widetilde{H} = H \setminus Z$ con $H$ de tipo $G_{\delta}$ y $m_{e}(Z) = 0$, se concluye $m_{e}(E \cap M) = m_{e}(\widetilde{H} \cap M) = m(H \cap M)$.
+\end{proof}
+
+\subsection{El conjunto de Cantor}
+
+\begin{namedstd}{Ejemplo}{El conjunto de Cantor: cerrado, no numerable y de medida cero}
+Sea $C_{0} = [0,1]$ y, recursivamente, $C_{k+1}$ el resultado de quitar a cada intervalo de $C_{k}$ su tercio central abierto; por ejemplo
+\[
+C_{1} = \Big[0, \tfrac{1}{3}\Big] \cup \Big[\tfrac{2}{3}, 1\Big], \qquad C_{2} = \Big[0, \tfrac{1}{9}\Big] \cup \Big[\tfrac{2}{9}, \tfrac{1}{3}\Big] \cup \Big[\tfrac{2}{3}, \tfrac{7}{9}\Big] \cup \Big[\tfrac{8}{9}, 1\Big].
+\]
+El \emph{conjunto de Cantor} es $C = \bigcap_{k=1}^{\infty} C_{k}$.
+
+\begin{center}
+\begin{tikzpicture}[yscale=0.62, xscale=9]
+  \tikzset{cseg/.style={line width=3.2pt, blue!60!black}}
+  \draw[cseg] (0,0) -- (1,0);
+  \draw[cseg] (0,-1) -- (0.3333,-1);  \draw[cseg] (0.6667,-1) -- (1,-1);
+  \draw[cseg] (0,-2) -- (0.1111,-2);  \draw[cseg] (0.2222,-2) -- (0.3333,-2);
+  \draw[cseg] (0.6667,-2) -- (0.7778,-2); \draw[cseg] (0.8889,-2) -- (1,-2);
+  \foreach \a/\b in {0/0.037,0.074/0.1111,0.2222/0.2593,0.2963/0.3333,%
+      0.6667/0.7037,0.7407/0.7778,0.8889/0.9259,0.9630/1}
+    \draw[cseg] (\a,-3) -- (\b,-3);
+  \node[anchor=east, scale=0.7] at (-0.01,0) {$C_{0}$};
+  \node[anchor=east, scale=0.7] at (-0.01,-1) {$C_{1}$};
+  \node[anchor=east, scale=0.7] at (-0.01,-2) {$C_{2}$};
+  \node[anchor=east, scale=0.7] at (-0.01,-3) {$C_{3}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent Cada $C_{k}$ es cerrado, luego $C$ es cerrado y medible. Como en cada paso se conserva $\tfrac{2}{3}$ de la longitud, $m(C_{k}) = (\tfrac{2}{3})^{k}$, y al ser $C_{k+1} \subseteq C_{k}$ con $m(C_{1}) < \infty$, la continuidad por arriba da
+\[
+m(C) = \lim_{k \to \infty} m(C_{k}) = \lim_{k \to \infty}\Big(\tfrac{2}{3}\Big)^{k} = 0.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Caracterizaci\'on del conjunto de Cantor en base tres}
+Para $x \in [0,1]$ con expansi\'on $x = \sum_{i=1}^{\infty} n_{i}/3^{i}$, $n_{i} \in \{0,1,2\}$ (eligiendo, cuando hay dos expansiones, la que evita el d\'igito $1$ terminal), pruebe que $x \in C_{k}$ si y s\'olo si $n_{1}, \dots, n_{k} \in \{0, 2\}$; por tanto $x \in C$ si y s\'olo si $n_{i} \in \{0,2\}$ para todo $i$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La funci\'on de Cantor y la no numerabilidad de $C$}
+La \emph{funci\'on de Cantor} $\Phi : C \to [0,1]$, $\Phi\big(\sum_{i} n_{i}/3^{i}\big) = \sum_{i} \tfrac{n_{i}}{2}\,\tfrac{1}{2^{i}}$ (con $n_{i} \in \{0,2\}$), est\'a bien definida y es sobreyectiva sobre $[0,1]$. Como $[0,1]$ es no numerable, $C$ tambi\'en lo es. As\'i, $C$ es un conjunto cerrado, no numerable y de medida de Lebesgue cero.
+\end{namedstd}
+
+\subsection{Un conjunto no medible}
+
+\begin{namedres}{Lema}{Lema de Steinhaus: $E - E$ contiene un intervalo}
+Sea $E \subseteq \R$ medible con $m(E) > 0$. Entonces el conjunto $E - E = \{x - y : x, y \in E\}$ contiene un intervalo abierto centrado en $0$.
+\end{namedres}
+\begin{proof}
+Se puede suponer $m(E) < \infty$ (reemplazando $E$ por $E \cap [-R, R]$ con $R$ grande, de medida positiva). Con $\varepsilon = \tfrac{1}{3}$, tome un abierto $G \supseteq E$ con $m(G) < (1 + \varepsilon)m(E)$ y escriba $G = \bigcup_{k}[a_{k}, b_{k}]$ con interiores disjuntos. Poniendo $E_{k} = [a_{k}, b_{k}] \cap E$ se tiene $m(E) = \sum_{k} m(E_{k})$ y
+\[
+\sum_{k} m([a_{k}, b_{k}]) = m(G) < (1 + \varepsilon)m(E) = (1 + \varepsilon)\sum_{k} m(E_{k}),
+\]
+luego existe $k_{0}$ con $m(I) \leq (1 + \varepsilon)\, m(\widetilde{E})$, donde $I = [a_{k_{0}}, b_{k_{0}}]$ y $\widetilde{E} = E_{k_{0}}$; en particular $m(I) \leq \tfrac{4}{3} m(\widetilde{E})$. Afirmamos que si $|d| < \tfrac{1}{2} m(I)$ entonces $(\widetilde{E} - d) \cap \widetilde{E} \neq \emptyset$. En efecto, si fuera $(\widetilde{E} - d) \cap \widetilde{E} = \emptyset$, entonces $m\big(\widetilde{E} \cup (\widetilde{E} - d)\big) = 2 m(\widetilde{E})$; pero $\widetilde{E}$ y $\widetilde{E} - d$ est\'an ambos contenidos en un intervalo de longitud $m(I) + |d| < \tfrac{3}{2} m(I)$, as\'i que $2 m(\widetilde{E}) < \tfrac{3}{2} m(I)$, esto es $m(\widetilde{E}) < \tfrac{3}{4} m(I)$, contradiciendo $m(I) \leq \tfrac{4}{3}m(\widetilde{E})$. Por tanto, para $|d| < \tfrac{1}{2}m(I)$ existen $x, y \in \widetilde{E}$ con $x - d = y$, es decir $d \in \widetilde{E} - \widetilde{E} \subseteq E - E$. Luego $\big(-\tfrac{1}{2}m(I), \tfrac{1}{2}m(I)\big) \subseteq E - E$.
+\end{proof}
+
+\begin{namedstd}{Nota}{Invariancia por traslaciones de la medida exterior}
+De la definici\'on, $m_{e}$ es invariante por traslaciones: $m_{e}(E + t) = m_{e}(E)$ para todo $t$, pues trasladar un cubrimiento por cajas produce un cubrimiento por cajas del mismo volumen.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El conjunto de Vitali es no medible}
+Defina sobre $\R$ la relaci\'on de equivalencia $x \sim y \iff x - y \in \Q$. La clase de $x$ es $\{x + r : r \in \Q\}$, numerable; por tanto hay una cantidad no numerable de clases. El \emph{conjunto de Vitali} $E$ se obtiene escogiendo un representante de cada clase. Entonces $E$ es no numerable y $(E - E) \cap \Q = \{0\}$, pues dos elementos distintos de $E$ no son equivalentes y su diferencia es irracional. Si $E$ fuese medible: caso $m(E) > 0$ es imposible, porque por el lema de Steinhaus $E - E$ contendr\'ia un intervalo alrededor de $0$ y por ende racionales no nulos, contra $(E - E) \cap \Q = \{0\}$; luego $m(E) = 0$. Pero $\R = \bigcup_{r \in \Q}(E + r)$, y por invariancia por traslaciones y subaditividad
+\[
+m_{e}(\R) \leq \sum_{r \in \Q} m_{e}(E + r) = \sum_{r \in \Q} m_{e}(E) = 0,
+\]
+absurdo. Por tanto $E$ no es medible.
+\end{namedstd}
+
+\begin{namedres}{Corolario}{Todo conjunto de medida exterior positiva contiene un no medible}
+Sea $A \subseteq \R$ con $m_{e}(A) > 0$. Entonces existe $E \subseteq A$ no medible.
+\end{namedres}
+\begin{proof}
+Con $E$ el conjunto de Vitali, $\R = \bigsqcup_{r \in \Q}(E + r)$, de modo que $A = \bigcup_{r \in \Q} A_{r}$ con $A_{r} = A \cap (E + r)$. Cada $A_{r} - A_{r} \subseteq (E + r) - (E + r) = E - E$, luego $(A_{r} - A_{r}) \cap \Q = \{0\}$; por el lema de Steinhaus, si $A_{r}$ fuera medible no podr\'ia tener medida positiva, as\'i que $m(A_{r}) = 0$. Si todos los $A_{r}$ fueran medibles, por subaditividad $m_{e}(A) \leq \sum_{r} m_{e}(A_{r}) = 0$, contradiciendo $m_{e}(A) > 0$. Por tanto alg\'un $A_{r} \subseteq A$ es no medible.
+\end{proof}
+
+% =============================================================================
+\section{Funciones medibles}
+% =============================================================================
+
+\subsection{Definici\'on y equivalencias}
+
+\begin{namedstd}{Definición}{Funci\'on medible}
+Sea $f : E \to \Rext = \R \cup \{\pm\infty\}$. Decimos que $f$ es \emph{medible} si para todo $a \in \R$
+\[
+\{f > a\} := \{x \in E : f(x) > a\} \in \mathcal{M}.
+\]
+Como $E = \bigcup_{k=1}^{\infty}\{f > -k\} \cup \{f = -\infty\}$, si $f$ es medible entonces $E$ es medible si y s\'olo si $\{f = -\infty\}$ es medible. En lo que sigue se supone que $E$ es medible.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Funciones continuas e indicadoras}
+\begin{enumerate}[label=(\roman*)]
+\item Si $f : \R^{d} \to \R$ es continua, $\{f > a\} = f^{-1}((a, \infty))$ es abierto, luego medible; toda funci\'on continua es medible.
+\item Si $f = \ind_{A}$ con $A$ medible, entonces $\{f > a\}$ vale $E$ si $a < 0$, $A$ si $0 \leq a < 1$ y $\emptyset$ si $a \geq 1$; en todos los casos es medible.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Condiciones equivalentes de medibilidad}
+Sea $f : E \to \Rext$ con $E$ medible. Las siguientes condiciones, para todo $a \in \R$, son equivalentes:
+\[
+\text{(i) } \{f > a\} \in \mathcal{M}, \quad \text{(ii) } \{f < a\} \in \mathcal{M}, \quad \text{(iii) } \{f \leq a\} \in \mathcal{M}, \quad \text{(iv) } \{f \geq a\} \in \mathcal{M}.
+\]
+\end{namedres}
+\begin{proof}
+$\{f \leq a\} = \{f > a\}^{c}$ y $\{f < a\} = \{f \geq a\}^{c}$, de modo que (i)$\Leftrightarrow$(iii) y (ii)$\Leftrightarrow$(iv) por cerradura bajo complementos. Adem\'as
+\[
+\{f \geq a\} = \bigcap_{n=1}^{\infty}\Big\{f > a - \tfrac{1}{n}\Big\}, \qquad \{f > a\} = \bigcup_{n=1}^{\infty}\Big\{f \geq a + \tfrac{1}{n}\Big\},
+\]
+lo que muestra (i)$\Rightarrow$(iv) y (iv)$\Rightarrow$(i) por cerradura bajo intersecciones y uniones numerables. Las cuatro condiciones son, pues, equivalentes.
+\end{proof}
+
+\begin{namedstd}{Nota}{Otros conjuntos medibles asociados a $f$}
+Si $f : E \to \Rext$ es medible, son medibles
+\[
+\{f > -\infty\} = \bigcup_{k}\{f > -k\}, \quad \{f < \infty\} = \bigcup_{k}\{f \leq k\}, \quad \{f = \infty\}, \quad \{a \leq f \leq b\}, \quad \{a \leq f < b\},
+\]
+por ser intersecciones y uniones numerables de los conjuntos $\{f > a\}$, $\{f \leq a\}$, etc.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Funci\'on Borel medible}
+$f : E \to \R$ es \emph{Borel medible} si $E \in \mathcal{B}$ y $\{f > a\} \in \mathcal{B}$ para todo $a \in \R$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Medibilidad por preim\'agenes de abiertos}
+Sea $f : E \to \R$. Entonces $f$ es medible si y s\'olo si $f^{-1}(G)$ es medible para todo abierto $G \subseteq \R$.
+\end{namedres}
+\begin{proof}
+Si las preim\'agenes de abiertos son medibles, tomando $G = (a, \infty)$ se obtiene $\{f > a\} = f^{-1}(G)$ medible, luego $f$ es medible. Rec\'iprocamente, sea $f$ medible y $G \subseteq \R$ abierto; escriba $G = \bigcup_{k}(a_{k}, b_{k})$. Como
+\[
+f^{-1}\big((a_{k}, b_{k})\big) = \{a_{k} < f\} \cap \{f < b_{k}\}
+\]
+es medible, $f^{-1}(G) = \bigcup_{k} f^{-1}\big((a_{k}, b_{k})\big)$ es uni\'on numerable de medibles, luego medible.
+\end{proof}
+
+\subsection{Composici\'on, igualdad casi por doquier y operaciones}
+
+\begin{namedres}{Lema}{Composici\'on de una medible con una continua}
+Sea $f : E \to \R$ medible y $\phi : \R \to \R$ continua. Entonces $\phi \circ f$ es medible.
+\end{namedres}
+\begin{proof}
+Sea $G \subseteq \R$ abierto. Entonces $(\phi \circ f)^{-1}(G) = f^{-1}\big(\phi^{-1}(G)\big)$. Como $\phi$ es continua, $\phi^{-1}(G)$ es abierto, y como $f$ es medible, $f^{-1}\big(\phi^{-1}(G)\big)$ es medible. Por el teorema anterior, $\phi \circ f$ es medible.
+\end{proof}
+
+\begin{namedstd}{Nota}{Consecuencias inmediatas}
+Si $f$ es medible, entonces $|f|$, $|f|^{p}$ ($p > 0$), $e^{cf}$ ($c \in \R$) y las partes positiva y negativa
+\[
+f^{+} = \max\{f, 0\}, \qquad f^{-} = \max\{-f, 0\}
+\]
+son medibles. (Aqu\'i $f^{+}, f^{-} \geq 0$, $f = f^{+} - f^{-}$ y $|f| = f^{+} + f^{-}$, en concordancia con la notaci\'on de partes positiva y negativa de un n\'umero real.)
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Casi por doquier}
+Una propiedad se cumple \emph{casi por doquier} (c.p.d.) si se cumple salvo en un conjunto de medida cero.
+\end{namedstd}
+
+\begin{namedres}{Lema}{La igualdad casi por doquier preserva la medibilidad}
+Sean $f, g : E \to \R$ con $f$ medible y $g = f$ casi por doquier. Entonces $g$ es medible.
+\end{namedres}
+\begin{proof}
+Sea $a \in \R$. Descomponiendo seg\'un donde $f$ y $g$ coinciden,
+\[
+\{g > a\} = \big(\{g > a\} \cap \{f = g\}\big) \cup \big(\{g > a\} \cap \{f \neq g\}\big).
+\]
+El primer conjunto es $\{f > a\} \cap \{f = g\}$, medible (intersecci\'on de medibles, salvo el conjunto $\{f \neq g\}$ de medida cero que es medible). El segundo est\'a contenido en $\{f \neq g\}$, de medida cero, luego medible. Por tanto $\{g > a\}$ es uni\'on de medibles y $g$ es medible.
+\end{proof}
+
+\begin{namedres}{Lema}{Composici\'on con una continua para funciones finitas c.p.d.}
+Sea $f : E \to \Rext$ medible con $m(\{f = \infty\}) = m(\{f = -\infty\}) = 0$. Entonces $\phi \circ f$ es medible para toda $\phi : \R \to \R$ continua.
+\end{namedres}
+\begin{proof}
+Sea $F = \{x \in E : f(x) \in \R\}$ y defina $f_{1} = f$ en $F$ y $f_{1} = 0$ en $E \setminus F$. Como $E \setminus F = \{f = \infty\} \cup \{f = -\infty\}$ tiene medida cero, $f_{1}$ es medible y $f_{1} = f$ casi por doquier. Por el lema de composici\'on, $\phi \circ f_{1}$ es medible, y como $\phi \circ f_{1} = \phi \circ f$ c.p.d., el lema anterior da que $\phi \circ f$ es medible.
+\end{proof}
+
+\begin{namedres}{Lema}{El conjunto donde una medible supera a otra es medible}
+Sean $f, g : E \to \R$ medibles. Entonces $\{f > g\}$ es medible.
+\end{namedres}
+\begin{proof}
+Sea $\{q_{n}\}_{n=1}^{\infty}$ una enumeraci\'on de $\Q$. Como $f(x) > g(x)$ si y s\'olo si existe un racional estrictamente entre $g(x)$ y $f(x)$,
+\[
+\{f > g\} = \bigcup_{n=1}^{\infty}\big(\{f > q_{n}\} \cap \{q_{n} > g\}\big),
+\]
+uni\'on numerable de intersecciones de medibles, luego medible.
+\end{proof}
+
+\begin{namedres}{Lema}{Estructura de espacio vectorial de las funciones medibles}
+Sean $f, g : E \to \R$ medibles. Entonces:
+\begin{enumerate}[label=(\roman*)]
+\item $f + \lambda$ y $\lambda f$ son medibles para todo $\lambda \in \R$;
+\item $f + g$ es medible.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+El inciso (i) queda como ejercicio (directo desde la definici\'on: $\{f + \lambda > a\} = \{f > a - \lambda\}$ y, para $\lambda > 0$, $\{\lambda f > a\} = \{f > a/\lambda\}$, etc.). Para (ii), $g$ y $\lambda - g$ son medibles por (i), y por el lema anterior aplicado a $f$ y $\lambda - g$,
+\[
+\{f + g > \lambda\} = \{f > \lambda - g\}
+\]
+es medible para todo $\lambda \in \R$, luego $f + g$ es medible.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{El caso de valores infinitos en la suma}
+El lema anterior sigue valiendo para $f, g : E \to \Rext$ siempre que $f + g$ est\'e bien definida (es decir, evitando la indeterminaci\'on $\infty - \infty$). Pruebe esta variante.
+\end{namedstd}
+
+\begin{namedres}{Corolario}{Producto y cociente de funciones medibles}
+Sean $f, g : E \to \Rext$ medibles. Entonces $fg$ es medible (con la convenci\'on $0 \cdot (\pm\infty) = 0$, de modo que el producto siempre est\'a definido), y $f/g$ es medible si $g \neq 0$.
+\end{namedres}
+\begin{proof}
+Sea $F = \{f \in \R\} \cap \{g \in \R\}$. Para $a \geq 0$,
+\[
+\{fg > a\} = \big(\{fg > a\} \cap F\big) \cup \big(\{f = \infty\} \cap \{g > 0\}\big) \cup \big(\{g = \infty\} \cap \{f > 0\}\big) \cup \big(\{f = -\infty\} \cap \{g < 0\}\big) \cup \big(\{g = -\infty\} \cap \{f < 0\}\big),
+\]
+y todos los conjuntos del lado derecho son medibles salvo, a priori, el primero. En $F$ vale la identidad de polarizaci\'on
+\[
+fg = \tfrac{1}{4}\big((f + g)^{2} - (f - g)^{2}\big);
+\]
+como $f + g$ y $f - g$ son medibles (lema anterior) y el cuadrado es composici\'on con la continua $t \mapsto t^{2}$, $fg$ es medible en $F$, de modo que $\{fg > a\} \cap F$ es medible. El tratamiento de $a < 0$ y del cociente $f/g$ (componiendo con $t \mapsto 1/t$ donde $g \neq 0$) queda como ejercicio.
+\end{proof}
+
+\subsection{Sucesiones de funciones medibles y funciones simples}
+
+\begin{namedres}{Teorema}{Sup, inf, l\'imite superior e inferior de funciones medibles}
+Sea $\{f_{k}\}_{k=1}^{\infty}$ una sucesi\'on de funciones medibles $E \to \Rext$. Entonces $\sup_{k} f_{k}$, $\inf_{k} f_{k}$, $\limsup_{k} f_{k}$ y $\liminf_{k} f_{k}$ son medibles.
+\end{namedres}
+\begin{proof}
+Para todo $a \in \R$,
+\[
+\Big\{\sup_{k \geq 1} f_{k} > a\Big\} = \bigcup_{k=1}^{\infty}\{f_{k} > a\}
+\]
+es medible, luego $\sup_{k} f_{k}$ es medible. Las restantes se reducen a esta:
+\[
+\inf_{k} f_{k} = -\sup_{k}(-f_{k}), \qquad \limsup_{k} f_{k} = \inf_{k \geq 1}\sup_{\ell \geq k} f_{\ell}, \qquad \liminf_{k} f_{k} = \sup_{k \geq 1}\inf_{\ell \geq k} f_{\ell}. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Definición}{Funci\'on simple}
+Una funci\'on $\phi$ es \emph{simple} si existen conjuntos medibles $A_{1}, \dots, A_{m}$ y reales $a_{1}, \dots, a_{m}$ con
+\[
+\phi = \sum_{k=1}^{m} a_{k}\, \ind_{A_{k}}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Forma can\'onica de una funci\'on simple}
+Pruebe que toda funci\'on simple $\phi$ admite una representaci\'on $\phi = \sum_{k=1}^{\ell} b_{k}\, \ind_{B_{k}}$ con $B_{1}, \dots, B_{\ell}$ medibles disjuntos dos a dos y $b_{1}, \dots, b_{\ell}$ distintos dos a dos.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Aproximaci\'on di\'adica de una funci\'on no negativa}
+Sea $f : E \to [0, \infty]$. Para $k \in \N$ defina
+\[
+f_{k} = k\,\ind_{B_{k}} + \sum_{j=1}^{k 2^{k}} \frac{j-1}{2^{k}}\,\ind_{A_{k}^{j}}, \qquad B_{k} = f^{-1}\big([k, \infty]\big), \quad A_{k}^{j} = f^{-1}\Big(\Big[\tfrac{j-1}{2^{k}}, \tfrac{j}{2^{k}}\Big)\Big),
+\]
+es decir, $f_{k}(x) = \tfrac{j-1}{2^{k}}$ si $\tfrac{j-1}{2^{k}} \leq f(x) < \tfrac{j}{2^{k}}$ y $f_{k}(x) = k$ si $f(x) \geq k$. Si $0 \leq f(x) < k$, entonces $0 \leq f(x) - f_{k}(x) < \tfrac{1}{2^{k}}$, de modo que $f_{k}(x) \to f(x)$ cuando $f(x) < \infty$; y si $f(x) = \infty$, $f_{k}(x) = k \to \infty$. Adem\'as $f_{k} \leq f_{k+1}$: al pasar de $k$ a $k+1$ cada intervalo di\'adico se parte en dos, y el valor de $f_{k+1}$ es igual o una unidad di\'adica mayor que el de $f_{k}$. Si $f$ es medible, los $A_{k}^{j}$ y $B_{k}$ son medibles y cada $f_{k}$ es simple y medible.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Aproximaci\'on por funciones simples}
+Sea $f : E \to \Rext$. Entonces existe una sucesi\'on de funciones simples $\psi_{k}$ con $\psi_{k} \to f$ puntualmente. Si $f \geq 0$, la sucesi\'on puede tomarse creciente; si $f$ es medible, los $\psi_{k}$ pueden tomarse medibles.
+\end{namedres}
+\begin{proof}
+Para $f \geq 0$ la sucesi\'on di\'adica $\psi_{k} = f_{k}$ de la nota anterior es simple, creciente y converge puntualmente a $f$ (y medible si $f$ lo es). Para $f$ de signo arbitrario se aplica lo anterior a $f^{+}$ y $f^{-}$ y se toma $\psi_{k} = (f^{+})_{k} - (f^{-})_{k}$; los detalles de este caso quedan como ejercicio.
+\end{proof}
+\newpage
+\appendix
+% =============================================================================
+\section{Anexo: caracterizaciones equivalentes}
+% =============================================================================
+
+Varios conceptos de esta parte del curso admiten \emph{m\'ultiples caracterizaciones equivalentes}. Este anexo las recopila en cajas autocontenidas, una por concepto, indicando d\'onde se prueba cada equivalencia dentro del documento.
+
+\anexogroup{Variaci\'on acotada}
+
+\begin{equivbox}{blue}{Caracterizaciones de una funci\'on de variaci\'on acotada $f : [a,b] \to \R$}
+Las siguientes afirmaciones son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(supremo de incrementos)}\; $\displaystyle \sup_{\Gamma} S(f, \Gamma) < \infty$. \hfill\textit{Definici\'on 1.2.1.}
+\item \textbf{(descomposici\'on de Jordan)}\; $f = g - h$ con $g, h$ crecientes (pueden tomarse no negativas). \hfill\textit{Teorema 1.4.3.}
+\item \textbf{(variaciones $\pm$)}\; $P(f, [a,b]) + N(f, [a,b]) < \infty$, con $f = f(a) + P(f, [a,\cdot]) - N(f, [a,\cdot])$. \hfill\textit{Lema 1.4.2.}
+\end{enumerate}
+\textit{Caso regular ($f \in \mathcal{C}^{1}$):} adem\'as $\Var(f, [a,b]) = \int_{a}^{b} |f'|$ (Corolario 1.5.3).
+\end{equivbox}
+
+\anexogroup{Integral de Riemann--Stieltjes}
+
+\begin{equivbox}{teal}{Caracterizaciones de la integrabilidad de $f$ respecto de $\phi$}
+Sea $f$ acotada. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definici\'on)}\; Existe $I \in \R$ tal que $\forall \varepsilon > 0\ \exists \delta > 0:\ |\Gamma| < \delta \Rightarrow |R(f, \Gamma, \phi) - I| < \varepsilon$, para toda elecci\'on de puntos intermedios. \hfill\textit{Definici\'on 2.1.2.}
+\item \textbf{(criterio de Cauchy)}\; $\forall \varepsilon > 0\ \exists \delta > 0:\ |\Gamma|, |\Gamma'| < \delta \Rightarrow |R(f, \Gamma, \phi) - R(f, \Gamma', \phi)| < \varepsilon$. \hfill\textit{Ejercicio 2.1.3.}
+\end{enumerate}
+\textit{Condici\'on suficiente:} si $f$ es continua y $\phi$ de variaci\'on acotada, la integral existe (Teorema 2.3.2).
+\end{equivbox}
+
+\anexogroup{Medida de Lebesgue}
+
+\begin{equivbox}{violet}{Caracterizaciones de un conjunto Lebesgue medible $E \subseteq \R^{d}$}
+Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(aproximaci\'on exterior por abiertos)}\; $\forall \varepsilon > 0\ \exists$ abierto $G \supseteq E$ con $m_{e}(G \setminus E) < \varepsilon$. \hfill\textit{Definici\'on 3.5.1.}
+\item \textbf{(aproximaci\'on interior por cerrados)}\; $\forall \varepsilon > 0\ \exists$ cerrado $F \subseteq E$ con $m_{e}(E \setminus F) < \varepsilon$. \hfill\textit{Lema 4.2.2.}
+\item \textbf{($G_{\delta}$ m\'odulo nulo)}\; $E = H \setminus Z$ con $H$ de tipo $G_{\delta}$ y $m_{e}(Z) = 0$. \hfill\textit{Teorema 4.4.1.}
+\item \textbf{($F_{\sigma}$ m\'odulo nulo)}\; $E = H \cup Z$ con $H$ de tipo $F_{\sigma}$ y $m_{e}(Z) = 0$. \hfill\textit{Teorema 4.4.1.}
+\item \textbf{(Carath\'eodory)}\; $\forall A \subseteq \R^{d}:\ m_{e}(A) = m_{e}(A \cap E) + m_{e}(A \setminus E)$. \hfill\textit{Teorema 4.4.3.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{cyan!70!black}{Caracterizaciones de la medida exterior v\'ia envolturas}
+Para todo $E \subseteq \R^{d}$:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(\'infimo de cubrimientos)}\; $m_{e}(E) = \inf\big\{\sum_{k} m(I_{k}) : E \subseteq \bigcup_{k} I_{k},\ I_{k} \in S_{d}\big\}$. \hfill\textit{Definici\'on 3.3.1.}
+\item \textbf{(\'infimo sobre abiertos)}\; $m_{e}(E) = \inf\{ m_{e}(G) : G \supseteq E \text{ abierto}\}$. \hfill\textit{Lema 3.4.1.}
+\item \textbf{(envoltura $G_{\delta}$)}\; Existe $H \supseteq E$ de tipo $G_{\delta}$ con $m_{e}(E) = m_{e}(H)$. \hfill\textit{Lema 3.4.3.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Funciones medibles}
+
+\begin{equivbox}{orange!85!black}{Caracterizaciones de una funci\'on medible $f : E \to \overline{\R}$}
+Con $E$ medible, las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{($\{f > a\}$)}\; $\{f > a\}$ es medible para todo $a \in \R$. \hfill\textit{Definici\'on 5.1.1.}
+\item \textbf{($\{f \geq a\}$)}\; $\{f \geq a\}$ es medible para todo $a$. \hfill\textit{Teorema 5.1.3.}
+\item \textbf{($\{f < a\}$)}\; $\{f < a\}$ es medible para todo $a$. \hfill\textit{Teorema 5.1.3.}
+\item \textbf{($\{f \leq a\}$)}\; $\{f \leq a\}$ es medible para todo $a$. \hfill\textit{Teorema 5.1.3.}
+\item \textbf{(preimagen de abiertos)}\; $f^{-1}(G)$ es medible para todo abierto $G \subseteq \R$ (para $f$ con valores en $\R$). \hfill\textit{Teorema 5.1.5.}
+\end{enumerate}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: contraejemplos can\'onicos}
+% =============================================================================
+
+Cada fila responde a una pregunta del estilo ``¿es necesariamente \textit{X}?'' con un \textit{no}: el objeto cumple la hip\'otesis pero no la conclusi\'on.
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.30\textwidth} p{0.30\textwidth} p{0.32\textwidth}}
+\hline
+\textbf{Implicaci\'on que falla} & \textbf{Contraejemplo} & \textbf{Comentario / referencia} \\
+\hline
+\endhead
+
+Continua $\Rightarrow$ variaci\'on acotada & $f(x) = x\cos\!\big(\tfrac{\pi}{2x}\big)$ en $(0,1]$, $f(0) = 0$: continua, pero $S(f, \Gamma) \to \infty$ (las oscilaciones suman como la serie arm\'onica). & La continuidad no controla la variaci\'on (§1.2).\\
+\hline
+Variaci\'on acotada $\Rightarrow$ continua & Cualquier funci\'on mon\'otona con un salto, p.ej.\ $\ind_{[c,1]}$ en $[0,1]$. Es de variaci\'on acotada pero discontinua en $c$. & Las funciones de variaci\'on acotada s\'olo tienen discontinuidades contables (§1.5).\\
+\hline
+$f, \phi$ con discontinuidad com\'un $\Rightarrow$ $\int f\,d\phi$ existe & $f = \phi = \ind_{[z_{0}, 1]}$ en $[0,1]$: ambas saltan en $z_{0}$. & Falla el criterio de Cauchy (Lema 2.1.4).\\
+\hline
+L\'imite puntual de Riemann-integrables $\Rightarrow$ Riemann integrable & $f_{n} = \ind_{\{r_{1}, \dots, r_{n}\}} \uparrow \ind_{\Q \cap [0,1]}$, con $\int_{0}^{1} f_{n} = 0$ pero $\ind_{\Q \cap [0,1]}$ no es Riemann integrable. & Motiva la integral de Lebesgue (§2.5).\\
+\hline
+Medida (exterior) cero $\Rightarrow$ numerable & Conjunto de Cantor $C$: no numerable, cerrado y $m(C) = 0$. & $\Phi : C \to [0,1]$ sobreyectiva (§4.5).\\
+\hline
+Cerrado y de medida cero $\Rightarrow$ contable & De nuevo el conjunto de Cantor. & $C$ es perfecto y no numerable (§4.5).\\
+\hline
+Todo subconjunto de $\R$ es medible & Conjunto de Vitali $E$ (un representante por clase de $\sim$, $x \sim y \iff x - y \in \Q$). & Construcci\'on v\'ia el axioma de elecci\'on (§4.6).\\
+\hline
+$m_{e}$ aditiva sobre disjuntos cualesquiera & Los traslados $\{E + r\}_{r \in \Q \cap [0,1)}$ del conjunto de Vitali. & La aditividad requiere medibilidad o distancia positiva (§3.5, §4.6).\\
+\hline
+Continuidad por arriba sin finitud & $E_{k} = [-k, k]^{c}$: $E_{k+1} \subseteq E_{k}$, $m(E_{k}) = \infty$, pero $\bigcap_{k} E_{k} = \emptyset$. & Hace falta $m(E_{i_{0}}) < \infty$ (§4.3).\\
+\hline
+$|f|$ medible $\Rightarrow$ $f$ medible & $f = \ind_{E} - \ind_{E^{c}}$ con $E$ de Vitali: $|f| \equiv 1$ es medible, $f$ no. & La medibilidad de $|f|$ no basta (§5.2).\\
+\hline
+$f$ medible $\Rightarrow$ $f$ Riemann integrable & $\ind_{\Q \cap [0,1]}$ es medible pero no Riemann integrable. & La medibilidad es m\'as d\'ebil (§5.1).\\
+\hline
+Medible $\Rightarrow$ boreliano & Hay subconjuntos del Cantor que son medibles (medida cero) pero no borelianos: $|\mathcal{M}| = 2^{\mathfrak{c}} > \mathfrak{c} = |\mathcal{B}|$. & $\mathcal{B} \subsetneq \mathcal{M}$ (§4.1--4.2).\\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\newpage
+% =============================================================================
+\section{Anexo: implicaciones y equivalencias}
+% =============================================================================
+
+Mapa r\'apido de las relaciones l\'ogicas entre las propiedades de esta parte del curso. Cada bloque agrupa un concepto en tres categor\'ias:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Equivalencias} ($\Leftrightarrow$): caracterizaciones intercambiables.
+\item \textbf{Implicaciones siempre v\'alidas} ($\Rightarrow$): una propiedad implica otra sin condici\'on adicional, salvo aviso.
+\item \textbf{Implicaciones que \emph{no} valen en general} ($\not\Rightarrow$): hay contraejemplo (ver \emph{Anexo: contraejemplos can\'onicos}).
+\end{itemize}
+
+\medskip
+
+\begin{equivbox}{blue}{Variaci\'on acotada}
+\textbf{Equivalencias.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ de variaci\'on acotada $\Leftrightarrow$ $f = g - h$ con $g, h$ crecientes (Jordan). \hfill\textit{Teorema 1.4.3.}
+\item $f$ de variaci\'on acotada $\Leftrightarrow$ $P(f, [a,b]) + N(f, [a,b]) < \infty$. \hfill\textit{Lema 1.4.2.}
+\end{itemize}
+\textbf{Implicaciones siempre v\'alidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ mon\'otona $\Rightarrow$ $f$ de variaci\'on acotada, con $\Var(f) = |f(b) - f(a)|$. \hfill\textit{Ejemplo 1.2.2.}
+\item $f$ de variaci\'on acotada $\Rightarrow$ $f$ acotada. \hfill\textit{Proposici\'on 1.3.3.}
+\item $f$ de variaci\'on acotada $\Rightarrow$ discontinuidades a lo sumo contables (saltos). \hfill\textit{Teorema 1.5.1.}
+\item $f \in \mathcal{C}^{1} \Rightarrow$ $f$ de variaci\'on acotada con $\Var(f) = \int_{a}^{b}|f'|$. \hfill\textit{Corolario 1.5.3.}
+\item $f, g$ de variaci\'on acotada $\Rightarrow$ $cf + g$, $fg$ de variaci\'on acotada. \hfill\textit{Lema 1.3.4.}
+\end{itemize}
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Continua $\not\Rightarrow$ de variaci\'on acotada (e.g.\ $x\cos(\pi/2x)$ en $(0,1]$).
+\item De variaci\'on acotada $\not\Rightarrow$ continua (e.g.\ una funci\'on escalonada).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{teal}{Integral de Riemann--Stieltjes}
+\textbf{Equivalencias.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Integrable $\Leftrightarrow$ se cumple el criterio de Cauchy de las sumas. \hfill\textit{Ejercicio 2.1.3.}
+\end{itemize}
+\textbf{Implicaciones siempre v\'alidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ continua $+$ $\phi$ de variaci\'on acotada $\Rightarrow$ $\int_{a}^{b} f\,d\phi$ existe, con $|\int f\,d\phi| \leq \sup|f|\,\Var(\phi)$. \hfill\textit{Teorema 2.3.2.}
+\item $\int f\,d\phi$ existe $\Rightarrow$ $\int \phi\,df$ existe (integraci\'on por partes). \hfill\textit{Teorema 2.4.4.}
+\item $f$ continua $+$ $\phi$ creciente $\Rightarrow$ $\int f\,d\phi = f(\xi)(\phi(b) - \phi(a))$ para alg\'un $\xi$. \hfill\textit{Lema 2.4.3.}
+\item $f_{n} \to f$ uniforme, $f_{n}, f$ integrables, $\phi$ de variaci\'on acotada $\Rightarrow$ $\int f_{n}\,d\phi \to \int f\,d\phi$. \hfill\textit{Lema 2.5.2.}
+\end{itemize}
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f, \phi$ con una discontinuidad com\'un $\not\Rightarrow$ integrable: de hecho \emph{nunca} lo es. \hfill\textit{Lema 2.1.4.}
+\item Convergencia puntual $\not\Rightarrow$ paso al l\'imite bajo la integral (e.g.\ $\ind_{\{r_{1},\dots,r_{n}\}}$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{violet}{Medida de Lebesgue y conjuntos medibles}
+\textbf{Equivalencias} (caracterizaciones de ``$E$ medible'', Anexo A).
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Aprox.\ exterior por abiertos $\Leftrightarrow$ aprox.\ interior por cerrados $\Leftrightarrow$ $E = H \setminus Z$ ($H$ $G_{\delta}$) $\Leftrightarrow$ $E = H \cup Z$ ($H$ $F_{\sigma}$) $\Leftrightarrow$ Carath\'eodory. \hfill\textit{Teoremas 4.2--4.4.}
+\end{itemize}
+\textbf{Implicaciones siempre v\'alidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Abierto o cerrado $\Rightarrow$ medible; $\mathcal{B} \subseteq \mathcal{M}$. \hfill\textit{Teorema 4.1.2.}
+\item $m_{e}(E) = 0 \Rightarrow$ $E$ medible; numerable $\Rightarrow$ $m_{e} = 0$. \hfill\textit{Ejemplos 3.3.4, 3.5.2.}
+\item $\{E_{k}\}$ disjuntos medibles $\Rightarrow$ $m(\bigcup E_{k}) = \sum m(E_{k})$. \hfill\textit{Teorema 4.3.1.}
+\item $E_{k} \uparrow \Rightarrow m(\bigcup E_{k}) = \lim m(E_{k})$ (incluso para no medibles, con $m_{e}$). \hfill\textit{Teoremas 4.3.3, 4.3.5.}
+\item $d(E_{1}, E_{2}) > 0 \Rightarrow m_{e}(E_{1} \cup E_{2}) = m_{e}(E_{1}) + m_{e}(E_{2})$. \hfill\textit{Lema 3.5.5.}
+\end{itemize}
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item ``Todo conjunto'' $\not\Rightarrow$ medible (conjunto de Vitali).
+\item Medible $\not\Rightarrow$ boreliano ($\mathcal{B} \subsetneq \mathcal{M}$).
+\item $E_{k} \downarrow \not\Rightarrow m(\bigcap E_{k}) = \lim m(E_{k})$ sin finitud (e.g.\ $[-k,k]^{c}$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{orange!85!black}{Funciones medibles}
+\textbf{Equivalencias.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $\{f > a\}$ medible $\forall a$ $\Leftrightarrow$ lo mismo con $\{f \geq a\}$, $\{f < a\}$, $\{f \leq a\}$ $\Leftrightarrow$ $f^{-1}(\text{abierto})$ medible. \hfill\textit{Teoremas 5.1.3, 5.1.5.}
+\end{itemize}
+\textbf{Implicaciones siempre v\'alidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ continua $\Rightarrow$ $f$ medible. \hfill\textit{Ejemplo 5.1.2.}
+\item $f$ medible $+$ $\phi$ continua $\Rightarrow$ $\phi \circ f$ medible. \hfill\textit{Lema 5.2.1.}
+\item $f, g$ medibles $\Rightarrow$ $f + g$, $fg$, $f/g$ ($g \neq 0$) medibles. \hfill\textit{Lema 5.2.7, Corolario 5.2.9.}
+\item $\{f_{k}\}$ medibles $\Rightarrow$ $\sup f_{k}, \inf f_{k}, \limsup f_{k}, \liminf f_{k}$ medibles. \hfill\textit{Teorema 5.3.1.}
+\item $f$ medible $+$ $g = f$ c.p.d.\ $\Rightarrow$ $g$ medible. \hfill\textit{Lema 5.2.4.}
+\item $f$ medible $\Rightarrow$ $f$ es l\'imite puntual de funciones simples. \hfill\textit{Teorema 5.3.4.}
+\end{itemize}
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Medible $\not\Rightarrow$ continua (e.g.\ $\ind_{\Q}$).
+\item Medible $\not\Rightarrow$ Riemann integrable (e.g.\ $\ind_{\Q \cap [0,1]}$).
+\item $|f|$ medible $\not\Rightarrow$ $f$ medible (e.g.\ $\ind_{E} - \ind_{E^{c}}$, $E$ de Vitali).
+\end{itemize}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: estrategias de demostraci\'on}
+% =============================================================================
+
+Patrones meta de demostraci\'on que recurren en esta parte del curso. Ante un ``muestre que \dots'' del examen, revise estos patrones antes de empezar a escribir.
+
+\subsection{Estrategias por objetivo}
+
+\newtcolorbox{strategybox}[1]{%
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=blue!50!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title=#1,
+  arc=3pt,
+  boxrule=0.6pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt,
+}
+
+\begin{strategybox}{1.\ Para mostrar que una funci\'on es de variaci\'on acotada}
+\textbf{Patr\'on:} \textit{exhiba una cota o una descomposici\'on mon\'otona.}
+\begin{itemize}[leftmargin=1.5em]
+\item Cota directa: encuentre $M$ con $S(f, \Gamma) \leq M$ para toda $\Gamma$ (en mon\'otonas, $S$ telescopia a $|f(b) - f(a)|$).
+\item Descomposici\'on de Jordan: escriba $f = g - h$ con $g, h$ crecientes; o use $f = f(a) + P(f, [a,\cdot]) - N(f, [a,\cdot])$.
+\item \'Algebra: combinaciones $cf + g$ y productos $fg$ de funciones de variaci\'on acotada lo son.
+\end{itemize}
+\textbf{Apariciones:} caracterizaci\'on de Jordan (§1.4), aditividad sobre subintervalos (§1.3).
+\end{strategybox}
+
+\begin{strategybox}{2.\ Para probar la existencia de $\int f\,d\phi$}
+\textbf{Patr\'on:} \textit{reduzca a $\phi$ creciente y controle $U - L$.}
+\begin{itemize}[leftmargin=1.5em]
+\item Por Jordan, $\phi = \phi_{1} - \phi_{2}$ con $\phi_{i}$ crecientes: basta el caso creciente.
+\item La continuidad uniforme de $f$ da $U(f, \Gamma, \phi) - L(f, \Gamma, \phi) < \varepsilon/2$ para $|\Gamma|$ peque\~na.
+\item Tome $|\Gamma_{k}| \to 0$, refine $\Gamma_{k}' = \bigcup_{j \leq k}\Gamma_{j}$ y extraiga el l\'imite com\'un de las sumas superiores.
+\end{itemize}
+\textbf{Apariciones:} teorema de existencia (§2.3), paso al l\'imite uniforme (§2.5).
+\end{strategybox}
+
+\begin{strategybox}{3.\ Para mostrar que un conjunto es medible: cuatro rutas}
+\textbf{Patr\'on:} \textit{elija la caracterizaci\'on que mejor encaje con los datos.}
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Exterior:} exhiba un abierto $G \supseteq E$ con $m_{e}(G \setminus E) < \varepsilon$.
+\item \textbf{Interior:} exhiba un cerrado $F \subseteq E$ con $m_{e}(E \setminus F) < \varepsilon$.
+\item \textbf{Estructural:} escriba $E = H \setminus Z$ ($H$ de tipo $G_{\delta}$) o $E = H \cup Z$ ($H$ de tipo $F_{\sigma}$), con $m_{e}(Z) = 0$.
+\item \textbf{Carath\'eodory:} verifique $m_{e}(A) = m_{e}(A \cap E) + m_{e}(A \setminus E)$ para todo $A$.
+\end{itemize}
+\textbf{Apariciones:} cerrados y complementos medibles (§4.1), caracterizaciones (§4.4).
+\end{strategybox}
+
+\begin{strategybox}{4.\ Para calcular o acotar la medida exterior}
+\textbf{Patr\'on:} \textit{cubra por arriba, comprima por abajo.}
+\begin{itemize}[leftmargin=1.5em]
+\item Cota superior: exhiba un cubrimiento por cajas con suma de vol\'umenes peque\~na.
+\item Cota inferior: dilate las cajas a abiertas, use compacidad para un subcubrimiento finito y la aditividad sobre cajas.
+\item Aproxime por una envoltura abierta o $G_{\delta}$ de la misma medida.
+\end{itemize}
+\textbf{Apariciones:} medida de un intervalo / caja (§3.2--3.3), aproximaci\'on por abiertos (§3.4).
+\end{strategybox}
+\newpage
+\begin{strategybox}{5.\ Para $\sigma$-aditividad y continuidad de la medida}
+\textbf{Patr\'on:} \textit{disjunte, telescopie y aproxime por compactos.}
+\begin{itemize}[leftmargin=1.5em]
+\item Disjunte una uni\'on creciente: $\bigcup_{i} E_{i} = \bigsqcup_{i}(E_{i} \setminus E_{i-1})$.
+\item Para la cota inferior de $m(\bigcup E_{k})$, use cerrados interiores compactos a distancia positiva.
+\item En la continuidad por arriba, \textbf{no olvide} la hip\'otesis $m(E_{i_{0}}) < \infty$.
+\end{itemize}
+\textbf{Apariciones:} $\sigma$-aditividad (§4.3), continuidad de la medida (§4.3).
+\end{strategybox}
+
+\begin{strategybox}{6.\ Para mostrar que una funci\'on es medible}
+\textbf{Patr\'on:} \textit{reduzca a conjuntos de nivel o a preim\'agenes de abiertos.}
+\begin{itemize}[leftmargin=1.5em]
+\item Verifique que $\{f > a\}$ (o $\{f \geq a\}$, $\{f < a\}$, $\{f \leq a\}$) es medible para todo $a$.
+\item Use $f^{-1}(\text{abierto})$ medible; componga con continuas ($\phi \circ f$).
+\item Construya a partir de medibles: $f + g$, $fg$, $\sup_{k} f_{k}$, $\limsup_{k} f_{k}$; modifique en un conjunto nulo.
+\end{itemize}
+\textbf{Apariciones:} equivalencias de medibilidad (§5.1), operaciones (§5.2--5.3).
+\end{strategybox}
+
+\begin{strategybox}{7.\ Para construir conjuntos o funciones patol\'ogicas}
+\textbf{Patr\'on:} \textit{Cantor para medida cero no numerable; Vitali para no medibles.}
+\begin{itemize}[leftmargin=1.5em]
+\item Conjunto de Cantor: cerrado, no numerable y de medida cero (remoci\'on de tercios centrales).
+\item Conjunto de Vitali: un representante por clase de $x \sim y \iff x - y \in \Q$ (axioma de elecci\'on).
+\item Lema de Steinhaus ($m(E) > 0 \Rightarrow E - E$ contiene un intervalo) fuerza la contradicci\'on de medibilidad.
+\end{itemize}
+\textbf{Apariciones:} conjunto de Cantor (§4.5), conjunto de Vitali (§4.6).
+\end{strategybox}
+
+\begin{strategybox}{8.\ Para pasar al l\'imite bajo la integral}
+\textbf{Patr\'on:} \textit{convergencia uniforme $+$ la cota por la variaci\'on.}
+\begin{itemize}[leftmargin=1.5em]
+\item Use $\big|\int_{a}^{b} g\,d\phi\big| \leq \big(\sup|g|\big)\Var(\phi, [a,b])$ para toda $g$ integrable.
+\item Aplique esto a $g = f_{n} - f$: la convergencia uniforme hace $\sup|f_{n} - f| \to 0$.
+\item Convergencia s\'olo puntual \textbf{no} basta (e.g.\ $\ind_{\{r_{1}, \dots, r_{n}\}}$).
+\end{itemize}
+\textbf{Apariciones:} paso al l\'imite uniforme (§2.5), cota de la integral (§2.3).
+\end{strategybox}
+\newpage
+% =============================================================================
+\subsection{Compendio de t\'ecnicas de demostraci\'on}
+
+
+
+\begin{equivbox}{red!70!black}{1. Descomposici\'on de conjuntos}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Partir por intersecci\'on y diferencia.} Para comparar $A$ con $E$, escribir $A = (A \cap E) \sqcup (A \setminus E)$; y $E \setminus F = E \cap F^{c}$. \hfill\textit{Carath\'eodory (§4.4), complemento medible (§4.1), igualdad c.p.d.\ (§5.2).}
+\item \textbf{Disjuntar una uni\'on.} Convertir $\bigcup_{i} E_{i}$ en uni\'on \emph{disjunta} $\bigsqcup_{i}(E_{i} \setminus E_{i-1})$ (con $E_{0} = \emptyset$) para poder aplicar $\sigma$-aditividad. \hfill\textit{$\sigma$-aditividad y continuidad (§4.3).}
+\item \textbf{Forma can\'onica $G_{\delta} \setminus$ nulo / $F_{\sigma} \cup$ nulo.} Todo medible es $E = H \setminus Z$ ($H$ de tipo $G_{\delta}$) o $E = H \cup Z$ ($H$ de tipo $F_{\sigma}$), con $m_{e}(Z) = 0$. \hfill\textit{Caracterizaciones (§4.4).}
+\item \textbf{Partir el dominio por finitud.} Separar $\{f \in \R\}$, $\{f = +\infty\}$ y $\{f = -\infty\}$ y tratar cada pieza por separado. \hfill\textit{Producto y cociente de medibles (§5.2).}
+\item \textbf{Descomponer un abierto en cajas casi disjuntas.} Todo abierto de $\R^{d}$ es uni\'on numerable de cajas de interiores disjuntos. \hfill\textit{Cerrados medibles (§4.1).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{orange!85!black}{2. Control del error con $\varepsilon$}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Reparto $\varepsilon / 2^{k}$.} Asignar al $k$-\'esimo conjunto un error $\varepsilon / 2^{k}$, de modo que $\sum_{k} \varepsilon / 2^{k} = \varepsilon$ no se ``acumule''. \hfill\textit{Subaditividad (§3.2), uni\'on de medibles (§3.5), $\sigma$-aditividad (§4.3), Carath\'eodory (§4.4).}
+\item \textbf{Dilataci\'on $(1 + \varepsilon)$ o $+\,\varepsilon / 2^{k+1}$.} Agrandar cada caja/intervalo a uno abierto con $m(\overline{I_{k}^{\ast}}) \leq (1 + \varepsilon)\, m(I_{k})$ (o $m(I_{k}^{\ast}) \leq m(I_{k}) + \varepsilon / 2^{k+1}$) y luego $\varepsilon \to 0$. \hfill\textit{Medida de intervalo/caja (§3.2--3.3), aproximaci\'on por abiertos (§3.4), Steinhaus (§4.6).}
+\item \textbf{$\varepsilon$ arbitrario $\Rightarrow$ igualdad.} Probar ``$x \leq c + \varepsilon$ para todo $\varepsilon > 0$'' y concluir ``$x \leq c$''; combinar con la desigualdad opuesta para la igualdad. \hfill\textit{Presente en casi todas las pruebas.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{brown!75!black}{3. Aproximaci\'on, envolturas y squeeze}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Envoltura exterior.} Sustituir $E$ por un abierto $G \supseteq E$ con $m_{e}(G) \leq m_{e}(E) + \varepsilon$, o por un $G_{\delta}$ de igual medida exterior. \hfill\textit{Aproximaci\'on por abiertos (§3.4).}
+\item \textbf{Aproximaci\'on interior.} Para conjuntos medibles, hallar un cerrado $F \subseteq E$ (y luego un compacto) con $m_{e}(E \setminus F) < \varepsilon$. \hfill\textit{Caracterizaci\'on por cerrados (§4.2).}
+\item \textbf{Squeeze (encaje forzado).} Acotar una cantidad entre dos valores iguales, $m_{e}(E) \leq m(V_{k}) \leq m(G_{k}) = m_{e}(E)$, para forzar la igualdad intermedia. \hfill\textit{Continuidad exterior (§4.3), teorema t\'ecnico (§4.4).}
+\item \textbf{Forzar monoton\'ia con $V_{k} = \bigcap_{j \geq k} G_{j}$.} A partir de una sucesi\'on de envolturas \emph{no} encajada, fabricar una encajada (creciente) sin perder la medida. \hfill\textit{Continuidad exterior (§4.3), teorema t\'ecnico (§4.4).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{green!55!black}{4. Cubrimientos, compacidad y distancia positiva}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Compacidad $\to$ subcubrimiento finito.} De un cubrimiento numerable extraer uno finito y sumar finitamente. \hfill\textit{Medida de intervalo/caja (§3.2--3.3), cerrados medibles (§4.1).}
+\item \textbf{Aditividad a distancia positiva.} Si $d(E_{1}, E_{2}) > 0$, entonces $m_{e}(E_{1} \cup E_{2}) = m_{e}(E_{1}) + m_{e}(E_{2})$. \hfill\textit{(§3.5).}
+\item \textbf{Subdividir en cajas finas.} Partir las cajas hasta $\diam(I_{k}) < \tfrac{1}{2} d(E_{1}, E_{2})$ para que cada una toque a lo sumo uno de los dos conjuntos. \hfill\textit{Distancia positiva (§3.5), cerrados medibles (§4.1).}
+\item \textbf{Compactos disjuntos $\Rightarrow$ distancia positiva.} Permite la aditividad finita de $m$ sobre cerrados disjuntos (e inducci\'on). \hfill\textit{$\sigma$-aditividad (§4.3).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{blue!70!black}{5. Monoton\'ia, continuidad y series}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Monoton\'ia.} $E_{1} \subseteq E_{2} \Rightarrow m_{e}(E_{1}) \leq m_{e}(E_{2})$. \hfill\textit{(§3.2).}
+\item \textbf{Subaditividad numerable.} $m_{e}\big(\bigcup_{k} E_{k}\big) \leq \sum_{k} m_{e}(E_{k})$ entrega \emph{siempre} la desigualdad ``$\leq$''. \hfill\textit{(§3.2--3.3).}
+\item \textbf{Continuidad por abajo / por arriba.} $E_{k} \uparrow \Rightarrow m(\bigcup E_{k}) = \lim m(E_{k})$; $E_{k} \downarrow \Rightarrow m(\bigcap E_{k}) = \lim m(E_{k})$, \emph{siempre que} alg\'un $m(E_{i_{0}}) < \infty$. \hfill\textit{(§4.3).}
+\item \textbf{Telescopaje.} $\sum_{i}(a_{i} - a_{i-1}) = \lim_{n} a_{n}$ (con cuidado si algun t\'ermino es $\infty$). \hfill\textit{Continuidad de la medida (§4.3).}
+\item \textbf{Doble desigualdad $\Rightarrow$ igualdad.} Obtener ``$\leq$'' por subaditividad y ``$\geq$'' por la direcci\'on dif\'icil. \hfill\textit{Distancia positiva (§3.5), $\sigma$-aditividad (§4.3).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{magenta!70!black}{6. Reducciones}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Sin p\'erdida de generalidad, $m_{e}(E) < \infty$.} Resolver primero el caso de medida finita; el infinito por agotamiento. \hfill\textit{Steinhaus (§4.6), Carath\'eodory (§4.4).}
+\item \textbf{Agotamiento / $\sigma$-finitud.} Escribir $E = \bigcup_{k}(E \cap B(0,k))$, usar $F \cap \overline{B(0,k)}$ compacto, o partir en coronas $\overline{B(0,n)} \setminus B(0,n-1)$. \hfill\textit{Cerrados (§4.1), $\sigma$-aditividad (§4.3).}
+\item \textbf{Reducir al caso ``bueno''.} $\phi$ creciente v\'ia Jordan (Riemann--Stieltjes); $f = f^{+} - f^{-}$ con $f^{\pm} \geq 0$ (funciones medibles). \hfill\textit{Existencia R-S (§2.3), aproximaci\'on simple (§5.3).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{teal!80!black}{7. T\'ecnicas para funciones medibles}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Reducir a conjuntos de nivel.} Probar la medibilidad de $\{f > a\}$ y convertir entre $\{f > a\}, \{f \geq a\}, \{f < a\}, \{f \leq a\}$ con complementos y $\bigcap / \bigcup$ de $a \pm \tfrac{1}{n}$. \hfill\textit{(§5.1).}
+\item \textbf{Interpolaci\'on racional.} $\{f > g\} = \bigcup_{q \in \Q}\big(\{f > q\} \cap \{q > g\}\big)$; y todo abierto es uni\'on numerable de intervalos racionales. \hfill\textit{(§5.1--5.2).}
+\item \textbf{Composici\'on con continua.} Si $\phi$ es continua, $\phi^{-1}(\text{abierto})$ es abierto, luego $\phi \circ f$ es medible. \hfill\textit{(§5.2).}
+\item \textbf{Modificar en un conjunto nulo.} $g = f$ c.p.d.\ preserva medibilidad; enviar $\{f = \pm\infty\}$ (nulo) a $0$ para usar el caso finito. \hfill\textit{(§5.2).}
+\item \textbf{Polarizaci\'on.} $fg = \tfrac{1}{4}\big((f+g)^{2} - (f-g)^{2}\big)$ reduce productos a sumas y cuadrados (composici\'on con $t \mapsto t^{2}$). \hfill\textit{(§5.2).}
+\item \textbf{Operaciones de sucesiones.} $\sup, \inf, \limsup, \liminf$ se construyen como $\bigcup / \bigcap$ numerables de $\{f_{k} > a\}$; toda $f$ es l\'imite de simples (di\'adica). \hfill\textit{(§5.3).}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{violet!80!black}{8. Trucos l\'ogicos y de construcci\'on}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Cerradura de $\sigma$-\'algebra.} Fabricar nuevos medibles por uni\'on, intersecci\'on, complemento y diferencia \emph{numerables}. \hfill\textit{(§4.1).}
+\item \textbf{Invariancia por traslaci\'on.} $m_{e}(E + t) = m_{e}(E)$ para todo $t$. \hfill\textit{Vitali (§4.6).}
+\item \textbf{Contradicci\'on por consecuencia ``demasiado grande''.} De $m_{e}(E) = 0$ deducir $m_{e}(\R) = 0$, absurdo. \hfill\textit{Vitali (§4.6).}
+\item \textbf{Axioma de elecci\'on.} Escoger un representante por clase de equivalencia para construir conjuntos patol\'ogicos. \hfill\textit{Vitali (§4.6).}
+\item \textbf{Envoltura que respeta intersecciones.} Un $G_{\delta}$, $H \supseteq E$, con $m(H \cap M) = m_{e}(E \cap M)$ para todo medible $M$. \hfill\textit{Teorema t\'ecnico (§4.4).}
+\end{itemize}
+\end{equivbox}
+
+% Fin del documento.
+\end{document}

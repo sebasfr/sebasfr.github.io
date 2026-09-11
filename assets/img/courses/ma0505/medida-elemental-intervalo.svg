@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="110" viewBox="0 0 640 110"
+     role="img" aria-label="A number line with the half-open interval from a to b marked, of elementary measure b minus a">
+  <style>
+    .axis  { fill: none; stroke: #1a1a1a; stroke-width: 1.4; }
+    .seg   { fill: none; stroke: #c2410c; stroke-width: 5; stroke-linecap: butt; }
+    .dot   { fill: #1a1a1a; }
+    .open  { fill: #fdfbf7; stroke: #1a1a1a; stroke-width: 1.6; }
+    .lbl   { font-family: Georgia, "Times New Roman", serif; font-size: 15px;
+             font-style: italic; fill: #1a1a1a; }
+  </style>
+  <defs>
+    <marker id="ml-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10" fill="none" stroke="#1a1a1a" stroke-width="1.6"/>
+    </marker>
+  </defs>
+
+  <line class="axis" x1="30" y1="62" x2="610" y2="62" marker-end="url(#ml-arrow)"/>
+
+  <!-- [a, b) : closed on the left, open on the right -->
+  <line class="seg" x1="160" y1="62" x2="420" y2="62"/>
+  <circle class="dot"  cx="160" cy="62" r="4.5"/>
+  <circle class="open" cx="420" cy="62" r="4.5"/>
+
+  <text class="lbl" x="160" y="88" text-anchor="middle">a</text>
+  <text class="lbl" x="420" y="88" text-anchor="middle">b</text>
+  <text class="lbl" x="290" y="38" text-anchor="middle">ℓ([a, b)) = b − a</text>
+</svg>

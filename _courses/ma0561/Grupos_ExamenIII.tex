@@ -1,0 +1,2278 @@
+% =============================================================================
+%  Notas de Grupos y Anillos — MA0561 — III Parcial
+%  Compilar con: pdflatex Grupos_ExamenIII.tex (dos veces para que el TOC
+%  recoja las entradas de cada definición, teorema, lema, etc.)
+% =============================================================================
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{XCharter}
+\usepackage[libertine,charter]{newtxmath}
+\usepackage[spanish,es-noshorthands]{babel}
+% Renombramos elementos al español manualmente (no requiere texlive-lang-spanish)
+\addto\captionsenglish{%
+  \renewcommand{\contentsname}{\'Indice}%
+  \renewcommand{\refname}{Referencias}%
+}
+% newtxmath ya define \Bbbk y \openbox; los liberamos para que amssymb y
+% amsthm puedan redefinirlos sin errores. (Conflicto latente heredado del
+% preámbulo del I Parcial, inocuo allí porque ese documento no usaba \Bbbk.)
+\let\Bbbk\relax
+\let\openbox\relax
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit}
+\usepackage{eso-pic}
+\usepackage{etoolbox}
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={Notas de Grupos y Anillos --- MA0561},
+  pdfauthor={Sebastián Fernández Rivera}
+}
+
+% Mostrar entradas hasta nivel "subsubsection" en el índice
+% (cada teorema/definición/etc. aparece en el TOC con nombre y página).
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+
+\renewcommand{\proofname}{\textbf{Prueba}}
+\allowdisplaybreaks
+
+% -----------------------------------------------------------------------------
+%  Contador y entornos para resultados (definiciones, teoremas, etc.)
+%  - Cada resultado se numera dentro de su subsection: 1.1.1, 1.1.2, ...
+%  - Cada resultado se agrega automáticamente al índice con su nombre y página.
+% -----------------------------------------------------------------------------
+\newcounter{result}[subsection]
+\renewcommand{\theresult}{\thesubsection.\arabic{result}}
+
+% Cuerpo en cursiva (para teoremas, proposiciones, lemas, corolarios)
+\newenvironment{namedres}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+% -----------------------------------------------------------------------------
+%  Caja coloreada para los resúmenes de los anexos.
+%  Uso: \begin{equivbox}{ColorXcolor}{Título}  ...  \end{equivbox}
+% -----------------------------------------------------------------------------
+\newtcolorbox{equivbox}[2]{%
+  enhanced,
+  breakable,
+  colback=#1!6!white,
+  colframe=#1!72!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#2},% braces protect commas in the title from tcolorbox key parser
+  arc=4pt,
+  boxrule=0.8pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  before skip=4pt, after skip=8pt,
+}
+
+% Encabezado compacto para los sub-grupos de un Anexo:
+% sustituye a \subsection*{...}\addcontentsline{...} cuando se desea poco
+% espacio entre el título del grupo y la caja siguiente.
+\newcommand{\anexogroup}[1]{%
+  \par\addvspace{0.7\baselineskip}%
+  \noindent{\bfseries\large #1}\par\nobreak
+  \addcontentsline{toc}{subsection}{#1}%
+  \vspace{4pt}\nopagebreak
+}
+
+% Cuerpo en redonda (para definiciones, ejemplos, ejercicios, notas, notación)
+\newenvironment{namedstd}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+% Subrayado HTML <u>...</u> -> \uline
+\newcommand{\hlu}[1]{\underline{#1}}
+
+% Operadores y abreviaturas
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Imm}{Im}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Frac}{Frac}
+\DeclareMathOperator{\Nil}{Nil}
+\DeclareMathOperator{\Rad}{Rad}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\mSpec}{mSpec}
+\DeclareMathOperator{\Char}{char}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\mcd}{mcd}
+\DeclareMathOperator{\MCD}{MCD}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\F}{\mathbb{F}}
+% Función indicadora (los beamers usan \ind)
+\newcommand{\ind}{\mathbf{1}}
+
+% =============================================================================
+%  Cabecera y pie de página (fancyhdr)
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{MA0561 --- Grupos y Anillos, III Parcial}}
+\fancyfoot[C]{\small Página \thepage{} de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% =============================================================================
+%  Tabs de color en el borde exterior (índice rápido por sección)
+% =============================================================================
+\definecolor{sec1col}{HTML}{1F77B4}   % Anillos
+\definecolor{sec2col}{HTML}{2CA02C}   % El anillo de polinomios
+\definecolor{sec3col}{HTML}{17BECF}   % Ideales
+\definecolor{sec4col}{HTML}{9467BD}   % Ideales primos
+\definecolor{sec5col}{HTML}{FF7F0E}   % Productos de anillos
+\definecolor{sec6col}{HTML}{D62728}   % Anillos cociente
+\definecolor{sec7col}{HTML}{8C564B}   % Homomorfismos de anillos
+\definecolor{sec8col}{HTML}{E377C2}   % Subanillos primos y característica
+\definecolor{sec9col}{HTML}{BCBD22}   % El cuerpo de fracciones
+\definecolor{sec10col}{HTML}{555555}  % Factorización de homomorfismos
+
+\newcounter{thumbsec}
+\pretocmd{\section}{\stepcounter{thumbsec}}{}{}
+
+% Bandera para evitar que los thumb-tabs aparezcan en la portada y el índice.
+% Se activa explícitamente en el cuerpo, justo después del \tableofcontents.
+\newif\ifdrawthumb
+\drawthumbfalse
+
+\newcommand{\drawthumbtab}{%
+  \ifdrawthumb%
+  \ifnum\value{thumbsec}>0%
+    \ifnum\value{thumbsec}<11%
+      \begin{tikzpicture}[remember picture, overlay]%
+        \pgfmathsetmacro{\toppadcm}{4.0}%
+        \pgfmathsetmacro{\tabHcm}{1.6}%
+        \pgfmathsetmacro{\ypos}{-\toppadcm - (\value{thumbsec} - 1) * \tabHcm}%
+        \ifodd\value{page}%
+          % Páginas impares (recto) --- tab en el borde derecho.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north east)
+            rectangle ++(-0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=-0.35cm, yshift=\ypos cm - 0.6cm]current page.north east)
+            {\arabic{thumbsec}};
+        \else%
+          % Páginas pares (verso) --- tab en el borde izquierdo.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north west)
+            rectangle ++(0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=0.35cm, yshift=\ypos cm - 0.6cm]current page.north west)
+            {\arabic{thumbsec}};
+        \fi%
+      \end{tikzpicture}%
+    \fi%
+  \fi%
+  \fi%
+}
+\AddToShipoutPictureFG{\drawthumbtab}
+
+\begin{document}
+
+% =============================================================================
+% PORTADA
+% =============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.5cm}
+
+{\scshape\Large Universidad de Costa Rica\par}
+\vspace{0.3cm}
+{\scshape\large Escuela de Matem\'atica\par}
+
+\vspace{1.2cm}
+
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{0.6cm}
+
+{\Huge\bfseries Notas de Grupos y Anillos\par}
+
+\vspace{0.5cm}
+
+{\Large\itshape Resumen de definiciones, teoremas y resultados\par}
+
+\vspace{0.4cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+
+\vspace{1.4cm}
+
+{\Large\bfseries MA0561 --- Grupos y Anillos\par}
+
+\vspace{2.2cm}
+
+\begin{tabular}{rl}
+\textbf{Autor:}              & Sebasti\'{a}n Fern\'{a}ndez Rivera \\[4pt]
+\textbf{Curso:}              & MA0561 --- Grupos y Anillos \\[4pt]
+\textbf{Documento:}          & Notas para el III Parcial \\[4pt]
+\textbf{Resultados numerados:} & 140 \\[4pt]
+\textbf{Fecha:}              & \today
+\end{tabular}
+
+\vfill
+
+\begin{minipage}{0.85\textwidth}
+\centering
+\itshape
+Este documento re\'{u}ne las definiciones, teoremas, proposiciones, lemas, corolarios, ejemplos, notas, ejercicios y notaciones presentadas en el curso sobre la teor\'{\i}a de anillos: anillos y cuerpos, el anillo de polinomios, ideales, ideales primos y maximales, productos y cocientes de anillos, homomorfismos y los teoremas de isomorfismo, la caracter\'{\i}stica, el cuerpo de fracciones y la factorizaci\'{o}n de homomorfismos. Cada resultado est\'{a} numerado de la forma \texttt{seccion.subseccion.resultado} y aparece en el \'{\i}ndice con su p\'{a}gina correspondiente para una consulta r\'{a}pida durante el examen.
+\end{minipage}
+
+\vspace{1cm}
+
+{\color{blue!50!black}\rule{0.5\textwidth}{0.6pt}}
+
+\end{titlepage}
+
+% =============================================================================
+% \'INDICE
+% =============================================================================
+\thispagestyle{empty}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+% \tableofcontents llama internamente a \section*{...}, lo cual activa el hook
+% \pretocmd{\section}{...} y hace avanzar \value{thumbsec} a 1 antes de iniciar
+% el cuerpo. Reseteamos para que la sección 1 reciba el thumb-tab "1".
+\setcounter{thumbsec}{0}
+\drawthumbtrue   % Activa los thumb-tabs a partir de aquí (cuerpo del documento).
+
+% =============================================================================
+\section{Anillos}
+% =============================================================================
+
+\subsection{La definición de anillo y primeras propiedades}
+
+\begin{namedstd}{Definición}{Anillo y anillo conmutativo}
+Un \emph{anillo} es un conjunto $R$ junto con dos operaciones binarias $+, \cdot$ tales que:
+\begin{enumerate}[label=(\arabic*)]
+\item $(R, +)$ es un grupo abeliano;
+\item la operación $\cdot$ es asociativa y tiene un elemento neutro;
+\item si $a, b, c \in R$, entonces $a \cdot (b + c) = a \cdot b + a \cdot c$ y $(a + b) \cdot c = a \cdot c + b \cdot c$.
+\end{enumerate}
+Si además $(R, +, \cdot)$ cumple que para todos $a, b \in R$, $a \cdot b = b \cdot a$, entonces $R$ es un \emph{anillo conmutativo}.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{No se supone que $1 \neq 0$}
+Si $0$ es el neutro de $+$ y $1$ es el neutro de $\cdot$, no estamos suponiendo que $1 \neq 0$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Reglas aritméticas básicas en un anillo}
+Sea $(R, +, \cdot)$ un anillo. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item para todo $a \in R$, $a \cdot 0 = 0 \cdot a = 0$;
+\item para todos $a, b \in R$, $(-a) \cdot b = -(a \cdot b) = a \cdot (-b)$;
+\item para todos $a, b \in R$, $(-a) \cdot (-b) = a \cdot b$;
+\item el neutro de $\cdot$ es único y $(-1) \cdot a = -a$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{El anillo trivial}
+Si $0 = 1$, entonces
+\[
+a = a \cdot 1 = a \cdot 0 = 0
+\]
+para todo $a \in R$, de donde $R = \{0\}$ y el anillo es el anillo trivial de un solo elemento.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Primeros ejemplos de anillos}
+Los siguientes son ejemplos básicos:
+\begin{enumerate}[label=(\arabic*)]
+\item $(\Z, +, \cdot)$ es un anillo conmutativo.
+\item Sean $n > 1$ y $R$ un anillo. Entonces $M_{n}(R)$ es un anillo con las operaciones $+, \cdot$ de matrices. No es un anillo conmutativo.
+\item $(\R, +, \cdot)$, $(\Q, +, \cdot)$ y $(\C, +, \cdot)$ son anillos conmutativos.
+\end{enumerate}
+\end{namedstd}
+
+\subsection{Cuerpos y subanillos}
+
+\begin{namedstd}{Definición}{Cuerpo}
+Un \emph{cuerpo} $(F, +, \cdot)$ es un anillo conmutativo tal que $1 \neq 0$ y para todo $a \in F$,
+\[
+a \neq 0 \implies \exists b \in F\ (a \cdot b = 1).
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Los anillos numéricos usuales son cuerpos}
+Muestre que $(\R, +, \cdot)$, $(\Q, +, \cdot)$ y $(\C, +, \cdot)$ son cuerpos.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Subanillo}
+Sea $(R, +, \cdot)$ un anillo y $S \subseteq R$. Decimos que $S$ es un \emph{subanillo} de $R$ si $(S, +\mid_{S \times S}, \cdot\mid_{S \times S})$ es un anillo.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Criterio de subanillo}
+$S \subseteq R$ es un subanillo si y solo si $1 \in S$ y para todos $a, b \in S$ se cumple que $a - b \in S$ y $a \cdot b \in S$. (Ejercicio.)
+\end{namedstd}
+
+\subsection{Unidades, divisores de cero y dominios enteros}
+
+\begin{namedstd}{Definición}{Unidades y el grupo de unidades}
+Sea $(R, +, \cdot)$ un anillo. Un elemento $a \in R$ es una \emph{unidad} si existe $b \in R$ tal que
+\[
+a \cdot b = 1 = b \cdot a.
+\]
+Si $a$ es unidad, entonces $b$ es único; en este caso escribimos $b = a^{-1}$. Definimos además el conjunto
+\[
+U_{R} = \{ a \in R :\ a \text{ es unidad} \}.
+\]
+A veces se escribe $U_{R} = R^{\times}$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Las unidades forman un grupo}
+$(U_{R}, \cdot)$ es un grupo.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Las unidades de un cuerpo}
+Si $(F, +, \cdot)$ es un cuerpo, entonces $U_{F} = F \setminus \{0\}$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Divisores de cero, anillos de división y dominios enteros}
+Sea $(R, +, \cdot)$ un anillo.
+\begin{enumerate}[label=(\arabic*)]
+\item $a \in R$ es un \emph{divisor de cero} si $a \neq 0$ y existe $b \in R$ tal que $b \neq 0$ y $a \cdot b = 0$ o $b \cdot a = 0$.
+\item Un anillo sin divisores de cero se llama un \emph{anillo de división}.
+\item Un anillo conmutativo sin divisores de cero se llama un \emph{dominio entero}.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Las unidades no son divisores de cero}
+Todo cuerpo es un dominio entero. Más en general, si $a \in R$ es una unidad, entonces $a$ no es divisor de cero.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Los subanillos de un cuerpo son dominios enteros}
+Sea $(F, +, \cdot)$ un cuerpo y $R \subseteq F$ un subanillo. Entonces $R$ es un dominio entero.
+\end{namedres}
+\begin{proof}
+Primero, $R$ es conmutativo, pues la operación $\cdot$ de $R$ es la restricción de la de $F$, que es conmutativa. Ahora, suponga que existe $a \in R$ divisor de cero. Entonces $a \neq 0$ y existe $b \in R$ con $b \neq 0$ tal que $a \cdot b = 0$ o $b \cdot a = 0$. Como $R \subseteq F$, tenemos que $a, b \in F$, y entonces $a$ es un divisor de cero en $F$. Pero $F$ es un cuerpo y por lo tanto un dominio entero, así que $F$ no posee divisores de cero, una contradicción. Concluimos que $R$ no tiene divisores de cero, es decir, $R$ es un dominio entero.
+\end{proof}
+
+\begin{namedres}{Proposición}{Ley de cancelación}
+Sea $(R, +, \cdot)$ un anillo y $a \in R$ tal que $a \neq 0$ y $a$ no es divisor de cero. Si $a \cdot x = a \cdot y$, entonces $x = y$.
+\end{namedres}
+\begin{proof}
+Suponga que $ax = ay$. Entonces, restando y usando la distributividad,
+\[
+ax = ay \implies ax - ay = 0 \implies a(x - y) = 0.
+\]
+Si fuese $x - y \neq 0$, la igualdad $a(x - y) = 0$ exhibiría a $a$ como divisor de cero, pues $a \neq 0$. Como $a$ no es un divisor de cero, necesariamente $x - y = 0$, es decir, $x = y$.
+\end{proof}
+
+\begin{namedres}{Lema}{Todo dominio entero finito es un cuerpo}
+Sea $R \neq \{0\}$ un dominio entero finito. Entonces $R$ es un cuerpo.
+\end{namedres}
+\begin{proof}
+Note primero que, como $R \neq \{0\}$, tenemos que $1 \neq 0$. Sea $a \in R$ con $a \neq 0$, y considere la función $\mu : R \to R$ dada por $\mu(x) = a \cdot x$. Note que $\mu$ es inyectiva: si $\mu(x) = \mu(y)$, entonces $a \cdot x = a \cdot y$, y como $a \neq 0$ no es divisor de cero (pues $R$ es dominio entero), la ley de cancelación implica que $x = y$. Más aún, como $R$ es finito y $\mu : R \to R$ es inyectiva, $\mu$ es sobreyectiva. En particular, existe $b \in R$ tal que
+\[
+\mu(b) = a \cdot b = 1.
+\]
+Note que $b \neq 0$, pues si $b = 0$ tendríamos $1 = a \cdot 0 = 0$, y sabemos que $0 \neq 1$ en $R$. Concluimos que $a$ es invertible y, como $a \neq 0$ era arbitrario y $R$ es conmutativo con $1 \neq 0$, $R$ es un cuerpo.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Los enteros y los enteros módulo $n$}
+Los siguientes ejemplos serán recurrentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $(\Z, +, \cdot)$ es un anillo, $\Z^{\times} = \{1, -1\}$ y $\Z$ es un dominio entero.
+\item $(\Z_{n}, +, \cdot)$, con $n > 1$, es un anillo. Es un cuerpo si y solo si $n$ es primo, y
+\[
+\Z_{n}^{\times} = \{ [k] \in \Z_{n} :\ \mcd(k, n) = 1 \ \text{y}\ 0 \leq k \leq n - 1 \}.
+\]
+Si $[x] \in \Z_{n}$, hay exactamente dos posibilidades: $[x] \in \Z_{n}^{\times}$ o $[x]$ es divisor de cero (ejercicio).
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El anillo de endomorfismos de un grupo abeliano}
+Sea $G$ un grupo abeliano y sea
+\[
+\End(G) := \{ f : G \to G\ \text{homomorfismo} \}.
+\]
+Defina $+, \cdot$ en $\End(G)$ así: si $f, g \in \End(G)$, entonces $f + g : G \to G$ es tal que $(f + g)(x) = f(x) + g(x)$, y $f \cdot g : G \to G$ es tal que $(f \cdot g)(x) = f(g(x))$. \textbf{Ejercicio:} $\End(G)$ es un anillo no conmutativo.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El anillo de funciones con valores en un anillo}
+Sea $R \neq \{0\}$ un anillo y $X$ un conjunto no vacío. Defina
+\[
+\mathcal{F}(X, R) := \{ f : X \to R\ \text{funciones} \},
+\]
+con las operaciones $+, \cdot$ dadas puntualmente: si $f, g \in \mathcal{F}(X, R)$, entonces
+\[
+f + g : X \to R, \quad x \mapsto f(x) +_{R} g(x), \qquad f \cdot g : X \to R, \quad x \mapsto f(x) \cdot_{R} g(x).
+\]
+\textbf{Ejercicio:} $\mathcal{F}(X, R)$ es un anillo, y es conmutativo si y solo si $R$ es conmutativo.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Los enteros gaussianos}
+Sea $\Z[i] := \{ a + bi :\ a, b \in \Z \} \subseteq \C$. Este conjunto es llamado el de los \emph{enteros gaussianos}. Como $\Z[i]$ es un subanillo del cuerpo $\C$, podemos ver que es un dominio entero.
+\end{namedstd}
+
+% =============================================================================
+\section{El anillo de polinomios}
+% =============================================================================
+
+\subsection{La construcción de $R[x]$}
+
+\begin{namedstd}{Definición}{Sucesiones eventualmente cero en $R$}
+Sea $R$ un anillo. Definimos el conjunto de sucesiones de $R$ como
+\[
+R^{\N} := \{ (a_{i})_{i \in \N} :\ a_{i} \in R \} = \{ (a_{0}, a_{1}, \dots, a_{n}, \dots) :\ a_{i} \in R \}.
+\]
+Llamamos $P \subseteq R^{\N}$ al subconjunto de sucesiones \emph{eventualmente cero}, esto es,
+\[
+P := \{ (a_{i})_{i \in \N} :\ \exists N \in \N\ (a_{k} = 0,\ \forall k > N) \}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{La suma y los neutros en $P$}
+Defina la operación $+$ en $P$ de la siguiente manera:
+\[
+(a_{i})_{i \in \N} + (b_{i})_{i \in \N} = (a_{i} + b_{i})_{i \in \N}.
+\]
+Note que esta operación es cerrada en $P$. Defina el uno y el cero en $P$ como
+\begin{align*}
+1 &:= (1, 0, 0, \dots, 0, \dots), \\
+0 &:= (0, 0, \dots, 0, \dots).
+\end{align*}
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Multiplicación escalar en $P$}
+Si $c \in R$ y $(a_{i})_{i \in \N} \in P$, defina
+\[
+c \cdot (a_{i})_{i \in \N} = (c \cdot a_{0},\ c \cdot a_{1},\ \dots) \in P.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Notación}{Las potencias $x^{k}$}
+Si $k \in \N$, defina $x^{k} := (\delta_{i,k})_{i \in \N}$, donde $\delta_{i,k}$ es la delta de Kronecker. Por ejemplo:
+\begin{align*}
+x^{1} &:= (0, 1, 0, \dots), \\
+x^{2} &:= (0, 0, 1, \dots), \\
+1 &= x^{0} = (1, 0, \dots, 0).
+\end{align*}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Un polinomio como sucesión}
+\[
+5 + 7x + 3x^{2} = 5 \cdot (1, 0, \dots, 0) + 7 \cdot (0, 1, 0, \dots, 0) + 3 \cdot (0, 0, 1, \dots) \in P.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{El producto de polinomios y el anillo $R[x]$}
+Sean $p = (a_{i})_{i \in \N}$ y $q = (b_{i})_{i \in \N}$, con $p, q \in P$. Defina $p \cdot q = (c_{i})_{i \in \N}$ tal que
+\[
+c_{k} = \sum_{i=0}^{k} a_{i} \cdot b_{k-i}.
+\]
+Note que $p \cdot q \in P$. Así, $P$ es un anillo con estas operaciones y lo denotamos por $R[x]$. Este anillo es llamado el \emph{anillo de polinomios} sobre $R$.
+\end{namedstd}
+
+\subsection{El grado de un polinomio}
+
+\begin{namedstd}{Definición}{Grado de un polinomio y coeficiente principal}
+Antes de definir el grado de un polinomio, establecemos algunas convenciones sobre el conjunto $\N \cup \{-\infty\}$. En particular:
+\begin{enumerate}[label=(\arabic*)]
+\item $\forall n \in \N\ (-\infty < n)$;
+\item $r + (-\infty) = -\infty$ para $r \in \N$;
+\item $(-\infty) + (-\infty) = -\infty$.
+\end{enumerate}
+Sea $R$ un anillo y $p \in R[x]$. Definimos la función del grado $\deg : R[x] \to \N \cup \{-\infty\}$ tal que
+\[
+\deg(p) =
+\begin{cases}
+-\infty & \text{si } p = 0, \\
+n & \text{si } p = (a_{i})_{i \in \N},\ a_{n} \neq 0\ \text{y } n \text{ es el elemento más grande de } \N \text{ tal que } a_{n} \neq 0.
+\end{cases}
+\]
+Si $\deg(p) = n$, decimos que $a_{n}$ es el \emph{coeficiente principal} de $p$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Propiedades del grado}
+Sea $R$ un anillo y sean $p, q \in R[x]$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $\deg(p + q) \leq \max\{\deg(p), \deg(q)\}$;
+\item $\deg(p \cdot q) \leq \deg(p) + \deg(q)$;
+\item si $p \neq 0$, $q \neq 0$ y los coeficientes principales de $p$ y $q$ no son divisores de cero, entonces $\deg(p \cdot q) = \deg(p) + \deg(q)$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Si $p = 0$ o $q = 0$, las tres afirmaciones son inmediatas de las convenciones con $-\infty$. Suponga entonces que $p = (a_{i})_{i \in \N}$ y $q = (b_{i})_{i \in \N}$ son no nulos, con $\deg(p) = n$ y $\deg(q) = m$.
+
+Para (1), si $k > \max\{n, m\}$, entonces $a_{k} = 0$ y $b_{k} = 0$, de modo que el coeficiente $k$-ésimo de $p + q$ es $a_{k} + b_{k} = 0$. Es decir, todo coeficiente de $p + q$ por encima de $\max\{n, m\}$ se anula, y por lo tanto $\deg(p + q) \leq \max\{\deg(p), \deg(q)\}$.
+
+Para (2), escriba $p \cdot q = (c_{k})_{k \in \N}$ con $c_{k} = \sum_{i=0}^{k} a_{i} b_{k-i}$. Si $k > n + m$, entonces en cada sumando $a_{i} b_{k-i}$ ocurre una de dos: o bien $i > n$, y entonces $a_{i} = 0$; o bien $i \leq n$, y entonces $k - i \geq k - n > m$, de modo que $b_{k-i} = 0$. En ambos casos el sumando es cero, así que $c_{k} = 0$ para $k > n + m$, y concluimos que $\deg(p \cdot q) \leq \deg(p) + \deg(q)$.
+
+Para (3), examinamos el coeficiente $c_{n+m}$: un sumando $a_{i} b_{n+m-i}$ solo puede ser no nulo si $i \leq n$ y $n + m - i \leq m$, es decir, si $i \geq n$; entonces el único sumando posiblemente no nulo es el de $i = n$, y $c_{n+m} = a_{n} b_{m}$. Como $a_{n}$ no es divisor de cero, $a_{n} \neq 0$ (es coeficiente principal) y $b_{m} \neq 0$, tenemos que $a_{n} b_{m} \neq 0$. Entonces $c_{n+m} \neq 0$ y, junto con (2), $\deg(p \cdot q) = n + m$.
+\end{proof}
+
+\begin{namedstd}{Definición}{El anillo de polinomios en $n$ variables}
+Sea $R$ un anillo conmutativo y $n \geq 1$. Definimos el anillo de polinomios con $n$ variables como
+\[
+R[x_{1}, \dots, x_{n}] =
+\begin{cases}
+R[x_{1}] & \text{si } n = 1, \\
+R[x_{1}, \dots, x_{n-1}][x_{n}] & \text{si } n > 1.
+\end{cases}
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Interpretación de los polinomios como funciones}
+Si $p \in R[x]$, entonces $p$ define una función $\tilde{p} : R \to R$: si $p = (a_{i})_{i \in \N} = a_{0} + a_{1} x + \dots + a_{n} x^{n}$, entonces
+\[
+\tilde{p} :\ c \mapsto a_{0} + a_{1} c + \dots + a_{n} c^{n}.
+\]
+\textbf{Importante:} no se debe confundir el polinomio con su función asociada.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Polinomios distintos con la misma función asociada}
+Considere los siguientes polinomios en $\Z_{3}[x]$:
+\begin{align*}
+p &= x^{2} + 1, \\
+q &= x^{3} + x^{2} + 2x + 1.
+\end{align*}
+Note que $p \neq q$ pero $\tilde{p} = \tilde{q}$:
+\begin{align*}
+\tilde{p}(0) &= 1 = \tilde{q}(0), \\
+\tilde{p}(1) &= 2 = \tilde{q}(1), \\
+\tilde{p}(2) &= 2 = \tilde{q}(2).
+\end{align*}
+\end{namedstd}
+
+\subsection{El algoritmo de la división y las raíces}
+
+\begin{namedres}{Teorema}{Algoritmo de la división para anillos conmutativos}
+Sea $R$ un anillo conmutativo. Sean $f, g \in R[x]$ tales que $g \neq 0$, y sea $b$ el coeficiente principal de $g$. Entonces existen $m \geq 0$ y $q, r \in R[x]$ tales que
+\[
+b^{m} \cdot f = q \cdot g + r, \quad \text{con } \deg(r) < \deg(g) \ \text{y}\ m \leq \max\{0,\ \deg(f) - \deg(g) + 1\}.
+\]
+\end{namedres}
+\begin{proof}
+Procedemos por inducción fuerte sobre $\deg(f)$. Si $\deg(f) < \deg(g)$ (en particular, si $f = 0$), tome $m = 0$, $q = 0$ y $r = f$; entonces $b^{0} f = 0 \cdot g + f$, $\deg(r) = \deg(f) < \deg(g)$ y $m = 0 \leq \max\{0, \deg(f) - \deg(g) + 1\}$.
+
+Suponga ahora que $\deg(f) \geq \deg(g)$, y que el resultado vale para todo polinomio de grado menor que $\deg(f)$. Sean $a$ el coeficiente principal de $f$, $n = \deg(f)$ y $k = \deg(g)$, de modo que $n \geq k$. Defina
+\[
+h := b \cdot f - a \cdot x^{\,n-k} \cdot g.
+\]
+Entonces $\deg(h) < \deg(f)$: en efecto, tanto $b \cdot f$ como $a \cdot x^{\,n-k} \cdot g$ tienen grado a lo más $n$, y sus coeficientes de grado $n$ son $b \cdot a$ y $a \cdot b$ respectivamente, que coinciden porque $R$ es conmutativo; al restar, el término de grado $n$ se cancela. Por hipótesis inductiva aplicada a $h$, existen $m_{1} \geq 0$ y $q_{1}, r_{1} \in R[x]$ tales que
+\[
+b^{m_{1}} \cdot h = q_{1} \cdot g + r_{1}, \qquad \deg(r_{1}) < \deg(g), \qquad m_{1} \leq \max\{0,\ \deg(h) - \deg(g) + 1\}.
+\]
+Así, sustituyendo la definición de $h$, tenemos que
+\begin{align*}
+q_{1} \cdot g + r_{1} = b^{m_{1}} \cdot h &= b^{m_{1}} \big( b \cdot f - a \cdot x^{\,n-k} \cdot g \big) \\
+&= b^{m_{1} + 1} \cdot f - b^{m_{1}} \cdot a \cdot x^{\,n-k} \cdot g,
+\end{align*}
+y despejando obtenemos
+\[
+b^{m_{1} + 1} \cdot f = \big( q_{1} + b^{m_{1}} \cdot a \cdot x^{\,n-k} \big) \cdot g + r_{1}.
+\]
+Tomando $m = m_{1} + 1$, $q = q_{1} + b^{m_{1}} \cdot a \cdot x^{\,n-k}$ y $r = r_{1}$, se cumple la identidad con $\deg(r) < \deg(g)$. Finalmente, como $\deg(h) \leq n - 1$, tenemos que
+\[
+m = m_{1} + 1 \leq \max\{0,\ (n - 1) - k + 1\} + 1 \leq (n - k) + 1 = \max\{0,\ \deg(f) - \deg(g) + 1\},
+\]
+donde la última igualdad usa que $n \geq k$. Esto completa el paso inductivo y la prueba.
+\end{proof}
+
+\begin{namedstd}{Definición}{Raíz de un polinomio}
+Sea $p(x) \in R[x]$. Decimos que $\alpha \in R$ es una \emph{raíz} de $p$ si $\tilde{p}(\alpha) = 0$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Factorización de la raíz de un polinomio}
+Sea $R$ un anillo conmutativo y $p(x) \in R[x]$. Entonces $\alpha$ es raíz de $p(x)$ si y solo si existe $t \in R[x]$ tal que $p = (x - \alpha) \cdot t$.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedres}{Teorema}{Algoritmo de la división para cuerpos}
+Sea $F$ un cuerpo. Sean $f, g \in F[x]$ tales que $g \neq 0$. Entonces existen únicos $q, r \in F[x]$ tales que
+\[
+f = q \cdot g + r, \quad \text{con } \deg(r) < \deg(g).
+\]
+\end{namedres}
+\begin{proof}
+Para la existencia se aplica el algoritmo de la división para anillos: si $b$ es el coeficiente principal de $g$, existen $m \geq 0$ y $q_{0}, r_{0} \in F[x]$ tales que $b^{m} f = q_{0} g + r_{0}$ con $\deg(r_{0}) < \deg(g)$. Como $g \neq 0$, tenemos que $b \neq 0$, y entonces $b$ es una unidad de $F$; en particular $b^{m}$ es invertible. Multiplicando por $b^{-m}$ obtenemos
+\[
+f = \big( b^{-m} q_{0} \big) g + b^{-m} r_{0},
+\]
+y basta tomar $q = b^{-m} q_{0}$ y $r = b^{-m} r_{0}$. Note que $\deg(r) = \deg(r_{0}) < \deg(g)$, pues multiplicar por la constante no nula $b^{-m}$ no altera el grado (en un cuerpo no hay divisores de cero). La unicidad queda como ejercicio.
+\end{proof}
+
+\begin{namedres}{Teorema}{Polinomios sobre un dominio entero}
+Sea $A$ un dominio entero. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $A[x]$ es un dominio entero y $(A[x])^{\times} = A^{\times}$;
+\item si $p \in A[x]$, $p \neq 0$ y $\deg(p) = n$, entonces $p$ tiene a lo más $n$ raíces distintas.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\textit{Parte 1.} Suponga que existen $p, q \in A[x]$, con $p \neq 0$ y $q \neq 0$, tales que $p \cdot q = 0$. Entonces $\deg(p \cdot q) = -\infty$. Pero los coeficientes principales de $p$ y $q$ son distintos de cero, y en un dominio entero los elementos no nulos no son divisores de cero; entonces, por las propiedades del grado,
+\[
+\deg(p \cdot q) = \deg(p) + \deg(q) \in \N,
+\]
+una contradicción. Concluimos que $A[x]$ es un dominio entero.
+
+Para las unidades, note primero que $A^{\times} \subseteq (A[x])^{\times}$, pues la igualdad $a \cdot a^{-1} = 1$ en $A$ también vale en $A[x]$ al identificar las constantes. Recíprocamente, sea $p \in (A[x])^{\times}$. Entonces existe $q \in A[x]$ tal que $p \cdot q = 1$; en particular $p \neq 0$ y $q \neq 0$. Así,
+\[
+\deg(p \cdot q) = \underbrace{\deg(p) + \deg(q)}_{\in\, \N} = \deg(1) = 0,
+\]
+de donde $\deg(p) = \deg(q) = 0$, y entonces $p$ y $q$ son constantes, es decir, $p, q \in A$ con $p \cdot q = 1$. Concluimos que $p \in A^{\times}$, y por lo tanto $(A[x])^{\times} = A^{\times}$.
+
+\textit{Parte 2.} Procedemos por inducción sobre $n = \deg(p)$. Si $n = 0$, entonces $p = a_{0} \neq 0$ es constante, así que $\tilde{p}(\alpha) = a_{0} \neq 0$ para todo $\alpha \in A$, y $p$ tiene $0 \leq 0$ raíces. Suponga ahora que el resultado vale para polinomios no nulos de grado $n - 1$, y sea $p$ de grado $n \geq 1$. Si $p$ no tiene raíces, no hay nada que probar. Si $\alpha$ es una raíz de $p$, por el teorema de factorización de la raíz existe $t \in A[x]$ tal que $p = (x - \alpha) \cdot t$; note que $t \neq 0$, pues $p \neq 0$. Como el coeficiente principal de $x - \alpha$ es $1$, que no es divisor de cero, las propiedades del grado dan $n = \deg(p) = 1 + \deg(t)$, es decir, $\deg(t) = n - 1$. Ahora, si $\beta \neq \alpha$ es otra raíz de $p$, evaluando en $\beta$ tenemos que
+\[
+0 = \tilde{p}(\beta) = (\beta - \alpha) \cdot \tilde{t}(\beta),
+\]
+donde usamos que la función asociada de un producto es el producto de las funciones asociadas cuando el anillo es conmutativo (verificación directa con la fórmula $c_{k} = \sum_{i} a_{i} b_{k-i}$). Como $\beta - \alpha \neq 0$ y $A$ es un dominio entero, necesariamente $\tilde{t}(\beta) = 0$, es decir, toda raíz de $p$ distinta de $\alpha$ es raíz de $t$. Por hipótesis inductiva, $t$ tiene a lo más $n - 1$ raíces distintas, y entonces $p$ tiene a lo más $1 + (n - 1) = n$ raíces distintas.
+\end{proof}
+
+% =============================================================================
+\section{Ideales}
+% =============================================================================
+
+\subsection{Definición y ejemplos}
+
+\begin{namedstd}{Definición}{$R$-ideal por la izquierda, por la derecha y bilátero}
+Sea $R$ un anillo y $I \subseteq R$ con $I \neq \emptyset$. Decimos que $I$ es un \emph{$R$-ideal por la izquierda} (respectivamente, \emph{por la derecha}) si:
+\begin{enumerate}[label=(\arabic*)]
+\item $\forall x, y \in I\ (x + y \in I)$;
+\item $\forall r \in R\ \forall x \in I\ (r \cdot x \in I)$ (respectivamente, $x \cdot r \in I$); esta propiedad se llama \emph{absorción}.
+\end{enumerate}
+Si $I$ es un $R$-ideal por la derecha y por la izquierda, decimos que $I$ es un \emph{$R$-ideal}.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Primeras propiedades de los ideales}
+Sea $I$ un $R$-ideal (izquierdo o derecho).
+\begin{enumerate}[label=(\arabic*)]
+\item $(I, +)$ es un grupo. Note que $0 \in I$: en efecto, como $0 \in R$ y la proposición de reglas aritméticas da $0 \cdot x = 0$ para todo $x \in R$, la absorción aplicada a cualquier $x \in I$ muestra que $0 = 0 \cdot x \in I$.
+\item Sea $x \in I$. Entonces $(-1) \cdot x = -x \in I$.
+\item Si $1 \in I$, entonces $I = R$, pues si $a \in R$, la absorción da $a \cdot 1 = a \in I$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Ideales triviales y los ideales de un cuerpo}
+Los primeros ejemplos de ideales:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $R$ es un anillo, $R$ y $\{0\}$ son ideales; se les llama los \emph{ideales triviales}.
+\item Sea $F$ un cuerpo y $I$ un ideal en $F$ tal que $I \neq \{0\}$. Sea $a \in I$ con $a \neq 0$. Entonces
+\[
+a^{-1} \in F \implies a^{-1} \cdot a \in I \implies 1 \in I \implies I = F.
+\]
+Concluimos que un cuerpo solo posee los dos ideales triviales.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Ideales en anillos de polinomios}
+Sea $R$ un anillo conmutativo.
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $I \subseteq R[x]$ tal que
+\[
+I = \{ p \in R[x] :\ \text{el término constante de } p \text{ es cero} \}.
+\]
+Entonces $I$ es un ideal.
+\item Si $I$ es un ideal de $R$, defina
+\[
+I[x] = \{ p \in R[x] :\ p(x) \text{ tiene todos sus coeficientes en } I \}.
+\]
+Entonces $I[x]$ es un ideal en $R[x]$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Ideales en $\Z$ y en $\Z_{n}$}
+Dos familias de ideales en los anillos de enteros:
+\begin{enumerate}[label=(\arabic*)]
+\item $n\Z$ es un ideal de $\Z$.
+\item Sea $n > 1$ y considere $\Z_{n}$. Sea $d \in \Z_{n}$ tal que $d \mid n$. Entonces $\langle d \rangle$ (el grupo aditivo generado por $d$) es un ideal.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Un ideal por la izquierda que no es ideal por la derecha}
+Sea $R = M_{2 \times 2}(\R)$ y defina
+\[
+I := \left\{ \begin{pmatrix} a & 0 \\ b & 0 \end{pmatrix} :\ a, b \in \R \right\}.
+\]
+Note que
+\begin{align*}
+\begin{pmatrix} x & y \\ z & w \end{pmatrix} \begin{pmatrix} a & 0 \\ b & 0 \end{pmatrix} &= \begin{pmatrix} xa + yb & 0 \\ za + wb & 0 \end{pmatrix} \in I, \\
+\begin{pmatrix} a & 0 \\ b & 0 \end{pmatrix} \begin{pmatrix} x & y \\ z & w \end{pmatrix} &= \begin{pmatrix} ax & ay \\ bx & by \end{pmatrix} \notin I \ \text{en general},
+\end{align*}
+por lo que $I$ es un ideal por la izquierda pero no por la derecha.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Elemento nilpotente y el nilradical}
+Si $R$ es un anillo, $a \in R$ es \emph{nilpotente} si existe $n \in \N$ tal que $a^{n} = 0$. El menor $n$ que exista es el \emph{índice de nilpotencia} de $a$. Además,
+\[
+\Nil(R) = \{ x \in R :\ x \text{ es nilpotente} \}
+\]
+es un ideal, llamado el \emph{nilradical} de $R$ (ejercicio).
+\end{namedstd}
+
+\subsection{Operaciones con ideales y el ideal generado}
+
+\begin{namedstd}{Definición}{Suma, intersección y producto de ideales}
+Sea $R$ un anillo conmutativo y sean $I, J$ ideales. Defina:
+\begin{align*}
+I + J &:= \{ a + b :\ a \in I,\ b \in J \}, \\
+I \cap J &:= \{ x :\ x \in I \wedge x \in J \}, \\
+I \cdot J &:= \left\{ \sum_{i=1}^{n} a_{i} \cdot b_{i} :\ a_{i} \in I,\ b_{i} \in J,\ n \in \N \right\}.
+\end{align*}
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Las operaciones de ideales producen ideales}
+$I + J$, $I \cap J$ e $I \cdot J$ son ideales.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedres}{Corolario}{La intersección de ideales es un ideal}
+La intersección de cualquier familia de ideales de $R$ es un ideal de $R$.
+\end{namedres}
+\begin{proof}
+Sea $\{I_{\alpha}\}_{\alpha \in \Delta}$ una familia de ideales y $I = \bigcap_{\alpha \in \Delta} I_{\alpha}$. Como $0 \in I_{\alpha}$ para todo $\alpha$, tenemos que $0 \in I$, y en particular $I \neq \emptyset$. Si $x, y \in I$, entonces $x, y \in I_{\alpha}$ para todo $\alpha$, y como cada $I_{\alpha}$ es cerrado bajo sumas, $x + y \in I_{\alpha}$ para todo $\alpha$, es decir, $x + y \in I$. Finalmente, si $r \in R$ y $x \in I$, la absorción en cada $I_{\alpha}$ da $r x \in I_{\alpha}$ para todo $\alpha$, de modo que $r x \in I$ (y análogamente $x r \in I$). Concluimos que $I$ es un ideal.
+\end{proof}
+
+\begin{namedstd}{Definición}{Ideal generado, finitamente generado y principal}
+Sea $R$ un anillo conmutativo y $U \subseteq R$.
+\begin{enumerate}[label=(\arabic*)]
+\item $(U) := \bigcap_{U \subseteq I,\ I \text{ ideal}} I$ es el \emph{ideal generado} por $U$. Note que $(U)$ es un ideal, puesto que la intersección de ideales es un ideal. Si $U$ es finito y $U = \{u_{1}, \dots, u_{n}\}$, escribimos $(u_{1}, \dots, u_{n}) = (U)$.
+\item Decimos que un ideal $I$ es \emph{finitamente generado} si existe $U \subseteq R$ finito tal que $I = (U)$.
+\item Decimos que $I$ es un \emph{ideal principal} si existe $a \in R$ tal que $I = (a)$. Note que en este caso $I = (a) = \{ r \cdot a :\ r \in R \}$ (ejercicio).
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Caracterización del ideal generado como combinaciones}
+Sea $R$ un anillo conmutativo y $\emptyset \neq U \subseteq R$. Entonces
+\[
+(U) = \underbrace{\left\{ \sum_{i=1}^{n} a_{i} u_{i} :\ n \in \N,\ a_{i} \in R,\ u_{i} \in U \right\}}_{J}.
+\]
+\end{namedres}
+\begin{proof}
+Veamos primero que $J$ es un ideal: la suma de dos combinaciones de la forma $\sum a_{i} u_{i}$ es de nuevo una combinación de ese tipo, y si $r \in R$, entonces $r \sum_{i=1}^{n} a_{i} u_{i} = \sum_{i=1}^{n} (r a_{i}) u_{i} \in J$, lo que da la absorción. Además $U \subseteq J$, pues $u = 1 \cdot u$ para cada $u \in U$. Entonces $J$ es uno de los ideales que intersecamos para definir $(U)$, y por lo tanto $(U) \subseteq J$.
+
+Recíprocamente, sea $w \in J$. Entonces existen $n \in \N$, $a_{i} \in R$ y $u_{i} \in U$ tales que $w = \sum_{i=1}^{n} a_{i} u_{i}$. Sea $I$ un ideal cualquiera tal que $U \subseteq I$. Entonces, por absorción, $a_{i} u_{i} \in I$ para todo $i$, y por cerradura de la suma $\sum_{i=1}^{n} a_{i} u_{i} \in I$, de modo que $w \in I$. Como $I$ es arbitrario, tenemos que
+\[
+w \in \bigcap_{U \subseteq I,\ I \text{ ideal}} I = (U),
+\]
+es decir, $J \subseteq (U)$. Concluimos la igualdad.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Cálculos con ideales generados}
+Sea $R$ un anillo conmutativo.
+\begin{enumerate}[label=(\arabic*)]
+\item $(0) = \{0\}$ y $(1) = R$. Si $u \in R^{\times}$, entonces $(u) = R$. En general, si $u_{1}, \dots, u_{n} \in I$ con $I$ ideal, entonces $(u_{1}, \dots, u_{n}) \subseteq I$.
+\item Si $R = \Z$, entonces $(6, 15) = (3)$: como $6 = 3 \cdot 2$ y $15 = 3 \cdot 5$, tenemos que $6, 15 \in (3)$ y por lo tanto $(6, 15) \subseteq (3)$. Por otra parte, $3 = 6 \cdot (-2) + 15$, entonces $3 \in (6, 15)$ y por lo tanto $(3) \subseteq (6, 15)$.
+\item Considere el anillo de polinomios $R[x]$. Note que
+\[
+(x) = \{ x \cdot p(x) :\ p(x) \in R[x] \} = \{ r(x) :\ \text{el coeficiente constante de } r(x) \text{ es cero} \}.
+\]
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Anillo de ideales principales y DIP}
+Recogemos dos nociones:
+\begin{enumerate}[label=(\arabic*)]
+\item Un \emph{anillo de ideales principales} es un anillo en el que todo ideal es principal.
+\item Un \emph{dominio de ideales principales} (DIP) es un anillo de ideales principales que es un dominio entero.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$\Z[x]$ no es un anillo de ideales principales}
+Sea $R = \Z[x]$. Se puede probar que $(2, x)$ no es principal (ejercicio). Entonces $\Z[x]$ no es un anillo de ideales principales.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{$\Z$ es un DIP, y $K[x]$ es un DIP si $K$ es un cuerpo}
+$\Z$ es un dominio de ideales principales. Si $K$ es un cuerpo, entonces $K[x]$ es un dominio de ideales principales.
+\end{namedres}
+\begin{proof}
+Ya sabemos que $\Z$ es un dominio entero. Claramente $\{0\} = (0)$ es principal. Sea $I \neq \{0\}$ un ideal de $\Z$. Entonces existe $a \in I$ con $a \neq 0$; como $-a \in I$, existe al menos un elemento de $\Z^{+}$ en $I$. Sea $b \in I$ el elemento positivo más pequeño de $I$. Probaremos que $I = (b)$. Claramente $(b) \subseteq I$, por absorción. Sea $a \in I$. Por el algoritmo de la división en $\Z$, existen $q, r \in \Z$ tales que
+\[
+a = q b + r, \quad \text{con } 0 \leq r < b.
+\]
+Entonces $a - q b = r \in I$, pues $a \in I$ y $q b \in I$. Por la minimalidad de $b$, necesariamente $r = 0$; entonces $a = q b$, de modo que $a \in (b)$ y por lo tanto $I \subseteq (b)$. Concluimos que $I = (b)$.
+
+La prueba de que $K[x]$ es un DIP si $K$ es un cuerpo queda como ejercicio.
+\end{proof}
+
+\begin{namedstd}{Definición}{Ideales primos relativos}
+Sea $R$ un anillo conmutativo y sean $I, J$ ideales. Decimos que $I$ y $J$ son \emph{primos relativos} si $I + J = R$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Propiedades de la suma y el producto de ideales}
+Sea $R$ un anillo conmutativo y sean $I, J, K$ ideales. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $I + J = J + I$ y $I J = J I$;
+\item $I + (J + K) = (I + J) + K$ y $(I J) K = I (J K)$;
+\item $I (J + K) = I J + I K$;
+\item $(0) + I = I$, $R \cdot I = I$ y $I + R = R$;
+\item $(0) \cdot I = (0)$;
+\item $I J \subseteq I \cap J$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1): $I + J = J + I$ es inmediato de la conmutatividad de la suma en $R$, y $I J = J I$ porque cada generador satisface $a_{i} b_{i} = b_{i} a_{i}$, al ser $R$ conmutativo.
+
+Para (2): ambos lados de $I + (J + K) = (I + J) + K$ son $\{ a + b + c :\ a \in I,\ b \in J,\ c \in K \}$, por la asociatividad de la suma. Para el producto, note que todo elemento de $(I J) K$ es una suma finita $\sum_{i} w_{i} c_{i}$ con $w_{i} \in I J$ y $c_{i} \in K$; escribiendo cada $w_{i}$ como suma finita de productos $a b$, y distribuyendo, $(I J) K$ es exactamente el conjunto de sumas finitas de productos triples $(a b) c$ con $a \in I$, $b \in J$, $c \in K$. El mismo argumento describe $I (J K)$ como las sumas finitas de productos $a (b c)$, y la asociatividad de $R$ da la igualdad.
+
+Para (3): ``$\subseteq$'' porque cada generador satisface $a (b + c) = a b + a c \in I J + I K$, y las sumas finitas de estos quedan en el ideal $I J + I K$. ``$\supseteq$'' porque $I J \subseteq I (J + K)$ (todo $b \in J$ se escribe $b = b + 0 \in J + K$) e $I K \subseteq I (J + K)$, y el ideal $I (J + K)$ es cerrado bajo sumas.
+
+Para (4): $(0) + I = I$ pues $0 + a = a$; $R \cdot I = I$ pues ``$\subseteq$'' es la absorción y ``$\supseteq$'' se sigue de $a = 1 \cdot a$; y $I + R = R$ pues todo $a \in R$ se escribe $a = 0 + a$.
+
+Para (5): cada generador de $(0) \cdot I$ es de la forma $0 \cdot b = 0$, así que $(0) \cdot I = \{0\} = (0)$.
+
+Para (6): cada generador $a b$ con $a \in I$, $b \in J$ pertenece a $I$ (absorción de $I$, con $b \in R$) y a $J$ (absorción de $J$, con $a \in R$); como $I \cap J$ es un ideal, las sumas finitas de tales productos quedan en $I \cap J$, es decir, $I J \subseteq I \cap J$.
+\end{proof}
+
+\subsection{Ideales maximales y el teorema de Krull}
+
+\begin{namedstd}{Definición}{Ideal maximal y el espectro maximal}
+Sea $R$ un anillo conmutativo. Un ideal $\mathfrak{m} \neq R$ es \emph{maximal} si cada vez que $J$ es un ideal tal que $\mathfrak{m} \subseteq J$, entonces $J = R$ o $J = \mathfrak{m}$. Denotamos por $\mSpec(R)$ al conjunto de ideales maximales de $R$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Espectros maximales conocidos}
+Calculamos $\mSpec$ en los ejemplos básicos:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $R = \{0\}$, entonces $\mSpec(R) = \emptyset$.
+\item Si $K$ es un cuerpo, entonces $\mSpec(K) = \{ \{0\} \}$.
+\item Sea $R = \Z_{4}$. Los ideales son $(0)$, $(2) = \{0, 2\}$ y $(1) = \Z_{4} = (3)$. Note que $\mSpec(\Z_{4}) = \{(2)\}$.
+\item En $\Z$ todos los ideales son de la forma $n\Z$ con $n \in \N$. Muestre que $n\Z$ es maximal si y solo si $n$ es primo.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Axioma}{Lema de Zorn}
+Sea $(X, \leq)$ un conjunto parcialmente ordenado. Si
+\begin{enumerate}[label=(\arabic*)]
+\item $X \neq \emptyset$, y
+\item todo subconjunto totalmente ordenado de $X$ posee una cota superior en $X$,
+\end{enumerate}
+entonces $X$ posee un elemento maximal.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Krull: todo ideal propio está contenido en un maximal}
+Sea $R \neq \{0\}$ un anillo conmutativo y sea $I$ un ideal propio. Entonces existe $\mathfrak{m}$ un ideal maximal tal que $I \subseteq \mathfrak{m}$.
+\end{namedres}
+\begin{proof}
+Sea
+\[
+\Omega := \{ J :\ J \text{ ideal},\ J \neq R,\ I \subseteq J \},
+\]
+que es un conjunto parcialmente ordenado por la inclusión. Note que $\Omega \neq \emptyset$, pues $I \in \Omega$. Para aplicar el lema de Zorn, sea $(C_{\alpha})_{\alpha \in \Delta}$ una cadena en $\Omega$, que podemos suponer no vacía (la cadena vacía tiene a $I$ como cota superior), y sea $N = \bigcup_{\alpha \in \Delta} C_{\alpha}$. Probaremos que $N \in \Omega$.
+
+Primero, $N$ es un ideal. Note que $N \neq \emptyset$, pues $C_{\alpha} \subseteq N$ para $\alpha \in \Delta$ y cada $C_{\alpha}$ es no vacío. Sean $x, y \in N$. Entonces existen $\alpha, \beta \in \Delta$ tales que $x \in C_{\alpha}$ y $y \in C_{\beta}$. Como $(C_{\alpha})$ es una cadena, tenemos que $C_{\alpha} \subseteq C_{\beta}$ o $C_{\beta} \subseteq C_{\alpha}$; sin pérdida de generalidad, $C_{\alpha} \subseteq C_{\beta}$. Entonces $x, y \in C_{\beta}$, y como $C_{\beta}$ es un ideal, $x + y \in C_{\beta} \subseteq N$. De la misma manera, si $x \in N$ y $r \in R$, entonces $x \in C_{\alpha}$ para algún $\alpha$, y $r \cdot x \in C_{\alpha} \subseteq N$ por absorción.
+
+Segundo, $N \neq R$: si $N = R$, entonces $1 \in N$, de modo que existe $\alpha$ tal que $1 \in C_{\alpha}$, y por lo tanto $C_{\alpha} = R$, lo que contradice que $C_{\alpha} \in \Omega$. Finalmente, $I \subseteq C_{\alpha} \subseteq N$ para cualquier $\alpha \in \Delta$, por lo que $N \in \Omega$ y $N$ es una cota superior de la cadena $(C_{\alpha})_{\alpha \in \Delta}$.
+
+Luego, por el lema de Zorn, existe $\mathfrak{m}$ un elemento maximal en $\Omega$. Veamos que $\mathfrak{m}$ es un ideal maximal de $R$: por construcción $\mathfrak{m} \neq R$ y $I \subseteq \mathfrak{m}$. Si $J$ es un ideal tal que $\mathfrak{m} \subseteq J$ y $J \neq R$, entonces $I \subseteq \mathfrak{m} \subseteq J$, así que $J \in \Omega$; por la maximalidad de $\mathfrak{m}$ en $\Omega$, tenemos que $J = \mathfrak{m}$. Es decir, todo ideal que contiene a $\mathfrak{m}$ es $R$ o es $\mathfrak{m}$, que es la definición de ideal maximal.
+\end{proof}
+
+\begin{namedres}{Corolario}{El espectro maximal es no vacío y detecta las no unidades}
+Si $R \neq \{0\}$ es un anillo conmutativo, entonces $\mSpec(R) \neq \emptyset$. Además,
+\[
+\bigcup_{\mathfrak{m} \in \mSpec(R)} \mathfrak{m} = R \setminus R^{\times}.
+\]
+\end{namedres}
+\begin{proof}
+Como $R \neq \{0\}$, el ideal $(0)$ es propio, y por el teorema de Krull existe un ideal maximal que lo contiene; entonces $\mSpec(R) \neq \emptyset$.
+
+``$\supseteq$'': Si $x \in R \setminus R^{\times}$, entonces $(x) \neq R$: en caso contrario $1 \in (x)$, es decir, $1 = r x$ para algún $r \in R$, y $x$ sería una unidad. Por Krull, existe $\mathfrak{m}$ maximal tal que $(x) \subseteq \mathfrak{m}$. Concluya que $x \in \bigcup_{\mathfrak{m} \in \mSpec(R)} \mathfrak{m}$.
+
+``$\subseteq$'': Si $x \in \mathfrak{m}$ con $\mathfrak{m}$ maximal, entonces $x \notin R^{\times}$: si $x$ fuese una unidad, tendríamos $1 = x^{-1} x \in \mathfrak{m}$ por absorción, de donde $\mathfrak{m} = R$, lo que contradice $\mathfrak{m} \neq R$.
+\end{proof}
+
+\begin{namedstd}{Definición}{Anillo local}
+Un anillo conmutativo $R \neq \{0\}$ es \emph{local} si posee exactamente un ideal maximal.
+\end{namedstd}
+
+\begin{namedres}{Corolario}{Caracterización de los anillos locales}
+Si $R \neq \{0\}$ es un anillo conmutativo, entonces $R$ es local si y solo si $R \setminus R^{\times}$ es un ideal.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Definición}{Radical de Jacobson}
+Sea $R \neq \{0\}$ un anillo conmutativo. Definimos el \emph{radical de Jacobson} como
+\[
+\Rad(R) = \bigcap_{\mathfrak{m} \in \mSpec(R)} \mathfrak{m}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Caracterización del radical de Jacobson}
+Muestre que $x \in \Rad(R)$ si y solo si $1 - x y \in R^{\times}$ para cada $y \in R$.
+\end{namedstd}
+
+% =============================================================================
+\section{Ideales primos}
+% =============================================================================
+
+\subsection{Definición y caracterizaciones}
+
+\begin{namedstd}{Definición}{Ideal primo}
+Sea $R$ un anillo y $I$ un $R$-ideal. Decimos que $I$ es \emph{primo} si para todos $x, y \in R$, si $x y \in I$ entonces $x \in I$ o $y \in I$.
+\end{namedstd}
+
+\begin{namedstd}{Notación}{El espectro primo}
+Denotamos por $\Spec(R)$ al conjunto de los ideales primos de $R$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Caracterización de primalidad con productos de ideales}
+Sea $R$ un anillo y sea $I$ un $R$-ideal. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $I$ es primo;
+\item para todos $J_{1}, J_{2}$ ideales de $R$: si $J_{1} J_{2} \subseteq I$, entonces $J_{1} \subseteq I$ o $J_{2} \subseteq I$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedres}{Proposición}{El ideal cero es primo si y solo si el anillo es dominio entero}
+Sea $R$ un anillo conmutativo con $R \neq \{0\}$. Entonces $R$ es un dominio entero si y solo si $\{0\}$ es primo.
+\end{namedres}
+\begin{proof}
+``$\Rightarrow$'': Sean $x, y \in R$ tales que $x \cdot y \in \{0\}$, es decir, $x \cdot y = 0$. Como $R$ es un dominio entero, no posee divisores de cero, y entonces $x = 0$ o $y = 0$; es decir, $x \in \{0\}$ o $y \in \{0\}$. Concluimos que $\{0\}$ es primo.
+
+``$\Leftarrow$'': Procedemos por contrapositiva. Si $R$ no es un dominio entero, entonces, al ser $R$ conmutativo, la única posibilidad es que posea divisores de cero: existen $x, y \in R$ tales que $x \neq 0$, $y \neq 0$, pero $x \cdot y = 0$. Entonces $x \cdot y \in \{0\}$, pero $x \notin \{0\}$ y $y \notin \{0\}$, de modo que $\{0\}$ no es primo.
+\end{proof}
+
+\subsection{Maximales, primos y el nilradical}
+
+\begin{namedres}{Proposición}{Todo ideal maximal es primo}
+Sea $R$ un anillo conmutativo con $R \neq \{0\}$. Entonces todo ideal maximal es primo. En particular, $\Spec(R) \neq \emptyset$.
+\end{namedres}
+\begin{proof}
+Sea $\mathfrak{m}$ un ideal maximal, y sean $x, y \in R$ tales que $x \cdot y \in \mathfrak{m}$. Suponga, por contradicción, que $x \notin \mathfrak{m}$ y $y \notin \mathfrak{m}$. Considere
+\[
+(x) + \mathfrak{m} = \{ r \cdot x + m :\ r \in R,\ m \in \mathfrak{m} \} \subseteq R,
+\]
+que es un ideal, por ser suma de ideales. Note que $\mathfrak{m} \subseteq (x) + \mathfrak{m}$, y la contención es estricta: $x = 1 \cdot x + 0 \in (x) + \mathfrak{m}$, pero $x \notin \mathfrak{m}$. Es decir, $\mathfrak{m} \subsetneq (x) + \mathfrak{m}$, y análogamente $\mathfrak{m} \subsetneq (y) + \mathfrak{m}$.
+
+Como $\mathfrak{m}$ es maximal y ambos son ideales que contienen propiamente a $\mathfrak{m}$, tenemos que
+\[
+(x) + \mathfrak{m} = R = (y) + \mathfrak{m}.
+\]
+Como $1 \in R$, existen $m_{1}, m_{2} \in \mathfrak{m}$ y $r_{1}, r_{2} \in R$ tales que
+\[
+1 = r_{1} x + m_{1}, \qquad 1 = r_{2} y + m_{2}.
+\]
+Multiplicando ambas igualdades,
+\[
+1 = (r_{1} x + m_{1})(r_{2} y + m_{2}) = \underbrace{r_{1} r_{2}\, x y}_{\in\, \mathfrak{m}} + \underbrace{r_{1} x\, m_{2}}_{\in\, \mathfrak{m}} + \underbrace{m_{1}\, r_{2} y}_{\in\, \mathfrak{m}} + \underbrace{m_{1} m_{2}}_{\in\, \mathfrak{m}} \in \mathfrak{m},
+\]
+donde el primer sumando está en $\mathfrak{m}$ porque $x y \in \mathfrak{m}$ y $\mathfrak{m}$ absorbe productos, y los restantes por absorción directa. Entonces $1 \in \mathfrak{m}$, de donde $\mathfrak{m} = R$, lo cual es una contradicción con la definición de ideal maximal. Concluimos que $x \in \mathfrak{m}$ o $y \in \mathfrak{m}$, es decir, $\mathfrak{m}$ es primo.
+
+Finalmente, por el corolario del teorema de Krull, $\mSpec(R) \neq \emptyset$, y como todo maximal es primo, $\Spec(R) \supseteq \mSpec(R) \neq \emptyset$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Espectros primos conocidos}
+Calculamos $\Spec$ en los ejemplos básicos:
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $K$ un cuerpo. Entonces $\mSpec(K) = \Spec(K) = \{ \{0\} \}$.
+\item Sea $R = \Z$. Entonces
+\[
+\mSpec(\Z) = \{ p\Z :\ p \text{ primo} \}, \qquad \Spec(\Z) = \mSpec(\Z) \cup \{ \{0\} \}.
+\]
+\item Sea $R = \R[x]$. El ideal $\langle x^{2} - 1 \rangle$ no es primo:
+\[
+x^{2} - 1 = (x - 1)(x + 1) \in \langle x^{2} - 1 \rangle,
+\]
+pero (ejercicio) $(x - 1), (x + 1) \notin \langle x^{2} - 1 \rangle$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Teorema}{El nilradical es la intersección de los ideales primos}
+Sea $R$ un anillo conmutativo. Entonces
+\[
+\bigcap_{I \text{ primo}} I = \Nil(R) = \{ x \in R :\ \exists n \in \N\ (x^{n} = 0) \}.
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+% =============================================================================
+\section{Productos de anillos}
+% =============================================================================
+
+\subsection{El producto directo y sus propiedades}
+
+\begin{namedstd}{Definición}{El producto de dos anillos}
+Sean $R_{1}, R_{2}$ anillos, con estructuras $(R_{1}, +_{R_{1}}, \cdot_{R_{1}}, 0_{R_{1}}, 1_{R_{1}})$ y $(R_{2}, +_{R_{2}}, \cdot_{R_{2}}, 0_{R_{2}}, 1_{R_{2}})$. Defina
+\[
+R_{1} \times R_{2} := \{ (x_{1}, x_{2}) :\ x_{1} \in R_{1},\ x_{2} \in R_{2} \},
+\]
+con las operaciones componente a componente:
+\[
+(x_{1}, x_{2}) + (y_{1}, y_{2}) = (x_{1} +_{R_{1}} y_{1},\ x_{2} +_{R_{2}} y_{2}), \qquad (x_{1}, x_{2}) \cdot (y_{1}, y_{2}) = (x_{1} y_{1},\ x_{2} y_{2}).
+\]
+El cero en $R_{1} \times R_{2}$ es $\vec{0} = (0_{R_{1}}, 0_{R_{2}})$ y el uno es $\vec{1} = (1_{R_{1}}, 1_{R_{2}})$. Entonces $(R_{1} \times R_{2}, +, \cdot, \vec{0}, \vec{1})$ es un anillo.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{El producto directo de una familia de anillos}
+En general, si $\{R_{i}\}_{i \in I}$ es un conjunto de anillos, podemos construir el anillo
+\[
+\prod_{i \in I} R_{i}
+\]
+de forma análoga, con las operaciones definidas componente a componente.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$\R^{2}$ tiene divisores de cero}
+$\R^{2} = \R \times \R$ es un anillo, y
+\[
+\underbrace{(1, 0)}_{\neq (0,0)} \cdot \underbrace{(0, 1)}_{\neq (0,0)} = (0, 0).
+\]
+Entonces, a pesar de que $\R$ no tiene divisores de cero, $\R^{2}$ sí tiene.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Las unidades del producto}
+Sea $\{R_{i} :\ i \in I\}$ un conjunto de anillos y $R = \prod_{i \in I} R_{i}$. Al considerar las unidades $R^{\times}$, tenemos que
+\[
+R^{\times} = \prod_{i \in I} R_{i}^{\times}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Subanillos e ideales de un producto}
+Sea $\{R_{i} :\ i \in I\}$ un conjunto de anillos y $R = \prod_{i \in I} R_{i}$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item si para cada $i \in I$, $S_{i}$ es un subanillo de $R_{i}$, entonces $\prod_{i \in I} S_{i}$ es un subanillo de $R$;
+\item si para cada $i \in I$, $A_{i} \subseteq R_{i}$ es un $R_{i}$-ideal, entonces $\prod_{i \in I} A_{i}$ es un $R$-ideal;
+\item si $K$ es un ideal de $R \times S$, entonces existen $I$ un $R$-ideal y $J$ un $S$-ideal tales que $K = I \times J$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1): usamos el criterio de subanillo. Como $1_{R_{i}} \in S_{i}$ para cada $i$, tenemos que $\vec{1} = (1_{R_{i}})_{i} \in \prod_{i} S_{i}$; y si $a = (a_{i})_{i}$ y $b = (b_{i})_{i}$ están en $\prod_{i} S_{i}$, entonces $a - b = (a_{i} - b_{i})_{i}$ y $a b = (a_{i} b_{i})_{i}$ tienen todas sus componentes en los $S_{i}$, por ser cada $S_{i}$ subanillo.
+
+Para (2): $\prod_{i} A_{i} \neq \emptyset$ pues contiene a $\vec{0}$; es cerrado bajo sumas componente a componente; y si $r = (r_{i})_{i} \in R$ y $x = (x_{i})_{i} \in \prod_{i} A_{i}$, entonces $r x = (r_{i} x_{i})_{i}$ tiene cada componente en $A_{i}$ por la absorción de cada $A_{i}$.
+
+Para (3): sea $K$ un ideal de $R \times S$. Si $(r, s) \in K$, la absorción con $(1, 0)$ y $(0, 1)$ da
+\[
+(r, 0) = (1, 0) \cdot (r, s) \in K, \qquad (0, s) = (0, 1) \cdot (r, s) \in K.
+\]
+Defina
+\[
+I = \{ r \in R :\ (r, 0) \in K \}, \qquad J = \{ s \in S :\ (0, s) \in K \}.
+\]
+Entonces $I$ es un $R$-ideal: $0 \in I$; si $r, r' \in I$, entonces $(r + r', 0) = (r, 0) + (r', 0) \in K$; y si $a \in R$, entonces $(a r, 0) = (a, 0) \cdot (r, 0) \in K$ por la absorción de $K$. Análogamente $J$ es un $S$-ideal. Veamos que $K = I \times J$. ``$\subseteq$'': si $(r, s) \in K$, por lo anterior $(r, 0), (0, s) \in K$, es decir, $r \in I$ y $s \in J$. ``$\supseteq$'': si $r \in I$ y $s \in J$, entonces
+\[
+(r, s) = (r, 0) + (0, s) \in K,
+\]
+por la cerradura de $K$ bajo sumas.
+\end{proof}
+
+% =============================================================================
+\section{Anillos cociente}
+% =============================================================================
+
+\subsection{La congruencia módulo un ideal y el cociente}
+
+\begin{namedstd}{Definición}{La relación de congruencia módulo un ideal}
+Sea $R$ un anillo e $I$ un $R$-ideal. Para $a, b \in R$, definamos la relación $\sim_{I}$ tal que
+\[
+a \sim_{I} b \iff a - b \in I.
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{La congruencia módulo un ideal es de equivalencia}
+La relación $\sim_{I}$ es una relación de equivalencia en $R$.
+\end{namedres}
+\begin{proof}
+Verificamos las tres propiedades:
+\begin{enumerate}[label=(\arabic*)]
+\item \textit{Reflexividad:} $a \sim_{I} a$, pues $a - a = 0 \in I$.
+\item \textit{Simetría:} si $a \sim_{I} b$, entonces $a - b \in I$; como $I$ es cerrado bajo inversos aditivos, $b - a = -(a - b) \in I$, es decir, $b \sim_{I} a$.
+\item \textit{Transitividad:} si $a \sim_{I} b$ y $b \sim_{I} c$, entonces $a - b \in I$ y $b - c \in I$. Como $I$ es cerrado bajo sumas,
+\[
+a - c = (a - b) + (b - c) \in I,
+\]
+es decir, $a \sim_{I} c$. \qedhere
+\end{enumerate}
+\end{proof}
+
+\begin{namedstd}{Nota}{Las clases de equivalencia son clases laterales}
+Sea $R/I = \{ [a]_{I} :\ a \in R \}$ el conjunto de clases de equivalencia de $\sim_{I}$. Entonces
+\begin{align*}
+[a]_{I} &= \{ b \in R :\ a \sim_{I} b \} = \{ b \in R :\ a - b \in I \} \\
+&= \{ b \in R :\ \exists x \in I\ (x = a - b) \} = \{ b \in R :\ \exists x \in I\ (b = a - x) \} \\
+&= \{ a - x :\ x \in I \} = a + I,
+\end{align*}
+donde la última igualdad usa que $I$ es cerrado bajo inversos aditivos, de modo que $\{-x : x \in I\} = I$. \textbf{Notación:} $[a]_{I} = a + I$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Las operaciones del anillo cociente}
+Definimos $\tilde{+}$ en $R/I$ tal que
+\[
+(a + I)\ \tilde{+}\ (b + I) = (a + b) + I.
+\]
+El ideal $I$ es el ``$0$'' en $R/I$ (es decir, $[0]_{I}$). Definimos $\tilde{\cdot}$ en $R/I$ tal que
+\[
+(a + I)\ \tilde{\cdot}\ (b + I) = (a \cdot b) + I.
+\]
+La clase $1_{R} + I$ es el ``$1$'' en $R/I$.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{El cociente es un anillo}
+$R/I$ es un anillo con estas operaciones. Se llama el \emph{anillo cociente} de $R$ por $I$.
+\end{namedres}
+\begin{proof}
+La parte delicada es verificar que $\tilde{+}$ y $\tilde{\cdot}$ están bien definidas, es decir, que no dependen de los representantes. Suponga que $a + I = a' + I$ y $b + I = b' + I$, o sea, $a - a' \in I$ y $b - b' \in I$. Para la suma,
+\[
+(a + b) - (a' + b') = (a - a') + (b - b') \in I,
+\]
+de modo que $(a + b) + I = (a' + b') + I$. Para el producto, sumamos y restamos $a' b$:
+\[
+a b - a' b' = (a - a') b + a' (b - b'),
+\]
+y aquí $(a - a') b \in I$ por la absorción por la derecha y $a' (b - b') \in I$ por la absorción por la izquierda; entonces $a b - a' b' \in I$, es decir, $(a b) + I = (a' b') + I$. Aquí se usa de manera esencial que $I$ es un ideal bilátero.
+
+Los axiomas de anillo se heredan de $R$ operando con representantes; por ejemplo,
+\[
+\big( (a + I)\, \tilde{\cdot}\, (b + I) \big)\, \tilde{\cdot}\, (c + I) = (a b) c + I = a (b c) + I = (a + I)\, \tilde{\cdot}\, \big( (b + I)\, \tilde{\cdot}\, (c + I) \big),
+\]
+y de igual forma la asociatividad y conmutatividad de $\tilde{+}$, la distributividad, los neutros $I = 0 + I$ y $1 + I$, y el inverso aditivo $(-a) + I$.
+\end{proof}
+
+\begin{namedstd}{Definición}{La proyección canónica}
+Si $R$ es un anillo e $I$ es un $R$-ideal, sea $\pi_{I} : R \to R/I$ tal que $a \mapsto a + I$, la \emph{proyección canónica} de $R$ en $R/I$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Propiedades de la proyección canónica}
+La proyección canónica $\pi_{I}$ es sobreyectiva y $\Ker(\pi_{I}) = I$.
+\end{namedres}
+\begin{proof}
+La sobreyectividad es inmediata: toda clase $a + I \in R/I$ es $\pi_{I}(a)$. Para el núcleo, tenemos las dos contenciones:
+\[
+\text{si } x \in I \implies \pi_{I}(x) = x + I = I = [0]_{I} \implies x \in \Ker(\pi_{I}),
+\]
+pues $x - 0 = x \in I$; y recíprocamente,
+\[
+\text{si } x \in \Ker(\pi_{I}) \implies \pi_{I}(x) = x + I = I \implies x \in I,
+\]
+pues $x = x - 0 \in I$. Concluimos que $\Ker(\pi_{I}) = I$.
+\end{proof}
+
+\subsection{Ejemplos de cocientes}
+
+\begin{namedstd}{Ejemplo}{Los enteros módulo $n$ como cociente}
+$\Z/(n) = \Z_{n}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El cociente $\Z[x]/(x^{2})$}
+Si $p(x) + (x^{2}) \in \Z[x]/(x^{2})$, entonces existen únicos $a, b \in \Z$ tales que
+\[
+[p(x)]_{(x^{2})} = [a + b x]_{(x^{2})}.
+\]
+Para la existencia, escriba $p(x) = a + b x + x^{2} q(x)$ con $q(x) \in \Z[x]$; entonces $p(x) - (a + bx) = x^{2} q(x) \in (x^{2})$. Probemos ahora la unicidad. Sean $a_{0}, a_{1}, b_{0}, b_{1} \in \Z$ tales que
+\[
+[a_{0} + a_{1} x]_{(x^{2})} = [b_{0} + b_{1} x]_{(x^{2})}.
+\]
+Entonces
+\[
+(a_{0} - b_{0}) + (a_{1} - b_{1}) x \in (x^{2}).
+\]
+Pero todo elemento no nulo de $(x^{2}) = x^{2} \cdot \Z[x]$ tiene grado al menos $2$, es decir, sus coeficientes de grados $0$ y $1$ son nulos; entonces $a_{0} = b_{0}$ y $a_{1} = b_{1}$. Concluimos que
+\[
+\Z[x]/(x^{2}) = \{ [a + b x]_{(x^{2})} :\ a, b \in \Z \}.
+\]
+Note además que
+\[
+[3x]_{(x^{2})} \cdot [5x]_{(x^{2})} = [15 x^{2}]_{(x^{2})} = [0]_{(x^{2})},
+\]
+de modo que $\Z[x]/(x^{2})$ tiene divisores de cero.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Divisores de cero y unidades de $\Z[x]/(x^{2})$}
+Muestre que los divisores de cero de $\Z[x]/(x^{2})$ son $\{ [b x] :\ b \neq 0 \}$ y que las unidades son $\{ [\pm 1 + b x] :\ b \in \Z \}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Un cociente de los enteros gaussianos}
+Sea $\Z[i] = \{ a + b i :\ a, b \in \Z \}$. Entonces $\Z[i]/(1 + i) = \{ [0], [1] \}$ (ejercicio).
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El cociente $\R[x]/(x^{2} + 1)$}
+Sea $R = \R[x]/(x^{2} + 1)$ y $\alpha = [x]$. Entonces
+\[
+\alpha^{2} = [x^{2}] = [-1],
+\]
+pues $x^{2} - (-1) = x^{2} + 1 \in (x^{2} + 1)$. Es decir, en $R$ hay solución a la ecuación ``$t^{2} + 1 = 0$''. Veremos que $R \cong \C$.
+\end{namedstd}
+
+\subsection{El teorema de correspondencia}
+
+\begin{namedstd}{Definición}{Cociente de un subconjunto}
+Sea $R$ un anillo, $I$ un $R$-ideal y $S \subseteq R$ (solo un subconjunto). Definimos
+\[
+S/I := \{ s + I :\ s \in S \} \subseteq R/I.
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Correspondencia entre ideales y subanillos del cociente}
+La aplicación $S \mapsto S/I$ induce biyecciones que preservan la inclusión entre los siguientes conjuntos:
+\begin{enumerate}[label=(\arabic*)]
+\item $\{ J :\ J \text{ ideal de } R \text{ tal que } J \supseteq I \} \to \{ \text{ideales de } R/I \}$;
+\item $\{ \text{subanillos de } R \text{ que contienen a } I \} \to \{ \text{subanillos de } R/I \}$.
+\end{enumerate}
+En ambos casos la función inversa es $A \mapsto \{ r \in R :\ r + I \in A \}$.
+\end{namedres}
+\begin{proof}
+Probamos el caso de ideales; el de subanillos es idéntico, usando el criterio de subanillo en lugar de la definición de ideal. Escriba $\Phi(J) = J/I$ y $\Psi(A) = \{ r \in R :\ r + I \in A \}$.
+
+\textit{$\Phi$ llega a donde debe.} Si $J \supseteq I$ es un ideal de $R$, entonces $J/I$ es un ideal de $R/I$: es no vacío; es cerrado bajo sumas, pues $(j + I) + (j' + I) = (j + j') + I$ con $j + j' \in J$; y absorbe productos, pues $(r + I)(j + I) = r j + I$ con $r j \in J$ por la absorción de $J$ en $R$.
+
+\textit{$\Psi$ llega a donde debe.} Si $A$ es un ideal de $R/I$, entonces $\Psi(A)$ es un ideal de $R$: si $r, r' \in \Psi(A)$, entonces $(r + r') + I = (r + I) + (r' + I) \in A$, así que $r + r' \in \Psi(A)$; y si $s \in R$, entonces $(s r) + I = (s + I)(r + I) \in A$ por la absorción de $A$. Además $I \subseteq \Psi(A)$: si $x \in I$, entonces $x + I = I = [0] \in A$, pues todo ideal contiene al cero.
+
+\textit{Son mutuamente inversas.} Primero, $\Psi(\Phi(J)) = \{ r :\ r + I \in J/I \} = J$: la contención ``$\supseteq$'' es clara, y si $r + I = j + I$ para algún $j \in J$, entonces $r - j \in I \subseteq J$, de donde $r = j + (r - j) \in J$. Segundo, $\Phi(\Psi(A)) = \{ r + I :\ r + I \in A \} = A$, pues todo elemento de $A$ es una clase $r + I$ para algún $r \in R$.
+
+\textit{Preservan la inclusión.} Si $J \subseteq J'$, entonces $J/I \subseteq J'/I$ directamente; y si $A \subseteq A'$, entonces $\Psi(A) \subseteq \Psi(A')$ directamente. (En el caso de subanillos, $\Psi(B) \supseteq I$ vale porque $[0] \in B$, y la cuenta de inversas usa $I \subseteq S$ de la misma manera.)
+\end{proof}
+
+% =============================================================================
+\section{Homomorfismos de anillos}
+% =============================================================================
+
+\subsection{Definiciones y primeros ejemplos}
+
+\begin{namedstd}{Definición}{Homomorfismo de anillos}
+Sean $R, S$ anillos. Entonces $\varphi : R \to S$ es un \emph{homomorfismo de anillos} si:
+\begin{enumerate}[label=(\arabic*)]
+\item $\varphi(a +_{R} b) = \varphi(a) +_{S} \varphi(b)$ para todos $a, b \in R$;
+\item $\varphi(a \cdot_{R} b) = \varphi(a) \cdot_{S} \varphi(b)$ para todos $a, b \in R$;
+\item $\varphi(1_{R}) = 1_{S}$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Los homomorfismos preservan el cero}
+La definición implica que $\varphi(0_{R}) = 0_{S}$, pues
+\[
+\varphi(0_{R}) = \varphi(0_{R} + 0_{R}) = \varphi(0_{R}) +_{S} \varphi(0_{R}) \implies 0_{S} = \varphi(0_{R}),
+\]
+cancelando $\varphi(0_{R})$ en el grupo $(S, +)$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Monomorfismos, isomorfismos y automorfismos}
+Sea $\varphi : R \to S$ un homomorfismo de anillos.
+\begin{itemize}
+\item Si $\varphi$ es inyectiva, entonces $\varphi$ es un \emph{monomorfismo}.
+\item Si $\varphi$ es biyectiva, entonces $\varphi$ es un \emph{isomorfismo}.
+\item Si $\varphi$ es biyectiva y $R = S$, entonces $\varphi$ es un \emph{automorfismo}.
+\end{itemize}
+Si $R$ y $S$ son anillos tales que existe un isomorfismo $\varphi : R \to S$, decimos que $R$ y $S$ son \emph{isomorfos} y escribimos $R \cong S$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$\R[x]/(x^{2}+1)$ es isomorfo a $\C$}
+Ya vimos que $\R[x]/(x^{2} + 1) = \{ [a + b x] :\ a, b \in \R \}$ (el argumento de forma normal es el mismo que para $\Z[x]/(x^{2})$). La función
+\[
+\varphi : \C \longrightarrow \R[x]/(x^{2} + 1), \qquad a + i b \longmapsto [a + b x],
+\]
+es un isomorfismo (ejercicio). En particular, $\R[x]/(x^{2}+1) \cong \C$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Los homomorfismos preservan unidades}
+Sean $R, S$ anillos y $\varphi : R \to S$ un homomorfismo. Si $a \in R^{\times}$, entonces $\varphi(a) \in S^{\times}$ y $\varphi(a^{-1}) = (\varphi(a))^{-1}$.
+\end{namedres}
+\begin{proof}
+Sea $a \in R^{\times}$ con inverso $a^{-1} \in R$, de modo que $a \cdot a^{-1} = 1_{R} = a^{-1} \cdot a$. Aplicando $\varphi$,
+\[
+\varphi(a \cdot a^{-1}) = \varphi(1_{R}) \implies \varphi(a) \cdot_{S} \varphi(a^{-1}) = 1_{S} = \varphi(a^{-1}) \cdot_{S} \varphi(a),
+\]
+donde la segunda igualdad se obtiene aplicando $\varphi$ a $a^{-1} \cdot a = 1_{R}$. Entonces $\varphi(a^{-1})$ es un inverso multiplicativo de $\varphi(a)$, es decir, $\varphi(a^{-1}) = (\varphi(a))^{-1}$ y $\varphi(a) \in S^{\times}$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{La inclusión de un subanillo y la reducción módulo $n$}
+Dos ejemplos básicos de homomorfismos:
+\begin{enumerate}[label=(\arabic*)]
+\item Sea $S$ un subanillo de $R$. La función $\varphi : S \to R$ tal que $x \mapsto x$ es un monomorfismo.
+\item La función $\varphi : \Z \to \Z_{n}$ tal que $x \mapsto [x]$ es un homomorfismo.
+\end{enumerate}
+\end{namedstd}
+
+\subsection{Núcleo e imagen}
+
+\begin{namedstd}{Definición}{Núcleo e imagen de un homomorfismo}
+Sean $R, S$ anillos y $\varphi : R \to S$ un homomorfismo.
+\begin{enumerate}[label=(\arabic*)]
+\item $\Ker(\varphi) = \{ x \in R :\ \varphi(x) = 0_{S} \} \subseteq R$;
+\item $\Imm(\varphi) = \{ \varphi(x) :\ x \in R \} = \varphi(R) \subseteq S$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{El núcleo es un ideal y detecta la inyectividad}
+$\Ker(\varphi)$ es un $R$-ideal. Además, $\Ker(\varphi) = \{0_{R}\}$ si y solo si $\varphi$ es inyectiva.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Composición de homomorfismos}
+La composición de homomorfismos es un homomorfismo, y el inverso de un isomorfismo es un isomorfismo. Además,
+\[
+\varphi_{1} \circ (\varphi_{2} \circ \varphi_{3}) = (\varphi_{1} \circ \varphi_{2}) \circ \varphi_{3}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La reducción de coeficientes módulo $n$ y su núcleo}
+Sea $r_{n} : \Z[x] \longrightarrow \Z_{n}[x]$ tal que
+\[
+r_{n}(a_{0} + a_{1} x + \dots + a_{m} x^{m}) = [a_{0}] + [a_{1}] x + \dots + [a_{m}] x^{m}.
+\]
+La función $r_{n}$ es un homomorfismo (ejercicio) y es sobreyectiva. Además, $\Ker(r_{n}) = (n\Z)[x]$, pues
+\begin{align*}
+a_{0} + a_{1} x + \dots + a_{m} x^{m} \in \Ker(r_{n})
+&\iff [a_{i}] = [0] \quad \forall i \in \{0, 1, \dots, m\} \\
+&\iff n \mid a_{i} \quad \forall i \in \{0, 1, \dots, m\}.
+\end{align*}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El homomorfismo de evaluación y su núcleo}
+Sea $a \in \R$ y sea $\varphi_{a} : \R[x] \to \R$ tal que $\varphi_{a}(p(x)) = p(a)$. Entonces $\varphi_{a}$ es un homomorfismo (ejercicio). Su núcleo es
+\begin{align*}
+\Ker(\varphi_{a}) &= \{ p(x) \in \R[x] :\ p(a) = 0 \} \\
+&= \{ p(x) \in \R[x] :\ \exists q(x) \in \R[x]\ \big( p(x) = (x - a) \cdot q(x) \big) \} \\
+&= \{ (x - a) \cdot q(x) :\ q(x) \in \R[x] \} \\
+&= (x - a) \cdot \R[x] \neq \{ 0_{\R[x]} \},
+\end{align*}
+donde la segunda igualdad es el teorema de factorización de la raíz.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Propiedades invariantes bajo isomorfismos}
+Sean $R, S$ anillos y $\varphi : R \to S$ un isomorfismo. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $R$ es conmutativo $\iff$ $S$ es conmutativo;
+\item $x \in R^{\times} \iff \varphi(x) \in S^{\times}$;
+\item $R$ es un cuerpo $\iff$ $S$ es un cuerpo;
+\item $x \in R$ es divisor de cero $\iff$ $\varphi(x) \in S$ es divisor de cero.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{$\R \times \R$ no es isomorfo a $\C$ como anillo}
+Sea $\varphi : \R \times \R \to \C$ tal que $(a, b) \mapsto a + i b$. Es un isomorfismo de grupos abelianos, pero no de anillos, pues $\C$ es un dominio entero y $\R \times \R$ no lo es (tiene divisores de cero).
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$\Q(i)$ no es isomorfo a $\Q$}
+Sea $\Q(i) = \{ a + i b :\ a, b \in \Q \}$. Entonces $\Q(i)$ es un cuerpo y $\Q(i) \not\cong \Q$. En efecto, existe $\alpha \in \Q(i)$ tal que $\alpha^{2} = -1$ (a saber, $\alpha = i$), es decir, tal que $\alpha^{2} + 1 = 0$. Si $f : \Q(i) \to \Q$ fuese un isomorfismo, tendríamos que
+\[
+f(\alpha^{2} + 1) = f(0) = 0 \implies (f(\alpha))^{2} + f(1) = 0 \implies (f(\alpha))^{2} + 1 = 0.
+\]
+Esto implicaría que en $\Q$ la ecuación $x^{2} + 1 = 0$ tiene solución, lo cual es imposible, pues $x^{2} \geq 0$ para todo $x \in \Q$. Concluimos que no existe tal isomorfismo.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El único automorfismo de $\Z$ es la identidad}
+$\Aut(\Z) = \{\mathrm{id}_{\Z}\}$. En efecto, sea $f \in \Aut(\Z)$. Entonces
+\begin{align*}
+f(0) &= 0, \\
+f(1) &= 1, \\
+f(2) &= f(1) + f(1) = 2, \\
+&\ \,\vdots \\
+f(n) &= n \quad \text{si } n \in \N,
+\end{align*}
+donde cada paso usa la aditividad: $f(n + 1) = f(n) + f(1)$. En general, $f(-n) = -f(n) = -n$ si $n > 0$, pues los homomorfismos preservan inversos aditivos. Concluimos que $f = \mathrm{id}_{\Z}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La conjugación es un automorfismo de matrices}
+Sea $U \in GL_{n}(\R)$. La función $\varphi : M_{n \times n}(\R) \longrightarrow M_{n \times n}(\R)$ dada por $A \longmapsto U \cdot A \cdot U^{-1}$ es un automorfismo.
+\end{namedstd}
+
+\subsection{Extensión y contracción de ideales}
+
+\begin{namedres}{Lema}{La imagen inversa de un ideal es un ideal}
+Sean $R, S$ anillos, $\varphi : R \to S$ un homomorfismo y $J \subseteq S$ un $S$-ideal. Entonces $\varphi^{-1}(J)$ es un $R$-ideal.
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Nota}{La imagen directa de un ideal no es necesariamente un ideal}
+Si $I \subseteq R$ es un $R$-ideal, no necesariamente $\varphi(I)$ es un ideal de $S$. ¿Por qué?
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Extensión y contracción de ideales}
+Sea $\varphi : R \to S$ un homomorfismo de anillos.
+\begin{enumerate}[label=(\alph*)]
+\item Sea $I$ un $R$-ideal. Defina la \emph{extensión} de $I$, denotada $I^{e}$, como el ideal más pequeño de $S$ que contiene a $\varphi(I)$.
+\item Si $J \subseteq S$ es un $S$-ideal, la \emph{contracción} de $J$, denotada $J^{c}$, es $\varphi^{-1}(J)$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Contracciones y extensiones iteradas}
+Sea $\varphi : R \to S$ un homomorfismo de anillos, $I \subseteq R$ un $R$-ideal y $J \subseteq S$ un $S$-ideal. Entonces:
+\begin{enumerate}[label=(\alph*)]
+\item $I \subseteq (I^{e})^{c}$ y $J \supseteq (J^{c})^{e}$;
+\item $I^{e} = I^{ece}$;
+\item $J^{c} = J^{cec}$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Usaremos dos monotonías. Si $I_{1} \subseteq I_{2}$ son $R$-ideales, entonces $I_{1}^{e} \subseteq I_{2}^{e}$: en efecto, $\varphi(I_{1}) \subseteq \varphi(I_{2}) \subseteq I_{2}^{e}$, y como $I_{1}^{e}$ es el ideal más pequeño que contiene a $\varphi(I_{1})$, tenemos que $I_{1}^{e} \subseteq I_{2}^{e}$. Si $J_{1} \subseteq J_{2}$ son $S$-ideales, entonces $J_{1}^{c} = \varphi^{-1}(J_{1}) \subseteq \varphi^{-1}(J_{2}) = J_{2}^{c}$, directamente.
+
+Para (a): si $x \in I$, entonces $\varphi(x) \in \varphi(I) \subseteq I^{e}$, así que $x \in \varphi^{-1}(I^{e}) = (I^{e})^{c}$; es decir, $I \subseteq I^{ec}$. Por otra parte, $\varphi(J^{c}) = \varphi(\varphi^{-1}(J)) \subseteq J$, y como $J$ es un ideal que contiene a $\varphi(J^{c})$, el ideal más pequeño con esa propiedad satisface $(J^{c})^{e} \subseteq J$.
+
+Para (b): aplicando la primera parte de (a) al ideal $I$ y luego la monotonía de la extensión, $I \subseteq I^{ec}$ implica $I^{e} \subseteq I^{ece}$. Y aplicando la segunda parte de (a) con $J = I^{e}$, obtenemos $I^{ece} = (I^{ec})^{e} = ((I^{e})^{c})^{e} \subseteq I^{e}$. Ambas contenciones dan $I^{e} = I^{ece}$.
+
+Para (c): aplicando la primera parte de (a) con $I = J^{c}$, obtenemos $J^{c} \subseteq (J^{c})^{ec} = J^{cec}$. Y aplicando la monotonía de la contracción a $(J^{c})^{e} \subseteq J$, obtenemos $J^{cec} = ((J^{c})^{e})^{c} \subseteq J^{c}$. Ambas contenciones dan $J^{c} = J^{cec}$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Una extensión que crece: $n\Z$ dentro de $\Q$}
+Sea $\varphi : \Z \to \Q$ tal que $n \mapsto n$, y sea $n \neq 0, 1$. Entonces $\varphi(n) = n \in \Q^{\times}$, y como el único ideal de $\Q$ que contiene una unidad es todo $\Q$, tenemos que
+\[
+\langle \varphi((n)) \rangle = \Q \implies (n\Z)^{e} = \Q \implies ((n\Z)^{e})^{c} = \Q^{c} = \varphi^{-1}(\Q) = \Z.
+\]
+Es decir, $I = n\Z \subsetneq I^{ec} = \Z$: la contracción de la extensión puede ser estrictamente mayor que el ideal original.
+\end{namedstd}
+
+\subsection{Los teoremas de isomorfismo}
+
+\begin{namedres}{Teorema}{Primer teorema del isomorfismo}
+Sean $R, S$ anillos y $f : R \to S$ un homomorfismo de anillos. Sea $F : R/\Ker(f) \to \Imm(f)$ tal que $[a] \longmapsto f(a)$. Entonces $F$ es un isomorfismo y, en particular,
+\[
+R/\Ker(f) \cong \Imm(f).
+\]
+\end{namedres}
+\begin{proof}
+\textit{$F$ está bien definida.} Si $[a] = [b]$, entonces $a - b \in \Ker(f)$, de modo que
+\[
+f(a - b) = 0 \implies f(a) = f(b) \implies F([a]) = F([b]).
+\]
+
+\textit{$F$ es un homomorfismo.} Usando que $f$ lo es,
+\begin{align*}
+F([a] + [b]) &= F([a + b]) = f(a + b) = f(a) + f(b) = F([a]) + F([b]), \\
+F([a] \cdot [b]) &= F([a \cdot b]) = f(a \cdot b) = f(a) \cdot f(b) = F([a]) \cdot F([b]), \\
+F([1]) &= f(1) = 1.
+\end{align*}
+
+\textit{$F$ es sobreyectiva.} Todo elemento de $\Imm(f)$ es de la forma $f(a) = F([a])$ para algún $a \in R$.
+
+\textit{$F$ es inyectiva.} Calculamos el núcleo:
+\[
+F([a]) = 0_{S} \implies f(a) = 0_{S} \implies a \in \Ker(f) \implies [a] = [0],
+\]
+es decir, $\Ker(F) = \{ 0_{R/\Ker(f)} \} = \{ [0] \}$, y por lo tanto $F$ es inyectiva. Concluimos que $F$ es un isomorfismo.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{El cociente de un producto por un factor}
+Sean $R, S$ anillos y $\pi : R \times S \to S$ tal que $(x, s) \mapsto s$, que es un homomorfismo sobreyectivo. Su núcleo es
+\[
+\Ker(\pi) = R \times \{0\},
+\]
+pues $\pi(x, s) = 0_{S}$ si y solo si $s = 0_{S}$. Entonces, por el primer teorema del isomorfismo,
+\[
+(R \times S)/(R \times \{0\}) \cong S.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{El cociente de un producto por un producto de ideales}
+Sean $R, S$ anillos, $I$ un $R$-ideal y $J$ un $S$-ideal. Entonces
+\[
+(R \times S)/(I \times J) \cong R/I \times S/J,
+\]
+usando el homomorfismo $\varphi : R \times S \to R/I \times S/J$ tal que $(r, s) \mapsto (r + I, s + J)$ (ejercicio).
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Segundo teorema del isomorfismo}
+Sea $R$ un anillo, $S \leq R$ un subanillo e $I$ un $R$-ideal. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item $S \cap I$ es un $S$-ideal;
+\item $S + I$ es un subanillo de $R$;
+\item $I$ es un $(S + I)$-ideal;
+\item $S/(S \cap I) \cong (S + I)/I$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para (1): $0 \in S \cap I$, y $S \cap I$ es cerrado bajo sumas por serlo $S$ e $I$. Para la absorción, sean $s \in S$ y $x \in S \cap I$; entonces $s x \in S$, por ser $S$ cerrado bajo productos, y $s x \in I$, por la absorción de $I$ en $R$ (note que $s \in S \subseteq R$); es decir, $s x \in S \cap I$, y análogamente $x s \in S \cap I$.
+
+Para (2): usamos el criterio de subanillo. Primero, $1 = 1 + 0 \in S + I$. Si $s + x, s' + x' \in S + I$, entonces
+\[
+(s + x) - (s' + x') = (s - s') + (x - x') \in S + I,
+\]
+y para el producto,
+\[
+(s + x)(s' + x') = s s' + (s x' + x s' + x x'),
+\]
+donde $s s' \in S$ y los tres términos del paréntesis están en $I$ por absorción; entonces el producto está en $S + I$.
+
+Para (3): $I \subseteq S + I$ (pues $x = 0 + x$), $I$ es no vacío y cerrado bajo sumas, y la absorción por elementos de $S + I \subseteq R$ es un caso particular de la absorción de $I$ en $R$.
+
+Para (4): considere $\varphi : S \to (S + I)/I$ dada por $\varphi(s) = s + I$, la restricción a $S$ de la proyección canónica. Es un homomorfismo, pues las operaciones de $(S+I)/I$ se calculan con representantes. Es sobreyectiva: toda clase de $(S + I)/I$ es de la forma $(s + x) + I$ con $s \in S$, $x \in I$, y $(s + x) + I = s + I = \varphi(s)$, pues $x \in I$. Su núcleo es
+\[
+\Ker(\varphi) = \{ s \in S :\ s + I = I \} = \{ s \in S :\ s \in I \} = S \cap I.
+\]
+Por el primer teorema del isomorfismo, $S/(S \cap I) \cong \Imm(\varphi) = (S + I)/I$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Tercer teorema del isomorfismo}
+Sea $R$ un anillo y sean $I \subseteq J \subseteq R$ ideales. Entonces
+\[
+(R/I)\big/(J/I) \cong R/J.
+\]
+\end{namedres}
+\begin{proof}
+Considere $f : R/I \to R/J$ dada por $f([x]_{I}) = [x]_{J}$. Está bien definida: si $[x]_{I} = [y]_{I}$, entonces $x - y \in I \subseteq J$, de modo que $[x]_{J} = [y]_{J}$. Es un homomorfismo, pues las operaciones en ambos cocientes se calculan con representantes:
+\[
+f([x]_{I} + [y]_{I}) = f([x + y]_{I}) = [x + y]_{J} = [x]_{J} + [y]_{J},
+\]
+y análogamente para el producto; además $f([1]_{I}) = [1]_{J}$. Es sobreyectiva: toda clase $[x]_{J}$ es $f([x]_{I})$. Su núcleo es
+\[
+\Ker(f) = \{ [x]_{I} :\ [x]_{J} = [0]_{J} \} = \{ [x]_{I} :\ x \in J \} = J/I.
+\]
+Por el primer teorema del isomorfismo,
+\[
+(R/I)\big/(J/I) = (R/I)\big/\Ker(f) \cong \Imm(f) = R/J. \qedhere
+\]
+\end{proof}
+
+% =============================================================================
+\section{Subanillos primos y característica}
+% =============================================================================
+
+\subsection{El subanillo primo y el cuerpo primo}
+
+\begin{namedstd}{Definición}{Cuerpo primo}
+Sea $F$ un cuerpo. Definimos el \emph{cuerpo primo} de $F$ como la intersección de todos los subcuerpos de $F$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Subanillo primo}
+Sea $R$ un anillo. El \emph{subanillo primo} (o \emph{anillo primo}) de $R$ es la intersección de todos los subanillos de $R$; es decir, el subanillo más pequeño de $R$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{El anillo primo de un cuerpo vive en su cuerpo primo}
+Si $(F, +, \cdot)$ es un cuerpo, entonces es un anillo; como todo subcuerpo de $F$ es en particular un subanillo, el anillo primo de $F$ es un subanillo del cuerpo primo de $F$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Subanillos primos conocidos}
+Los siguientes ejemplos ilustran la definición:
+\begin{enumerate}[label=(\arabic*)]
+\item $\Z$ es el subanillo primo de $\Z$, y $\Z_{n}$ es el subanillo primo de $\Z_{n}$.
+\item Sea $R$ un anillo y considere $M_{n \times n}(R)$. Entonces $\{ z \cdot I_{n} :\ z \in \Z \}$ es el anillo primo de $M_{n \times n}(R)$.
+\item Si $R_{1} \subseteq R_{2}$ son anillos (respectivamente, cuerpos), entonces $R_{1}$ y $R_{2}$ tienen el mismo anillo primo (respectivamente, cuerpo primo).
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{La cadena de anillos numéricos}
+Note que $\Z \subseteq \Q \subseteq \R \subseteq \C \subseteq \HH$ (como anillos):
+\begin{itemize}
+\item todos tienen el mismo anillo primo, $\Z$;
+\item $\Q$ es el cuerpo primo de $\Q$, $\R$ y $\C$.
+\end{itemize}
+\end{namedstd}
+
+\subsection{La característica}
+
+\begin{namedstd}{Definición}{Característica de un anillo}
+Si $R$ es un anillo y $R_{0}$ es su anillo primo, definimos
+\[
+\Char(R) =
+\begin{cases}
+|R_{0}| & \text{si } R_{0} \text{ es finito}, \\
+0 & \text{si no}.
+\end{cases}
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{El subanillo primo es $\Z$ o $\Z_{n}$}
+Sea $R$ un anillo.
+\begin{enumerate}[label=(\arabic*)]
+\item El subanillo primo $R_{0}$ de $R$ es isomorfo a $\Z$ o a $\Z_{n}$, y en tal caso
+\[
+\Char(R) =
+\begin{cases}
+n & \text{si } R_{0} \cong \Z_{n}, \\
+0 & \text{si } R_{0} \cong \Z.
+\end{cases}
+\]
+\item Si $D$ es un dominio entero, entonces $\Char(D)$ es $0$ o un número primo $p$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\textit{Parte 1.} Sea $R_{0}$ el anillo primo de $R$ y sea $f_{R} : \Z \longrightarrow R$ tal que $n \longmapsto n \cdot 1_{R}$, que es un homomorfismo de anillos (de hecho, el único; véase el ejercicio sobre homomorfismos desde $\Z$). Afirmamos que $\Imm(f_{R}) = R_{0}$: por una parte, $\Imm(f_{R})$ es un subanillo de $R$; por otra, todo subanillo $S$ de $R$ contiene a $1_{R}$ y es cerrado bajo sumas y restas, así que contiene a $n \cdot 1_{R}$ para todo $n \in \Z$, es decir, $\Imm(f_{R}) \subseteq S$. Entonces $\Imm(f_{R})$ es el subanillo más pequeño de $R$, o sea, $\Imm(f_{R}) = R_{0}$. Por el primer teorema del isomorfismo,
+\[
+R_{0} = \Imm(f_{R}) \cong \Z/\Ker(f_{R}).
+\]
+Note que $\Ker(f_{R})$ es un ideal de $\Z$, y como $\Z$ es un DIP, tenemos que $\Ker(f_{R}) = (n)$ con $n \in \N$. Si $n = 0$, entonces $\Ker(f_{R}) = \{0\}$, de modo que $R_{0} \cong \Z$, que es infinito, y $\Char(R) = 0$. Si $n \neq 0$, entonces $R_{0} \cong \Z/(n) \cong \Z_{n}$, que tiene $n$ elementos, y $\Char(R) = n$.
+
+\textit{Parte 2.} Fue probada en la tarea; queda como ejercicio.
+\end{proof}
+
+\subsection{El homomorfismo de Frobenius y el pequeño teorema de Fermat}
+
+\begin{namedres}{Teorema}{Frobenius: elevar a la $p$ es un homomorfismo}
+Sea $R$ un anillo conmutativo tal que $\Char(R) = p > 0$ con $p$ primo. Entonces $\varphi : R \to R$ tal que $x \mapsto x^{p}$ es un homomorfismo. En particular,
+\[
+(x + y)^{p} = x^{p} + y^{p} \quad \text{para todos } x, y \in R.
+\]
+\end{namedres}
+\begin{proof}
+Note primero que $\varphi(1) = 1^{p} = 1$, y que, como $R$ es conmutativo,
+\[
+\varphi(x \cdot y) = (x y)^{p} = x^{p} y^{p} = \varphi(x) \cdot \varphi(y).
+\]
+Falta probar que $\varphi(x + y) = \varphi(x) + \varphi(y)$, es decir, que $(x + y)^{p} = x^{p} + y^{p}$.
+
+Sean $a, b \in R$. Por el teorema del binomio de Newton, válido en anillos conmutativos,
+\[
+(a + b)^{p} = \sum_{i=0}^{p} \binom{p}{i} a^{i} b^{p-i},
+\]
+donde $\binom{p}{i} a^{i} b^{p-i}$ denota el múltiplo entero correspondiente. Afirmamos que si $0 < i < p$, entonces $\binom{p}{i}$ es múltiplo de $p$: de la identidad
+\[
+i!\,(p - i)!\, \binom{p}{i} = p!
+\]
+vemos que $p$ divide al lado derecho; pero $p$ es primo y no divide a $i!$ ni a $(p-i)!$, pues todos sus factores son menores que $p$; entonces $p \mid \binom{p}{i}$. Ahora, como $\Char(R) = p$, tenemos que $p \cdot 1_{R} = 0$, y si $\binom{p}{i} = p \cdot t$ con $t \in \Z$, entonces
+\[
+\binom{p}{i} \cdot a^{i} b^{p-i} = \big( \binom{p}{i} \cdot 1_{R} \big)\, a^{i} b^{p-i} = \big( t \cdot (p \cdot 1_{R}) \big)\, a^{i} b^{p-i} = 0.
+\]
+Es decir, en la suma binomial solo sobreviven los términos $i = 0$ e $i = p$, de modo que $(a + b)^{p} = a^{p} + b^{p}$.
+\end{proof}
+
+\begin{namedstd}{Nota}{Frobenius en cuerpos finitos y sus iteradas}
+Tres observaciones sobre el homomorfismo anterior:
+\begin{enumerate}[label=(\arabic*)]
+\item $\varphi$ es llamado el \emph{homomorfismo de Frobenius}.
+\item Si $R$ es un cuerpo finito, entonces $\Ker(\varphi) = \{0\}$ (el núcleo es un ideal propio de un cuerpo), de modo que $\varphi$ es inyectiva. Como $R$ es finito, $\varphi$ es también sobreyectiva, y entonces $\varphi$ es un automorfismo.
+\item $\varphi^{n} : R \to R$, $x \mapsto x^{p^{n}}$, es un homomorfismo para todo $n \in \N$, por ser composición de homomorfismos. En particular,
+\[
+(a + b)^{p^{n}} = a^{p^{n}} + b^{p^{n}} \quad \text{para todos } a, b \in R,\ n \in \N.
+\]
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Pequeño teorema de Fermat}
+Sea $p$ primo. Entonces $n^{p} \equiv n \pmod{p}$ para todo $n > 0$.
+\end{namedres}
+\begin{proof}
+Procedemos por inducción sobre $n$. El caso base $n = 1$ es trivial, pues $1^{p} = 1$. Ahora, suponga como hipótesis inductiva que $n^{p} \equiv n \pmod{p}$ para algún $n \in \N$. El anillo $\Z_{p}$ es su propio anillo primo, así que $\Char(\Z_{p}) = p$. Usando el homomorfismo de Frobenius en $\Z_{p}$ y la hipótesis inductiva, tenemos que
+\[
+(n + 1)^{p} = n^{p} + 1^{p} = n + 1 \pmod{p},
+\]
+lo que prueba el paso inductivo. Concluya el resultado.
+\end{proof}
+
+% =============================================================================
+\section{El cuerpo de fracciones}
+% =============================================================================
+
+\subsection{La construcción}
+
+\begin{namedstd}{Definición}{La relación de proporcionalidad en $D \times (D \setminus \{0\})$}
+Sea $D$ un dominio entero y sea $S = D \times (D \setminus \{0\})$. Defina la relación $\sim$ en $S$ tal que
+\[
+(a, b) \sim (c, d) \iff a \cdot d = b \cdot c.
+\]
+Usamos la notación $\frac{a}{b} := [(a, b)]$ para la clase de equivalencia de $(a, b)$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{La relación de proporcionalidad es de equivalencia}
+La relación $\sim$ es una relación de equivalencia en $S$.
+\end{namedres}
+\begin{proof}
+La reflexividad y la simetría son inmediatas de la conmutatividad de $D$: $a \cdot b = b \cdot a$ da $(a,b) \sim (a,b)$, y si $a d = b c$, entonces $c b = d a$, es decir, $(c, d) \sim (a, b)$.
+
+Para la transitividad usamos que $D$ es un dominio entero. Suponga que $(a, b) \sim (c, d)$ y $(c, d) \sim (e, f)$, es decir, $a d = b c$ y $c f = d e$. Multiplicando la primera igualdad por $f$ y usando la segunda,
+\[
+a d f = b c f = b d e,
+\]
+y reordenando con la conmutatividad, $d (a f) = d (b e)$, es decir, $d (a f - b e) = 0$. Como $d \neq 0$ y $D$ no tiene divisores de cero, concluimos que $a f - b e = 0$, o sea $a f = b e$, que es exactamente $(a, b) \sim (e, f)$.
+\end{proof}
+
+\begin{namedstd}{Definición}{El cuerpo de fracciones y sus operaciones}
+Sea $F := \left\{ \frac{a}{b} :\ (a, b) \in S \right\}$. Note que si $x \in D \setminus \{0\}$, entonces $\frac{a}{b} = \frac{a \cdot x}{b \cdot x}$. Además, podemos definir operaciones en $F$ de la siguiente manera:
+\[
+\frac{a}{b} + \frac{c}{d} = \frac{a d + b c}{b d}, \qquad \frac{a}{b} \cdot \frac{c}{d} = \frac{a \cdot c}{b \cdot d}.
+\]
+Note que los denominadores $b d$ son no nulos porque $D$ es un dominio entero, que $\frac{0}{1}$ es el neutro de $+$ y que $\frac{1}{1}$ es el neutro de $\cdot$. La buena definición de estas operaciones (su independencia de los representantes) se verifica en la prueba del teorema siguiente.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{El cuerpo de fracciones es un cuerpo}
+$(F, +, \cdot, \frac{0}{1}, \frac{1}{1})$ es un anillo conmutativo y, más interesantemente, en realidad es un cuerpo.
+\end{namedres}
+\begin{proof}
+\textit{Buena definición de las operaciones.} Suponga que $\frac{a}{b} = \frac{a'}{b'}$ y $\frac{c}{d} = \frac{c'}{d'}$, es decir, $a b' = a' b$ y $c d' = c' d$. Para la suma hay que ver que $\frac{a d + b c}{b d} = \frac{a' d' + b' c'}{b' d'}$, o sea, que $(a d + b c) b' d' = (a' d' + b' c') b d$. Usando la conmutatividad y las dos relaciones,
+\[
+(a d + b c)\, b' d' = (a b')\, d d' + (c d')\, b b' = (a' b)\, d d' + (c' d)\, b b' = (a' d' + b' c')\, b d.
+\]
+Para el producto, $(a c)(b' d') = (a b')(c d') = (a' b)(c' d) = (a' c')(b d)$, es decir, $\frac{a c}{b d} = \frac{a' c'}{b' d'}$.
+
+\textit{$F$ es un anillo conmutativo.} Los denominadores $b d$ son no nulos, pues $D$ es un dominio entero. La asociatividad, la conmutatividad de ambas operaciones y la distributividad se verifican con representantes y se reducen a las propiedades correspondientes de $D$; el neutro aditivo es $\frac{0}{1}$, el inverso aditivo de $\frac{a}{b}$ es $\frac{-a}{b}$, y el neutro multiplicativo es $\frac{1}{1}$.
+
+\textit{$F$ es un cuerpo.} Note primero que $1 \neq 0$ en $D$ (si $1 = 0$, entonces $D = \{0\}$ y no habría denominadores disponibles), y entonces $\frac{1}{1} \neq \frac{0}{1}$ en $F$, pues $1 \cdot 1 \neq 0 \cdot 1$. Sea ahora $\frac{a}{b} \neq \frac{0}{1}$; esto significa que $a \cdot 1 \neq b \cdot 0$, es decir, $a \neq 0$. Entonces $\frac{b}{a} \in F$ (el denominador $a$ es no nulo) y
+\[
+\frac{a}{b} \cdot \frac{b}{a} = \frac{a b}{b a} = \frac{1}{1},
+\]
+pues $(a b) \cdot 1 = (b a) \cdot 1$. Es decir, todo elemento no nulo de $F$ es invertible, y $F$ es un cuerpo.
+\end{proof}
+
+\begin{namedstd}{Nota}{Ejemplos de cuerpos de fracciones}
+Escribimos $F = \Frac(D)$ para el \emph{cuerpo de fracciones} de $D$.
+\begin{itemize}
+\item $\Frac(\Z) \cong \Q$.
+\item Si $D$ es un cuerpo, entonces $\Frac(D) \cong D$.
+\item Si $D = \Bbbk[x_{1}, \dots, x_{n}]$ con $\Bbbk$ un cuerpo, entonces
+\[
+\Frac(D) = \Bbbk(x_{1}, \dots, x_{n}) = \left\{ \frac{p(x_{1}, \dots, x_{n})}{q(x_{1}, \dots, x_{n})} :\ q \neq 0 \right\},
+\]
+el cuerpo de funciones racionales en $n$ variables.
+\end{itemize}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{El dominio se sumerge en su cuerpo de fracciones}
+Podemos suponer que $D \subseteq \Frac(D)$, pues $i : D \to \Frac(D)$, $x \mapsto \frac{x}{1}$, es un homomorfismo inyectivo, por lo que $D$ se ``sumerge'' en $\Frac(D)$; esto es,
+\[
+D \cong \Imm(i) = \left\{ \frac{x}{1} :\ x \in D \right\} \subseteq \Frac(D).
+\]
+\end{namedstd}
+
+\subsection{La propiedad universal}
+
+\begin{namedres}{Teorema}{Propiedad universal del cuerpo de fracciones}
+Sea $D$ un dominio entero, $K$ un cuerpo y $f : D \to K$ un homomorfismo inyectivo. Entonces existe un único homomorfismo inyectivo $\tilde{f} : \Frac(D) \to K$ tal que
+\[
+\tilde{f}\left( \frac{x}{1} \right) = f(x) \quad \text{para todo } x \in D.
+\]
+De forma explícita,
+\[
+\tilde{f}\left( \frac{a}{b} \right) = \frac{f(a)}{f(b)} := f(a) \cdot f(b)^{-1} \quad \text{para todos } a, b \in D,\ b \neq 0.
+\]
+\end{namedres}
+\begin{proof}
+\textit{$\tilde{f}$ está bien definida.} Si $\frac{a}{b} = \frac{c}{d}$, entonces $a d = b c$, y aplicando $f$ obtenemos $f(a) \cdot f(d) = f(b) \cdot f(c)$. Note que $f(b) \neq 0$ y $f(d) \neq 0$, pues $b, d \neq 0$ y $f$ es inyectiva (su núcleo es trivial). Entonces, despejando en el cuerpo $K$, tenemos que
+\[
+\frac{f(a)}{f(b)} = \frac{f(c)}{f(d)} \in K \implies \tilde{f}\left( \frac{a}{b} \right) = \tilde{f}\left( \frac{c}{d} \right).
+\]
+Probar que $\tilde{f}$ es un homomorfismo inyectivo queda como ejercicio.
+
+\textit{Unicidad.} Suponga que $h : \Frac(D) \to K$ es un homomorfismo tal que $h\left( \frac{x}{1} \right) = f(x)$ para todo $x \in D$. Sea $b \neq 0$; como $\frac{b}{1} \cdot \frac{1}{b} = \frac{b}{b} = \frac{1}{1}$ y los homomorfismos preservan unidades, tenemos que $h\left( \frac{1}{b} \right) = h\left( \frac{b}{1} \right)^{-1} = f(b)^{-1}$. Entonces
+\[
+h\left( \frac{a}{b} \right) = h\left( \frac{a}{1} \cdot \frac{1}{b} \right) = h\left( \frac{a}{1} \right) \cdot h\left( \frac{1}{b} \right) = f(a) \cdot f(b)^{-1} = \frac{f(a)}{f(b)} = \tilde{f}\left( \frac{a}{b} \right),
+\]
+es decir, $h = \tilde{f}$.
+\end{proof}
+
+\begin{namedres}{Teorema}{El cuerpo primo como cuerpo de fracciones del anillo primo}
+Sea $\Bbbk$ un cuerpo.
+\begin{enumerate}[label=(\arabic*)]
+\item Si $R$ es el subanillo primo de $\Bbbk$ y $F$ es el subcuerpo primo de $\Bbbk$, entonces $F \cong \Frac(R)$.
+\item El subcuerpo primo de $\Bbbk$ es isomorfo a $\Q$ o a $\Z_{p}$ (también denotado $\F_{p}$), según $\Char(\Bbbk) = 0$ o $\Char(\Bbbk) = p > 0$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\textit{Parte 1.} Como todo subcuerpo de $\Bbbk$ es en particular un subanillo, el subanillo primo $R$ está contenido en el subcuerpo primo $F$, y entonces la inclusión $i : R \to F$, $x \mapsto x$, es un homomorfismo inyectivo de $R$ en el cuerpo $F$. Además, $R$ es un dominio entero, por ser subanillo de un cuerpo. Por la propiedad universal del cuerpo de fracciones, existe un homomorfismo inyectivo $\tilde{\imath} : \Frac(R) \to F$ con $\tilde{\imath}\left(\frac{a}{b}\right) = a b^{-1}$. Sea
+\[
+F_{0} = \Imm(\tilde{\imath}) = \{ a b^{-1} :\ a, b \in R,\ b \neq 0 \} \subseteq F.
+\]
+Como $\tilde{\imath}$ es un homomorfismo inyectivo desde un cuerpo, $F_{0} \cong \Frac(R)$ y $F_{0}$ es un subcuerpo de $\Bbbk$: es un subanillo (imagen de un homomorfismo), y el inverso de $a b^{-1} \neq 0$ es $b a^{-1} \in F_{0}$. Por la minimalidad del subcuerpo primo, $F \subseteq F_{0}$; y ya vimos que $F_{0} \subseteq F$. Concluimos que
+\[
+F = F_{0} \cong \Frac(R).
+\]
+
+\textit{Parte 2.} Por el teorema del subanillo primo, $R \cong \Z$ o $R \cong \Z_{n}$; y como $\Bbbk$ es un cuerpo, en particular un dominio entero, su característica es $0$ o un primo $p$. Si $\Char(\Bbbk) = 0$, entonces $R \cong \Z$ y, por la parte 1 (un isomorfismo de dominios se extiende a los cuerpos de fracciones vía la propiedad universal),
+\[
+F \cong \Frac(R) \cong \Frac(\Z) \cong \Q.
+\]
+Si $\Char(\Bbbk) = p$ primo, entonces $R \cong \Z_{p}$, que ya es un cuerpo (pues $p$ es primo), y el cuerpo de fracciones de un cuerpo es él mismo:
+\[
+F \cong \Frac(\Z_{p}) \cong \Z_{p} = \F_{p}. \qedhere
+\]
+\end{proof}
+
+% =============================================================================
+\section{Factorización de homomorfismos}
+% =============================================================================
+
+\subsection{El teorema de factorización}
+
+\begin{namedres}{Teorema}{Factorización de un homomorfismo por un cociente}
+Sean $R, S$ anillos e $I$ un $R$-ideal. Sea $f : R \to S$ un homomorfismo tal que $I \subseteq \Ker(f)$. Entonces existe un único homomorfismo $\bar{f} : R/I \to S$ tal que
+\[
+\bar{f}([x]) = f(x) \quad \text{para todo } x \in R.
+\]
+Equivalentemente, $\bar{f} \circ \pi_{I} = f$, es decir, el siguiente diagrama conmuta:
+\begin{center}
+\begin{tikzpicture}[>=Stealth, node distance=2.6cm]
+\node (R) {$R$};
+\node (S) [right=of R] {$S$};
+\node (Q) [below=1.7cm of R, xshift=1.3cm] {$R/I$};
+\draw[->] (R) -- node[above] {$f$} (S);
+\draw[->] (R) -- node[below left] {$\pi_{I}$} (Q);
+\draw[->, dashed] (Q) -- node[below right] {$\bar{f}$} (S);
+\end{tikzpicture}
+\end{center}
+\end{namedres}
+\begin{proof}
+\textit{$\bar{f}$ está bien definida.} Si $[x] = [y]$, entonces
+\[
+[x] = [y] \iff x - y \in I \subseteq \Ker(f) \implies f(x - y) = f(x) - f(y) = 0_{S} \implies f(x) = f(y),
+\]
+y por lo tanto $\bar{f}([x]) = \bar{f}([y])$.
+
+\textit{$\bar{f}$ es un homomorfismo.} Al igual que en el primer teorema del isomorfismo, esto se hereda directamente de $f$:
+\[
+\bar{f}([x] + [y]) = \bar{f}([x + y]) = f(x + y) = f(x) + f(y) = \bar{f}([x]) + \bar{f}([y]),
+\]
+y análogamente para el producto; además $\bar{f}([1]) = f(1) = 1_{S}$.
+
+\textit{Unicidad.} Si $g : R/I \to S$ satisface $g([x]) = f(x)$ para todo $x \in R$, entonces $g$ y $\bar{f}$ coinciden en todas las clases $[x]$, que son todos los elementos de $R/I$; entonces $g = \bar{f}$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Biyección entre homomorfismos que anulan $I$ y homomorfismos del cociente}
+Sean $R, S$ anillos e $I$ un $R$-ideal. La función $f \mapsto \bar{f}$ es una biyección
+\[
+\{ f \in \Hom(R, S) :\ f(I) = \{0\} \} \longrightarrow \Hom(R/I, S).
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{El único homomorfismo desde $\Z$}
+Si $f : \Z \to R$, con $R$ un anillo, es un homomorfismo, entonces $f(n) = n \cdot 1_{R}$; en particular, hay un único homomorfismo $\Z \to R$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Los homomorfismos de $\Z_{m}$ en $\Z_{n}$}
+Sean $m, n \in \Z^{+}$. ¿Cuáles son los elementos de $\Hom(\Z_{m}, \Z_{n})$? Por la biyección del teorema anterior, con $R = \Z$ e $I = (m)$,
+\[
+|\Hom(\Z/(m), \Z_{n})| = \Big| \underbrace{\{ f : \Z \to \Z_{n}\ \text{homomorfismo} :\ f((m)) = \{[0]_{n}\} \}}_{A} \Big|.
+\]
+Usando el ejercicio anterior, si $f \in A$, entonces $f(x) = x \cdot [1]_{n} = [x]_{n}$; es decir, el único candidato es la reducción módulo $n$. Este candidato pertenece a $A$ si y solo si $f((m)) = \{[0]_{n}\}$, y como $(m)$ está generado por $m$, esto equivale a $f(m) = [0]_{n}$. Note que si $f(m) \neq [0]_{n}$, entonces $A = \emptyset$ y $|\Hom(\Z_{m}, \Z_{n})| = 0$. Por otro lado,
+\[
+f(m) = [0]_{n} \iff m \cdot [1]_{n} = [0]_{n} \iff [m]_{n} = [0]_{n} \iff n \mid m.
+\]
+En ese caso $|A| = 1$, de modo que $|\Hom(\Z_{m}, \Z_{n})| = 1$, y el único homomorfismo es
+\[
+x + (m) \mapsto x + (n), \qquad \text{es decir,} \qquad [x]_{m} \mapsto [x]_{n}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Extensión de homomorfismos al anillo de polinomios}
+Sean $A, B$ anillos conmutativos, $f \in \Hom(A, B)$ y $b \in B$. Entonces existe un único $\bar{f} \in \Hom(A[x], B)$ tal que
+\[
+\bar{f}\left( \sum_{i=0}^{n} a_{i} x^{i} \right) = \sum_{i=0}^{n} f(a_{i})\, b^{i}.
+\]
+\end{namedres}
+\begin{proof}
+Ejercicio.
+\end{proof}
+
+\subsection{Cocientes por ideales primos y maximales}
+
+\begin{namedres}{Teorema}{Primo equivale a cociente dominio; maximal equivale a cociente cuerpo}
+Sea $R$ un anillo conmutativo e $I$ un $R$-ideal. Entonces:
+\begin{enumerate}[label=(\alph*)]
+\item $I$ es primo $\iff$ $R/I$ es un dominio entero;
+\item $I$ es maximal $\iff$ $R/I$ es un cuerpo.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\textit{(a), ``$\Leftarrow$''.} Suponga que $R/I$ es un dominio entero, y sean $a, b \in R$ tales que $a b \in I$. Entonces
+\[
+(a + I)(b + I) = a b + I = I,
+\]
+es decir, el producto de las clases es el cero de $R/I$. Como $R/I$ es un dominio entero, no posee divisores de cero, y entonces alguno de los dos factores debe ser cero: $a + I = I$ o $b + I = I$. Es decir, $a \in I$ o $b \in I$, de donde concluimos que $I$ es primo.
+
+\textit{(a), ``$\Rightarrow$''.} Suponga que $I$ es primo. Note primero que $R/I$ es conmutativo, por serlo $R$. Sean $a + I, b + I \in R/I$ tales que
+\[
+(a + I)(b + I) = a b + I = I,
+\]
+es decir, $a b \in I$. Por la primalidad de $I$, tenemos que $a \in I$ o $b \in I$; suponiendo sin pérdida de generalidad que $a \in I$, obtenemos $a + I = I$. Es decir, si un producto de clases es cero, alguno de los factores es cero, de modo que $R/I$ no posee divisores de cero y es un dominio entero.
+
+\textit{(b), ``$\Rightarrow$''.} Suponga que $I$ es maximal. Como $I \neq R$, tenemos que $1 \notin I$, y entonces $[1] \neq [0]$ en $R/I$. Sea $x \in R$ tal que $[x] \neq [0]$. Por el teorema de correspondencia, los ideales de $R/I$ corresponden a los ideales de $R$ que contienen a $I$; por la maximalidad de $I$, estos son solo $I$ y $R$, así que los únicos $R/I$-ideales son $I/I = \{[0]\}$ y $R/I$. Considere el ideal $\langle [x] \rangle$: como $[x] \neq [0]$, tenemos que $\langle [x] \rangle \neq \{[0]\}$, y entonces $\langle [x] \rangle = R/I$. Como $[1] \in R/I = \langle [x] \rangle = \{ [y][x] :\ [y] \in R/I \}$, existe $[y] \in R/I$ tal que $[y][x] = [1]$, es decir, $[x]$ es una unidad. Concluimos que todo elemento no nulo de $R/I$ es invertible y, junto con la conmutatividad y $[1] \neq [0]$, que $R/I$ es un cuerpo.
+
+\textit{(b), ``$\Leftarrow$''.} Suponga que $R/I$ es un cuerpo. Entonces $[1] \neq [0]$ en $R/I$, es decir, $1 \notin I$, de modo que $I \neq R$. Sea ahora $J$ un ideal tal que $I \subseteq J$ y $J \neq I$; hay que ver que $J = R$. Por el teorema de correspondencia, $J/I$ es un ideal de $R/I$, y como existe $x \in J \setminus I$, tenemos que $[x] \in J/I$ con $[x] \neq [0]$, es decir, $J/I \neq \{[0]\}$. Pero un cuerpo solo posee los dos ideales triviales, así que $J/I = R/I$. Como la correspondencia $J \mapsto J/I$ es una biyección entre los ideales de $R$ que contienen a $I$ y los ideales de $R/I$, de $J/I = R/I$ concluimos que $J = R$. Es decir, $I$ es maximal.
+\end{proof}
+
+\appendix
+% =============================================================================
+\section{Anexo: caracterizaciones y teoremas clave}
+% =============================================================================
+
+A lo largo de este parcial, varios conceptos clave admiten \emph{múltiples caracterizaciones equivalentes} o vienen empaquetados en teoremas con hipótesis precisas que conviene tener juntas a la vista. Este anexo recopila esos paquetes en cajas autocontenidas, una por concepto. Cada caja indica además dónde se prueba cada afirmación dentro del documento.
+
+\anexogroup{Estructuras y sus jerarquías}
+
+\begin{equivbox}{blue}{La jerarquía de estructuras de anillo}
+Cadena de implicaciones (ninguna recíproca vale en general):
+\[
+\text{cuerpo} \implies \text{dominio entero} \implies \text{anillo conmutativo} \implies \text{anillo}.
+\]
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Anillo:} $(R,+)$ grupo abeliano, $\cdot$ asociativo con neutro $1$, distributividad por ambos lados. \hfill\textit{Definición 1.1.1.}
+\item \textbf{Dominio entero:} conmutativo y sin divisores de cero. \hfill\textit{Definición 1.3.4.}
+\item \textbf{Cuerpo:} conmutativo, $1 \neq 0$ y todo $a \neq 0$ es invertible. \hfill\textit{Definición 1.2.1.}
+\item \textbf{Dominio entero finito $\Rightarrow$ cuerpo} (vía $\mu(x) = ax$ inyectiva $\Rightarrow$ sobreyectiva). \hfill\textit{Lema 1.3.8.}
+\item \textbf{Subanillo de un cuerpo $\Rightarrow$ dominio entero.} \hfill\textit{Lema 1.3.6.}
+\item \textbf{Contraejemplos de las recíprocas:} $\Z$ es dominio entero y no cuerpo; $\Z_{4}$ es conmutativo con divisores de cero; $M_{n}(\R)$ no es conmutativo.
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{teal}{Criterios de subanillo y de ideal}
+Sea $R$ un anillo y $S, I \subseteq R$.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Subanillo:} $S$ es subanillo $\iff$ $1 \in S$ y $a - b,\ a \cdot b \in S$ para todos $a, b \in S$. \hfill\textit{Nota 1.2.4.}
+\item \textbf{Ideal (izquierdo):} $I \neq \emptyset$, $x + y \in I$ y $r x \in I$ para $x, y \in I$, $r \in R$. \hfill\textit{Definición 3.1.1.}
+\item Todo ideal contiene a $0$; si $1 \in I$ (o una unidad), entonces $I = R$. \hfill\textit{Nota 3.1.2.}
+\item Un cuerpo solo tiene los ideales triviales $\{0\}$ y $F$. \hfill\textit{Ejemplo 3.1.3.}
+\item El núcleo de un homomorfismo es un ideal; la imagen inversa de un ideal es un ideal (la imagen directa no, en general). \hfill\textit{Nota 7.2.2, Lema 7.3.1.}
+\item \textbf{Ideal generado:} $(U) = \{ \sum_{i=1}^{n} a_{i} u_{i} :\ a_{i} \in R,\ u_{i} \in U \}$. \hfill\textit{Teorema 3.2.5.}
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{Ideales primos y maximales}
+
+\begin{equivbox}{violet}{Caracterizaciones de primo y maximal}
+Sea $R$ un anillo conmutativo e $I$ un $R$-ideal.
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{$I$ primo} $\iff$ ($xy \in I \Rightarrow x \in I$ o $y \in I$) $\iff$ $R/I$ es dominio entero $\iff$ ($J_{1} J_{2} \subseteq I \Rightarrow J_{1} \subseteq I$ o $J_{2} \subseteq I$). \hfill\textit{Def. 4.1.1, Teo. 10.2.1(a), Prop. 4.1.3.}
+\item \textbf{$I$ maximal} $\iff$ (no hay ideales entre $I$ y $R$) $\iff$ $R/I$ es cuerpo. \hfill\textit{Def. 3.3.1, Teo. 10.2.1(b).}
+\item \textbf{Maximal $\Rightarrow$ primo} (recíproca falsa: $\{0\} \subseteq \Z$ es primo, no maximal). \hfill\textit{Proposición 4.2.1.}
+\item $\{0\}$ primo $\iff$ $R$ dominio entero. \hfill\textit{Proposición 4.1.4.}
+\item \textbf{Krull:} todo ideal propio está contenido en un maximal; $\mSpec(R) \neq \emptyset$ si $R \neq \{0\}$. \hfill\textit{Teorema 3.3.4, Corolario 3.3.5.}
+\item $\bigcup_{\mathfrak{m}\ \text{maximal}} \mathfrak{m} = R \setminus R^{\times}$. \hfill\textit{Corolario 3.3.5.}
+\item $\Nil(R) = \bigcap_{I \text{ primo}} I$; $\Rad(R) = \bigcap_{\mathfrak{m} \text{ maximal}} \mathfrak{m}$, y $x \in \Rad(R) \iff 1 - x y \in R^{\times}\ \forall y$. \hfill\textit{Teo. 4.2.3, Def. 3.3.8, Ej. 3.3.9.}
+\end{enumerate}
+\textbf{Ejemplos:} $\Spec(\Z) = \{(0)\} \cup \{p\Z : p \text{ primo}\}$, $\mSpec(\Z) = \{p\Z\}$; en un cuerpo ambos son $\{\{0\}\}$; $\mSpec(\Z_{4}) = \{(2)\}$.
+\end{equivbox}
+
+\anexogroup{Cocientes y homomorfismos}
+
+\begin{equivbox}{purple}{El paquete completo del anillo cociente}
+Sea $R$ un anillo e $I$ un $R$-ideal.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $a \sim_{I} b \iff a - b \in I$; las clases son $[a]_{I} = a + I$; operaciones $(a+I) + (b+I) = (a+b)+I$ y $(a+I)(b+I) = ab+I$. \hfill\textit{§6.1.}
+\item La proyección $\pi_{I} : R \to R/I$ es un homomorfismo sobreyectivo con $\Ker(\pi_{I}) = I$. \hfill\textit{Proposición 6.1.7.}
+\item \textbf{Correspondencia:} $\{J \text{ ideal} : J \supseteq I\} \leftrightarrow \{\text{ideales de } R/I\}$, $J \mapsto J/I$, preservando inclusiones (ídem subanillos). \hfill\textit{Teorema 6.3.2.}
+\item \textbf{Factorización:} si $f : R \to S$ es homomorfismo e $I \subseteq \Ker(f)$, existe único $\bar{f} : R/I \to S$ con $\bar{f} \circ \pi_{I} = f$. \hfill\textit{Teorema 10.1.1.}
+\item $\{f \in \Hom(R,S) : f(I) = \{0\}\} \leftrightarrow \Hom(R/I, S)$ es biyección. \hfill\textit{Teorema 10.1.2.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{orange!85!black}{Los tres teoremas de isomorfismo}
+Sean $R, S$ anillos.
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{Primero:} si $f : R \to S$ es homomorfismo, entonces $R/\Ker(f) \cong \Imm(f)$ vía $[a] \mapsto f(a)$. \hfill\textit{Teorema 7.4.1.}
+\item \textbf{Segundo:} si $S \leq R$ subanillo e $I$ ideal, entonces $S \cap I$ es $S$-ideal, $S + I$ es subanillo, $I$ es $(S+I)$-ideal y $S/(S \cap I) \cong (S+I)/I$. \hfill\textit{Teorema 7.4.4.}
+\item \textbf{Tercero:} si $I \subseteq J \subseteq R$ ideales, entonces $(R/I)/(J/I) \cong R/J$. \hfill\textit{Teorema 7.4.5.}
+\end{enumerate}
+\textbf{Aplicaciones tipo:} $(R \times S)/(R \times \{0\}) \cong S$; $(R \times S)/(I \times J) \cong R/I \times S/J$; $\R[x]/(x^{2}+1) \cong \C$; $\Z/(n) = \Z_{n}$; $R_{0} \cong \Z/\Ker(f_{R})$ para el subanillo primo. \hfill\textit{§7.4, §6.2, §8.2.}
+\end{equivbox}
+
+\anexogroup{Polinomios}
+
+\begin{equivbox}{brown!85!black}{Todo lo que hay que saber de $R[x]$}
+Sea $R$ un anillo conmutativo y $f, g, p, q \in R[x]$.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Grado:} $\deg(p+q) \leq \max\{\deg p, \deg q\}$; $\deg(pq) \leq \deg p + \deg q$, con igualdad si los coeficientes principales no son divisores de cero. \hfill\textit{Proposición 2.2.2.}
+\item \textbf{División (anillos):} $g \neq 0$ con coef.\ principal $b$ $\Rightarrow$ $b^{m} f = q g + r$, $\deg r < \deg g$, $m \leq \max\{0, \deg f - \deg g + 1\}$. \hfill\textit{Teorema 2.3.1.}
+\item \textbf{División (cuerpos):} $q, r$ existen y son únicos con $f = qg + r$, $\deg r < \deg g$. \hfill\textit{Teorema 2.3.4.}
+\item \textbf{Raíces:} $\alpha$ raíz de $p$ $\iff$ $(x - \alpha) \mid p$. \hfill\textit{Teorema 2.3.3.}
+\item $A$ dominio entero $\Rightarrow$ $A[x]$ dominio entero, $(A[x])^{\times} = A^{\times}$, y $p \neq 0$ de grado $n$ tiene a lo más $n$ raíces. \hfill\textit{Teorema 2.3.5.}
+\item $K$ cuerpo $\Rightarrow$ $K[x]$ es DIP; $\Z$ es DIP; $\Z[x]$ \emph{no} es DIP ($(2,x)$ no es principal). \hfill\textit{Teorema 3.2.9, Ejemplo 3.2.8.}
+\item \textbf{Cuidado:} el polinomio no es su función asociada: en $\Z_{3}[x]$, $p = x^{2}+1 \neq q = x^{3}+x^{2}+2x+1$ pero $\tilde{p} = \tilde{q}$. \hfill\textit{Ejemplo 2.2.5.}
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{Característica y cuerpos de fracciones}
+
+\begin{equivbox}{red!75!black}{Subanillo primo, característica y Frobenius}
+Sea $R$ un anillo con subanillo primo $R_{0}$.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $R_{0} = \Imm(n \mapsto n \cdot 1_{R}) \cong \Z$ o $\Z_{n}$; $\Char(R) = 0$ o $n$ respectivamente. \hfill\textit{Teorema 8.2.2.}
+\item $D$ dominio entero $\Rightarrow$ $\Char(D) \in \{0\} \cup \{p :\ p \text{ primo}\}$. \hfill\textit{Teorema 8.2.2(2).}
+\item Cuerpo $\Bbbk$: su cuerpo primo es $\Frac(R_{0})$, isomorfo a $\Q$ (si $\Char \Bbbk = 0$) o a $\F_{p} = \Z_{p}$ (si $\Char \Bbbk = p$). \hfill\textit{Teorema 9.2.2.}
+\item \textbf{Frobenius:} $\Char(R) = p$ primo $\Rightarrow$ $x \mapsto x^{p}$ es homomorfismo: $(x+y)^{p} = x^{p} + y^{p}$; automorfismo si $R$ es cuerpo finito; iterando, $(x+y)^{p^{n}} = x^{p^{n}} + y^{p^{n}}$. \hfill\textit{Teorema 8.3.1, Nota 8.3.2.}
+\item \textbf{Fermat:} $p$ primo $\Rightarrow$ $n^{p} \equiv n \pmod{p}$. \hfill\textit{Teorema 8.3.3.}
+\end{itemize}
+\end{equivbox}
+
+\begin{equivbox}{olive!80!black}{El cuerpo de fracciones y su propiedad universal}
+Sea $D$ un dominio entero.
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item \textbf{Construcción:} clases $\frac{a}{b}$ de $(a,b) \in D \times (D \setminus \{0\})$ bajo $(a,b) \sim (c,d) \iff ad = bc$; suma $\frac{a}{b} + \frac{c}{d} = \frac{ad+bc}{bd}$, producto $\frac{ac}{bd}$. \hfill\textit{§9.1.}
+\item $\Frac(D)$ es un cuerpo y $D \hookrightarrow \Frac(D)$ vía $x \mapsto \frac{x}{1}$. \hfill\textit{Teorema 9.1.4, Nota 9.1.6.}
+\item \textbf{Propiedad universal:} todo homomorfismo inyectivo $f : D \to K$ con $K$ cuerpo se extiende de manera única a $\tilde{f} : \Frac(D) \to K$, $\tilde{f}(\frac{a}{b}) = f(a) f(b)^{-1}$. \hfill\textit{Teorema 9.2.1.}
+\item \textbf{Ejemplos:} $\Frac(\Z) \cong \Q$; $\Frac(D) \cong D$ si $D$ es cuerpo; $\Frac(\Bbbk[x_{1},\dots,x_{n}]) = \Bbbk(x_{1},\dots,x_{n})$. \hfill\textit{Nota 9.1.5.}
+\end{itemize}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: contraejemplos canónicos}
+% =============================================================================
+
+Esta tabla recopila los contraejemplos más útiles para el examen --- cada uno responde a una pregunta del estilo ``¿es necesariamente \textit{X}?'' con \textit{no, este anillo/ideal/función cumple A pero no B}.
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.30\textwidth} p{0.32\textwidth} p{0.30\textwidth}}
+\hline
+\textbf{Propiedad afirmativa} & \textbf{Contraejemplo a la implicación} & \textbf{Comentario / referencia} \\
+\hline
+\endhead
+
+Todo anillo es conmutativo & $M_{n}(R)$ con $n > 1$: el producto de matrices no conmuta. & Ejemplo 1.1.5. \\
+\hline
+Producto de dominios enteros $\Rightarrow$ dominio entero & $(1,0) \cdot (0,1) = (0,0)$ en $\R^{2}$: factores no nulos con producto nulo. & $\R$ no tiene divisores de cero, $\R \times \R$ sí (Ejemplo 5.1.3). \\
+\hline
+Todo cociente de un dominio entero es dominio entero & $\Z[x]/(x^{2})$: $[3x] \cdot [5x] = [0]$ con ambos factores no nulos. & $(x^{2})$ no es primo (Ejemplo 6.2.2). \\
+\hline
+Ideal por la izquierda $\Rightarrow$ ideal & Columnas $\begin{pmatrix} a & 0 \\ b & 0 \end{pmatrix}$ en $M_{2}(\R)$: absorbe por la izquierda, no por la derecha. & Solo en anillos no conmutativos (Ejemplo 3.1.6). \\
+\hline
+Todo ideal es principal & $(2, x) \subseteq \Z[x]$ no es principal. & $\Z[x]$ no es DIP (Ejemplo 3.2.8); $K[x]$ sí lo es si $K$ es cuerpo. \\
+\hline
+Ideal primo $\Rightarrow$ maximal & $\{0\} \subseteq \Z$ es primo ($\Z$ es dominio) pero $\{0\} \subsetneq 2\Z \subsetneq \Z$. & Maximal $\Rightarrow$ primo sí vale (Proposición 4.2.1). \\
+\hline
+$\langle x^{2} - 1 \rangle$ es primo en $\R[x]$ & $(x-1)(x+1) \in \langle x^{2}-1 \rangle$, pero ninguno de los factores pertenece. & Producto de no-elementos cae en el ideal (Ejemplo 4.2.2). \\
+\hline
+Polinomios iguales $\iff$ funciones iguales & En $\Z_{3}[x]$: $p = x^{2}+1 \neq q = x^{3}+x^{2}+2x+1$ pero $\tilde{p} = \tilde{q}$. & Sobre anillos finitos la función no determina el polinomio (Ejemplo 2.2.5). \\
+\hline
+$\deg(pq) = \deg(p) + \deg(q)$ siempre & En $\Z_{4}[x]$: $(2x)(2x) = 4x^{2} = 0$, grado $-\infty < 2$. & Falla si los coeficientes principales son divisores de cero (Proposición 2.2.2). \\
+\hline
+Isomorfismo de grupos aditivos $\Rightarrow$ isomorfismo de anillos & $(a,b) \mapsto a + ib$ de $\R \times \R$ en $\C$: aditivo biyectivo, no multiplicativo. & $\C$ es dominio entero y $\R^{2}$ no (Ejemplo 7.2.7). \\
+\hline
+Todos los cuerpos ``parecidos'' son isomorfos & $\Q(i) \not\cong \Q$: en $\Q(i)$ la ecuación $t^{2} + 1 = 0$ tiene solución, en $\Q$ no. & Las soluciones de ecuaciones son invariantes (Ejemplo 7.2.8). \\
+\hline
+La imagen de un ideal es un ideal & $\varphi : \Z \to \Q$ inclusión: $\varphi(2\Z) = 2\Z$ no es ideal de $\Q$ (un cuerpo solo tiene ideales triviales). & Solo la imagen \emph{inversa} preserva ideales (Nota 7.3.2). \\
+\hline
+$I^{ec} = I$ para extensión-contracción & $\varphi : \Z \to \Q$, $I = n\Z$: $I^{e} = \Q$ y $I^{ec} = \Z \supsetneq n\Z$. & Solo valen $I \subseteq I^{ec}$ y $I^{e} = I^{ece}$ (Ejemplo 7.3.5). \\
+\hline
+$\Hom(\Z_{m}, \Z_{n}) \neq \emptyset$ siempre & $|\Hom(\Z_{m}, \Z_{n})| = 0$ si $n \nmid m$ (y $= 1$ si $n \mid m$). & La condición $f(m) = [0]_{n}$ fuerza $n \mid m$ (Ejemplo 10.1.4). \\
+\hline
+Todo anillo tiene $1 \neq 0$ & El anillo trivial $R = \{0\}$: aquí $0 = 1$ y $\mSpec(R) = \emptyset$. & Por eso los teoremas piden $R \neq \{0\}$ (Nota 1.1.4). \\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+\newpage
+% =============================================================================
+\section{Anexo: cocientes, espectros y homomorfismos en un vistazo}
+% =============================================================================
+
+Mapa rápido para las preguntas de cálculo: qué es cada cociente, cuántos homomorfismos hay y cómo se ven los espectros de los anillos del curso.
+
+\medskip
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.28\textwidth} p{0.32\textwidth} p{0.30\textwidth}}
+\hline
+\textbf{Cociente} & \textbf{Descripción / isomorfismo} & \textbf{Observaciones} \\
+\hline
+\endhead
+
+$\Z/(n)$ & $\Z_{n}$ & Cuerpo $\iff$ $n$ primo (Ejemplo 1.3.9). \\
+\hline
+$\Z[x]/(x^{2})$ & $\{ [a + bx] :\ a, b \in \Z \}$, forma normal única & Divisores de cero $\{[bx] : b \neq 0\}$; unidades $\{[\pm 1 + bx]\}$ (Ejemplo 6.2.2). \\
+\hline
+$\R[x]/(x^{2}+1)$ & $\cong \C$, vía $a + ib \mapsto [a + bx]$ & $\alpha = [x]$ cumple $\alpha^{2} = [-1]$ (Ejemplos 6.2.5 y 7.1.4). \\
+\hline
+$\Z[i]/(1+i)$ & $\{[0], [1]\} \cong \Z_{2}$ & Ejercicio (Ejemplo 6.2.4). \\
+\hline
+$(R \times S)/(R \times \{0\})$ & $\cong S$ & Primer teorema del isomorfismo con la proyección (Ejemplo 7.4.2). \\
+\hline
+$(R \times S)/(I \times J)$ & $\cong R/I \times S/J$ & $(r,s) \mapsto (r+I, s+J)$ (Ejemplo 7.4.3). \\
+\hline
+$(R/I)/(J/I)$ & $\cong R/J$ (si $I \subseteq J$) & Tercer teorema del isomorfismo (Teorema 7.4.5). \\
+\hline
+$R/\Ker(f)$ & $\cong \Imm(f)$ & Primer teorema del isomorfismo (Teorema 7.4.1). \\
+\hline
+\end{longtable}
+
+\begin{longtable}{p{0.28\textwidth} p{0.62\textwidth}}
+\hline
+\textbf{Conjunto} & \textbf{Valor} \\
+\hline
+\endhead
+
+$\Hom(\Z, R)$ & $\{ n \mapsto n \cdot 1_{R} \}$: exactamente un elemento (Ejercicio 10.1.3). \\
+\hline
+$\Hom(\Z_{m}, \Z_{n})$ & Un elemento ($[x]_{m} \mapsto [x]_{n}$) si $n \mid m$; vacío si $n \nmid m$ (Ejemplo 10.1.4). \\
+\hline
+$\Aut(\Z)$ & $\{ \mathrm{id}_{\Z} \}$ (Ejemplo 7.2.9). \\
+\hline
+$\Z^{\times}$, $\Z_{n}^{\times}$, $F^{\times}$ & $\{\pm 1\}$; $\{[k] : \mcd(k,n) = 1\}$; $F \setminus \{0\}$ (§1.3). \\
+\hline
+$\left( \prod_{i} R_{i} \right)^{\times}$ & $\prod_{i} R_{i}^{\times}$ (Nota 5.1.4). \\
+\hline
+$(A[x])^{\times}$ & $A^{\times}$, si $A$ es dominio entero (Teorema 2.3.5). \\
+\hline
+$\Spec(\Z)$, $\mSpec(\Z)$ & $\{(0)\} \cup \{p\Z\}$ y $\{p\Z :\ p \text{ primo}\}$ (Ejemplo 4.2.2). \\
+\hline
+$\Spec(K)$, $K$ cuerpo & $\mSpec(K) = \Spec(K) = \{\{0\}\}$ (Ejemplo 4.2.2). \\
+\hline
+$\mSpec(\Z_{4})$ & $\{(2)\}$; ideales de $\Z_{4}$: $(0) \subsetneq (2) \subsetneq (1) = \Z_{4}$ (Ejemplo 3.3.2). \\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\begin{equivbox}{olive!80!black}{Decidir si un cociente $R/I$ es dominio entero o cuerpo}
+Estrategia en dos pasos:
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Traducir la pregunta: $R/I$ dominio entero $\iff$ $I$ primo; $R/I$ cuerpo $\iff$ $I$ maximal. \hfill\textit{Teorema 10.2.1.}
+\item Decidir primalidad/maximalidad en $R$: en $\Z$, $(n)$ es primo $\iff$ maximal $\iff$ $n$ primo (o $n = 0$, solo primo); en $K[x]$ (DIP), factorizar el generador: si el generador factoriza como $x^{2}-1 = (x-1)(x+1)$, el ideal no es primo.
+\item Verificación directa alternativa: buscar divisores de cero explícitos en el cociente (e.g., $[x]^{2} = [0]$ en $\Z[x]/(x^{2})$) o exhibir inversos.
+\end{itemize}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: estrategias de demostración}
+% =============================================================================
+
+Patrones meta de demostración que recurren a lo largo de este parcial. Cuando un problema de examen pida ``muestre que \dots'', revise estos patrones antes de empezar a escribir.
+
+\newtcolorbox{strategybox}[1]{%
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=blue!50!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#1},
+  arc=3pt,
+  boxrule=0.6pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt,
+}
+
+\begin{strategybox}{1.\ Para probar que un subconjunto es un ideal (o subanillo)}
+\textbf{Patrón:} \textit{verifique la lista mínima; o exhiba el conjunto como núcleo, imagen inversa o generado.}
+\begin{itemize}[leftmargin=1.5em]
+\item Lista mínima ideal: no vacío ($0 \in I$), cerrado bajo $+$, absorbe productos por $R$. Subanillo: $1 \in S$, cerrado bajo resta y producto.
+\item Núcleos: si logra escribir $I = \Ker(f)$ para un homomorfismo $f$, ya es ideal (Nota 7.2.2). Ejemplo: los polinomios con término constante cero son $\Ker(\varphi_{0})$.
+\item Imagen inversa: $\varphi^{-1}(J)$ es ideal si $J$ lo es (Lema 7.3.1); útil para contracciones.
+\item Generados: $(U)$ siempre es ideal, y sus elementos son las combinaciones $\sum a_{i} u_{i}$ (Teorema 3.2.5).
+\end{itemize}
+\textbf{Apariciones:} ideales de ejemplos (§3.1), nilradical, núcleos (§7.2), Krull (§3.3).
+\end{strategybox}
+
+\begin{strategybox}{2.\ Para probar igualdades de ideales: doble contención con presupuesto}
+\textbf{Patrón:} \textit{una contención suele ser absorción directa; la otra requiere producir el generador como combinación.}
+\begin{itemize}[leftmargin=1.5em]
+\item $(6, 15) = (3)$: ``$\subseteq$'' porque $6, 15$ son múltiplos de $3$; ``$\supseteq$'' porque $3 = 6 \cdot (-2) + 15$ (identidad de Bézout).
+\item Para $I = (b)$ en $\Z$ (o $K[x]$): tome $b$ el elemento positivo mínimo (o de grado mínimo), divida cualquier $a \in I$ por $b$ y use la minimalidad para forzar resto cero (Teorema 3.2.9).
+\item Para el generado: $(U) \subseteq J$ apenas $U \subseteq J$ con $J$ ideal; la otra dirección es que las combinaciones forman un ideal.
+\end{itemize}
+\textbf{Apariciones:} $\Z$ y $K[x]$ DIP (§3.2), cálculos con generados (§3.2).
+\end{strategybox}
+
+\begin{strategybox}{3.\ Para construir homomorfismos desde un cociente: factorizar}
+\textbf{Patrón:} \textit{nunca defina a mano sobre las clases; defina sobre $R$ y verifique $I \subseteq \Ker$.}
+\begin{itemize}[leftmargin=1.5em]
+\item Para definir $g : R/I \to S$: encuentre $f : R \to S$ homomorfismo con $f(I) = \{0\}$ y aplique el teorema de factorización (Teorema 10.1.1); la buena definición viene gratis.
+\item Para contar $\Hom(R/I, S)$: cuente $\{f \in \Hom(R, S) : f(I) = 0\}$ usando la biyección (Teorema 10.1.2); así se calcula $\Hom(\Z_{m}, \Z_{n})$.
+\item Para polinomios: un homomorfismo $A[x] \to B$ queda determinado por $f : A \to B$ y la imagen $b$ de $x$ (Teorema 10.1.5).
+\end{itemize}
+\textbf{Apariciones:} $\Hom(\Z_{m}, \Z_{n})$ (§10.1), evaluación (§7.2), $\R[x]/(x^{2}+1) \cong \C$ (§7.1).
+\end{strategybox}
+
+\begin{strategybox}{4.\ Para probar isomorfismos: primer teorema del isomorfismo}
+\textbf{Patrón:} \textit{construya un homomorfismo sobreyectivo desde el anillo grande y calcule su núcleo.}
+\begin{itemize}[leftmargin=1.5em]
+\item Para $R/I \cong S$: busque $f : R \to S$ sobreyectivo con $\Ker(f) = I$; concluya con el Teorema 7.4.1.
+\item Verifique la sobreyectividad con formas normales (e.g., todo elemento de $\Z[x]/(x^{2})$ es $[a+bx]$).
+\item El cálculo del núcleo suele reducirse a una condición de divisibilidad ($\Ker(r_{n}) = (n\Z)[x]$) o de anulación ($\Ker(\varphi_{a}) = (x - a)\R[x]$).
+\end{itemize}
+\textbf{Apariciones:} $(R \times S)/(R \times \{0\}) \cong S$, subanillo primo $\cong \Z/(n)$ (§8.2), cocientes de §6.2.
+\end{strategybox}
+
+\begin{strategybox}{5.\ Para probar que dos anillos NO son isomorfos: invariantes}
+\textbf{Patrón:} \textit{encuentre una propiedad preservada por isomorfismos que uno tiene y el otro no.}
+\begin{itemize}[leftmargin=1.5em]
+\item Invariantes básicos: conmutatividad, cardinalidad, característica, ser cuerpo/dominio entero, cantidad de unidades, cantidad de divisores de cero (Lema 7.2.6).
+\item Solubilidad de ecuaciones: ``$\exists \alpha : \alpha^{2} = -1$'' distingue $\Q(i)$ de $\Q$ (Ejemplo 7.2.8); aplique $f$ a la ecuación y derive una contradicción en el otro anillo.
+\item Divisores de cero distinguen $\R \times \R$ de $\C$ (Ejemplo 7.2.7).
+\end{itemize}
+\textbf{Apariciones:} §7.2; útil en preguntas de ``clasifique salvo isomorfismo''.
+\end{strategybox}
+
+\begin{strategybox}{6.\ Para trabajar con grados: contabilidad de coeficientes principales}
+\textbf{Patrón:} \textit{toda prueba sobre $R[x]$ empieza fijando grados y coeficientes principales.}
+\begin{itemize}[leftmargin=1.5em]
+\item Para cancelar el término de grado máximo: reste $a \cdot x^{\deg f - \deg g} \cdot g$ multiplicado para emparejar coeficientes (división, Teorema 2.3.1); la conmutatividad garantiza $ba = ab$.
+\item Para unidades y divisores de cero en $A[x]$: aplique $\deg$ a las ecuaciones $pq = 1$ o $pq = 0$ y use $\deg(pq) = \deg p + \deg q$ en dominios enteros (Teorema 2.3.5).
+\item Recuerde las convenciones con $-\infty$: $\deg 0 = -\infty$ absorbe sumas.
+\item Inducción sobre $\deg f$: caso base $\deg f < \deg g$, paso inductivo con $h = bf - a x^{n-k} g$ de grado menor.
+\end{itemize}
+\textbf{Apariciones:} división (§2.3), $A[x]$ dominio (§2.3), $K[x]$ DIP (§3.2).
+\end{strategybox}
+
+\begin{strategybox}{7.\ Para existencia de ideales maximales: el patrón de Zorn}
+\textbf{Patrón:} \textit{poset de ideales propios, cadenas acotadas por la unión, y $1 \notin$ unión.}
+\begin{itemize}[leftmargin=1.5em]
+\item Defina $\Omega = \{J \text{ ideal propio} : I \subseteq J\}$; no es vacío porque $I \in \Omega$.
+\item La unión de una cadena de ideales es ideal: dos elementos cualesquiera viven en un mismo eslabón (comparabilidad).
+\item La unión es propia: si $1$ estuviera en la unión, estaría en un eslabón, que sería todo $R$.
+\item El elemento maximal de $\Omega$ es un ideal maximal: cualquier ideal propio intermedio pertenecería a $\Omega$.
+\end{itemize}
+\textbf{Apariciones:} Krull (§3.3), corolarios sobre $\mSpec$ y anillos locales (§3.3).
+\end{strategybox}
+
+\begin{strategybox}{8.\ Para característica $p$: el sueño del novato y Fermat}
+\textbf{Patrón:} \textit{en característica $p$, los coeficientes binomiales intermedios mueren.}
+\begin{itemize}[leftmargin=1.5em]
+\item $p \mid \binom{p}{i}$ para $0 < i < p$: $p$ divide a $p!$ pero no a $i!(p-i)!$ (factores $< p$).
+\item Entonces $(x + y)^{p} = x^{p} + y^{p}$, e iterando $(x+y)^{p^{n}} = x^{p^{n}} + y^{p^{n}}$ (Teorema 8.3.1, Nota 8.3.2).
+\item Fermat sale por inducción: $(n+1)^{p} = n^{p} + 1 \equiv n + 1 \pmod{p}$ (Teorema 8.3.3).
+\item En cuerpos finitos, inyectivo $+$ finito $\Rightarrow$ biyectivo: Frobenius es automorfismo; el mismo truco prueba que dominios enteros finitos son cuerpos (Lema 1.3.8).
+\end{itemize}
+\textbf{Apariciones:} §8.3; cálculos en $\Z_{p}$ y $\F_{p}$.
+\end{strategybox}
+
+\newpage
+% =============================================================================
+\section{Anexo: resumen de fórmulas}
+% =============================================================================
+
+\begin{equivbox}{orange}{Resumen rápido --- todos los hechos en un vistazo}
+Sea $R$ un anillo (conmutativo cuando haga falta), $I, J$ ideales, $K$ un cuerpo, $D$ un dominio entero.
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Reglas básicas:} $a \cdot 0 = 0$; $(-a)b = -(ab) = a(-b)$; $(-a)(-b) = ab$; $(-1)a = -a$; $0 = 1 \Rightarrow R = \{0\}$.
+\item \textbf{Unidades:} $U_{R} = R^{\times}$ es grupo; unidades no son divisores de cero; en $\Z_{n}$: $[k]$ unidad $\iff \mcd(k,n) = 1$, si no, divisor de cero.
+\item \textbf{Cancelación:} $a \neq 0$ no divisor de cero y $ax = ay$ $\Rightarrow$ $x = y$.
+\item \textbf{Dominio finito:} dominio entero finito $\Rightarrow$ cuerpo; subanillo de cuerpo $\Rightarrow$ dominio entero.
+\item \textbf{Ideales:} $0 \in I$; $1 \in I \Rightarrow I = R$; $I + J$, $I \cap J$, $IJ$ ideales; $IJ \subseteq I \cap J$; $(U) = \{\sum a_{i} u_{i}\}$; $(a) = aR$.
+\item \textbf{DIP:} $\Z$ y $K[x]$ son DIP; $\Z[x]$ no ($(2,x)$).
+\item \textbf{Primo:} $xy \in I \Rightarrow x \in I \lor y \in I$ $\iff$ $R/I$ dominio entero. \textbf{Maximal:} sin ideales intermedios $\iff$ $R/I$ cuerpo. Maximal $\Rightarrow$ primo.
+\item \textbf{Krull:} ideal propio $\subseteq$ maximal; $\bigcup \mathfrak{m} = R \setminus R^{\times}$; $\Nil(R) = \bigcap_{\text{primos}} I$; $\Rad(R) = \bigcap_{\text{maximales}} \mathfrak{m}$.
+\item \textbf{Cociente:} $[a] = a + I$; operaciones con representantes; $\pi_{I}$ sobre, $\Ker \pi_{I} = I$; correspondencia de ideales $J \supseteq I \leftrightarrow$ ideales de $R/I$.
+\item \textbf{Homomorfismos:} $\varphi(0) = 0$; $\varphi(1) = 1$ (exigido); preservan unidades; $\Ker$ es ideal; inyectivo $\iff \Ker = \{0\}$.
+\item \textbf{Isomorfismo 1:} $R/\Ker f \cong \Imm f$. \textbf{2:} $S/(S \cap I) \cong (S+I)/I$. \textbf{3:} $(R/I)/(J/I) \cong R/J$.
+\item \textbf{Factorización:} $I \subseteq \Ker f$ $\Rightarrow$ $\exists!\, \bar{f} : R/I \to S$ con $\bar{f} \circ \pi_{I} = f$.
+\item \textbf{Extensión/contracción:} $I \subseteq I^{ec}$; $J^{ce} \subseteq J$; $I^{e} = I^{ece}$; $J^{c} = J^{cec}$.
+\item \textbf{Polinomios:} $\deg(pq) \leq \deg p + \deg q$ (igualdad sin divisores de cero en los coef.\ principales); $b^{m} f = qg + r$; en $K[x]$: $f = qg + r$ únicos; $\alpha$ raíz $\iff (x - \alpha) \mid p$; a lo más $\deg p$ raíces en un dominio; $(A[x])^{\times} = A^{\times}$.
+\item \textbf{Producto:} operaciones componente a componente; $R^{\times} = \prod R_{i}^{\times}$; ideales de $R \times S$ son $I \times J$.
+\item \textbf{Característica:} $R_{0} \cong \Z$ o $\Z_{n}$; $\Char(D) \in \{0, p\}$; cuerpo primo $\cong \Q$ o $\F_{p}$; Frobenius $x \mapsto x^{p}$ homomorfismo; $(x+y)^{p^{n}} = x^{p^{n}} + y^{p^{n}}$; $n^{p} \equiv n \pmod p$.
+\item \textbf{Fracciones:} $\frac{a}{b} + \frac{c}{d} = \frac{ad+bc}{bd}$; $\frac{a}{b} \cdot \frac{c}{d} = \frac{ac}{bd}$; $D \hookrightarrow \Frac(D)$; propiedad universal: $f : D \hookrightarrow K$ se extiende único a $\Frac(D)$.
+\item \textbf{Cocientes útiles:} $\Z/(n) = \Z_{n}$; $\R[x]/(x^{2}+1) \cong \C$; $\Z[i]/(1+i) \cong \Z_{2}$; $(R \times S)/(I \times J) \cong R/I \times S/J$; $|\Hom(\Z_{m}, \Z_{n})| = 1$ si $n \mid m$, $0$ si no.
+\end{itemize}
+\end{equivbox}
+
+\end{document}

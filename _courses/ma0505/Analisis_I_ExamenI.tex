@@ -1,0 +1,2093 @@
+% =============================================================================
+%  Notas de Análisis I — MA0505
+%  Compilar con: pdflatex Analisis_I_ExamenI.tex (dos veces para que el TOC
+%  recoja las entradas de cada definición, teorema, lema, etc.)
+% =============================================================================
+\documentclass[11pt,twoside]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{XCharter}
+\usepackage[libertine,charter]{newtxmath}
+\usepackage[spanish,es-noshorthands]{babel}
+% Renombramos elementos al español manualmente (no requiere texlive-lang-spanish)
+\addto\captionsenglish{%
+  \renewcommand{\contentsname}{\'Indice}%
+  \renewcommand{\refname}{Referencias}%
+}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit}
+\usepackage{eso-pic}
+\usepackage{etoolbox}
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={Notas de Análisis I --- MA0505},
+  pdfauthor={Sebastián Fernández Rivera}
+}
+
+% Mostrar entradas hasta nivel "subsubsection" en el índice
+% (cada teorema/definición/etc. aparece en el TOC con nombre y página).
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+
+\renewcommand{\proofname}{\textbf{Prueba}}
+\allowdisplaybreaks
+
+% -----------------------------------------------------------------------------
+%  Contador y entornos para resultados (definiciones, teoremas, etc.)
+%  - Cada resultado se numera dentro de su subsection: 1.1.1, 1.1.2, ...
+%  - Cada resultado se agrega automáticamente al índice con su nombre y página.
+% -----------------------------------------------------------------------------
+\newcounter{result}[subsection]
+\renewcommand{\theresult}{\thesubsection.\arabic{result}}
+
+% Cuerpo en cursiva (para teoremas, proposiciones, lemas, corolarios)
+\newenvironment{namedres}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\itshape\ignorespaces%
+}{\par\medskip\upshape}
+
+% -----------------------------------------------------------------------------
+%  Caja coloreada para el resumen final de equivalencias.
+%  Uso: \begin{equivbox}{ColorXcolor}{Título}  ...  \end{equivbox}
+% -----------------------------------------------------------------------------
+\newtcolorbox{equivbox}[2]{%
+  enhanced,
+  breakable,
+  colback=#1!6!white,
+  colframe=#1!72!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title={#2},% braces protect commas in the title from tcolorbox key parser
+  arc=4pt,
+  boxrule=0.8pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  before skip=4pt, after skip=8pt,
+}
+
+% Encabezado compacto para los sub-grupos de un Anexo:
+% sustituye a \subsection*{...}\addcontentsline{...} cuando se desea poco
+% espacio entre el título del grupo y la caja siguiente.
+\newcommand{\anexogroup}[1]{%
+  \par\addvspace{0.7\baselineskip}%
+  \noindent{\bfseries\large #1}\par\nobreak
+  \addcontentsline{toc}{subsection}{#1}%
+  \vspace{4pt}\nopagebreak
+}
+
+% Cuerpo en redonda (para definiciones, ejemplos, ejercicios, notas, notación)
+\newenvironment{namedstd}[2]{%
+  \refstepcounter{result}%
+  \phantomsection%
+  \addcontentsline{toc}{subsubsection}{\protect\numberline{\theresult}#1 (\textit{#2})}%
+  \par\medskip\noindent\textbf{#1 \theresult\ (\textit{#2}).}%
+  \par\nopagebreak\noindent\ignorespaces%
+}{\par\medskip}
+
+% Subrayado HTML <u>...</u> -> \uline
+\newcommand{\hlu}[1]{\underline{#1}}
+
+% Operadores y abreviaturas
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Imm}{Im}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\mcd}{mcd}
+\DeclareMathOperator{\MCD}{MCD}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+
+% =============================================================================
+%  Cabecera y pie de página (fancyhdr)
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{MA0505 --- An\'alisis I, I Parcial}}
+\fancyfoot[C]{\small Página \thepage{} de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% =============================================================================
+%  Tabs de color en el borde derecho (índice rápido por sección)
+% =============================================================================
+\definecolor{sec1col}{HTML}{1F77B4}   % Repaso
+\definecolor{sec2col}{HTML}{2CA02C}   % Espacios métricos
+\definecolor{sec3col}{HTML}{17BECF}   % Topología básica
+\definecolor{sec4col}{HTML}{9467BD}   % Continuidad
+\definecolor{sec5col}{HTML}{FF7F0E}   % Compacidad
+\definecolor{sec6col}{HTML}{8C564B}   % Completitud
+\definecolor{sec7col}{HTML}{E377C2}   % Arzelà-Ascoli
+\definecolor{sec8col}{HTML}{BCBD22}   % Conexidad
+\definecolor{sec9col}{HTML}{D62728}   % Baire
+\definecolor{sec10col}{HTML}{555555}  % Anexo
+
+\newcounter{thumbsec}
+\pretocmd{\section}{\stepcounter{thumbsec}}{}{}
+
+% Bandera para evitar que los thumb-tabs aparezcan en la portada y el índice.
+% Se activa explícitamente en el cuerpo, justo después del \tableofcontents.
+\newif\ifdrawthumb
+\drawthumbfalse
+
+\newcommand{\drawthumbtab}{%
+  \ifdrawthumb%
+  \ifnum\value{thumbsec}>0%
+    \ifnum\value{thumbsec}<10%
+      \begin{tikzpicture}[remember picture, overlay]%
+        \pgfmathsetmacro{\toppadcm}{4.0}%
+        \pgfmathsetmacro{\tabHcm}{1.6}%
+        \pgfmathsetmacro{\ypos}{-\toppadcm - (\value{thumbsec} - 1) * \tabHcm}%
+        \ifodd\value{page}%
+          % Páginas impares (recto) --- tab en el borde derecho.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north east)
+            rectangle ++(-0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=-0.35cm, yshift=\ypos cm - 0.6cm]current page.north east)
+            {\arabic{thumbsec}};
+        \else%
+          % Páginas pares (verso) --- tab en el borde izquierdo.
+          \fill[sec\arabic{thumbsec}col]
+            ([xshift=0pt, yshift=\ypos cm]current page.north west)
+            rectangle ++(0.7cm, -1.2cm);
+          \node[white, font=\bfseries\large, anchor=center]
+            at ([xshift=0.35cm, yshift=\ypos cm - 0.6cm]current page.north west)
+            {\arabic{thumbsec}};
+        \fi%
+      \end{tikzpicture}%
+    \fi%
+  \fi%
+  \fi%
+}
+\AddToShipoutPictureFG{\drawthumbtab}
+
+\begin{document}
+
+% =============================================================================
+% PORTADA
+% =============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.5cm}
+
+{\scshape\Large Universidad de Costa Rica\par}
+\vspace{0.3cm}
+{\scshape\large Escuela de Matem\'atica\par}
+
+\vspace{1.2cm}
+
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+\vspace{0.6cm}
+
+{\Huge\bfseries Notas de An\'alisis I\par}
+
+\vspace{0.5cm}
+
+{\Large\itshape Resumen de definiciones, teoremas y resultados\par}
+
+\vspace{0.4cm}
+{\color{blue!50!black}\rule{\textwidth}{1.2pt}}
+
+\vspace{1.4cm}
+
+{\Large\bfseries MA0505 --- An\'alisis I\par}
+
+\vspace{2.2cm}
+
+\begin{tabular}{rl}
+\textbf{Autor:}              & Sebasti\'{a}n Fern\'{a}ndez Rivera \\[4pt]
+\textbf{Curso:}              & MA0505 --- An\'alisis I \\[4pt]
+\textbf{Documento:}          & Notas para el I Parcial \\[4pt]
+\textbf{Resultados numerados:} & 120+ \\[4pt]
+\textbf{Fecha:}              & \today
+\end{tabular}
+
+\vfill
+
+\begin{minipage}{0.85\textwidth}
+\centering
+\itshape
+Este documento re\'{u}ne las definiciones, teoremas, proposiciones, lemas, corolarios, ejemplos, notas, ejercicios y notaciones presentadas en el curso. Cada resultado est\'{a} numerado de la forma \texttt{seccion.subseccion.resultado} y aparece en el \'{\i}ndice con su p\'{a}gina correspondiente para una consulta r\'{a}pida durante el examen.
+\end{minipage}
+
+\vspace{1cm}
+
+{\color{blue!50!black}\rule{0.5\textwidth}{0.6pt}}
+
+\end{titlepage}
+
+% =============================================================================
+% \'INDICE
+% =============================================================================
+\thispagestyle{empty}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+% \tableofcontents llama internamente a \section*{...}, lo cual activa el hook
+% \pretocmd{\section}{...} y hace avanzar \value{thumbsec} a 1 antes de iniciar
+% el cuerpo. Reseteamos para que la sección 1 reciba el thumb-tab "1".
+\setcounter{thumbsec}{0}
+\drawthumbtrue   % Activa los thumb-tabs a partir de aquí (cuerpo del documento).
+
+% =============================================================================
+\section{Repaso: normas en \texorpdfstring{$\R^{d}$}{Rd} y conexidad}
+% =============================================================================
+
+\subsection{Normas en \texorpdfstring{$\R^{d}$}{Rd}}
+
+\begin{namedstd}{Definición}{Familia de normas $p$ en $\R^{d}$}
+En $\R^{d}$ se consideran las siguientes normas:
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Euclídea}: $\|(x_{1},\dots,x_{d})\| = (x_{1}^{2}+\dots+x_{d}^{2})^{1/2}$.
+\item \emph{Norma del supremo}: $\|(x_{1},\dots,x_{d})\|_{\infty} = \max\{ |x_{i}| : 1 \leq i \leq d\}$.
+\item \emph{Norma $p$} ($1 \leq p < \infty$): $\|(x_{1},\dots,x_{d})\|_{p} = (|x_{1}|^{p}+\dots+|x_{d}|^{p})^{1/p}$.
+\end{enumerate}
+El caso $p = 2$ coincide con la norma euclídea, esto es,
+\[
+\|(x_{1},\dots,x_{d})\| = \|(x_{1},\dots,x_{d})\|_{2}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Bola asociada a una norma $p$}
+Para $x_{0} \in \R^{d}$ y $r > 0$ se define
+\[
+B_{p}(x_{0},r) = \{ x \in \R^{d} : \|x - x_{0}\|_{p} < r \}.
+\]
+Cuando $p = 2$ se escribe simplemente $B(x_{0},r)$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Conjunto abierto en $\R^{d}$}
+$D \subseteq \R^{d}$ es un \emph{conjunto abierto} si para todo $x_{0} \in D$ existe $r > 0$ tal que
+\[
+B(x_{0},r) \subseteq D.
+\]
+En particular $\emptyset$ y $\R^{d}$ son abiertos, y toda bola es abierta.
+\end{namedstd}
+
+\subsection{Equivalencia de normas $p$ en \texorpdfstring{$\R^{d}$}{Rd}}
+
+\begin{namedres}{Proposición}{Cotas entre la norma euclídea y la norma del supremo}
+Para todo $(x_{1},\dots,x_{d}) \in \R^{d}$,
+\[
+\|(x_{1},\dots,x_{d})\|_{\infty} \leq \|(x_{1},\dots,x_{d})\| \leq \sqrt{d}\,\|(x_{1},\dots,x_{d})\|_{\infty}.
+\]
+\end{namedres}
+\begin{proof}
+Para $1 \leq i \leq d$, $|x_{i}| \leq \sqrt{x_{1}^{2}+\dots+x_{d}^{2}} = \|(x_{1},\dots,x_{d})\|$, lo cual da $\|(x_{1},\dots,x_{d})\|_{\infty} \leq \|(x_{1},\dots,x_{d})\|$. Recíprocamente,
+\[
+\|(x_{1},\dots,x_{d})\| = \sqrt{x_{1}^{2}+\dots+x_{d}^{2}} \leq \left(d \max_{1 \leq i \leq d} |x_{i}|^{2}\right)^{1/2} = \sqrt{d}\,\|(x_{1},\dots,x_{d})\|_{\infty}. \qedhere
+\]
+\end{proof}
+
+\begin{namedres}{Proposición}{Cotas entre la norma $p$ y la norma del supremo}
+Para todo $1 \leq p < \infty$ y todo $(x_{1},\dots,x_{d}) \in \R^{d}$,
+\[
+\|(x_{1},\dots,x_{d})\|_{\infty} \leq \|(x_{1},\dots,x_{d})\|_{p} \leq d^{1/p} \|(x_{1},\dots,x_{d})\|_{\infty}.
+\]
+En consecuencia $\|(x_{1},\dots,x_{d})\| \leq \sqrt{d}\,\|(x_{1},\dots,x_{d})\|_{p}$.
+\end{namedres}
+\begin{proof}
+Para cada $1\leq i\leq d$, $|x_{i}|^{p}\leq \sum_{j=1}^{d}|x_{j}|^{p}$, y tomando $p$-ésima raíz se obtiene la cota inferior. Para la cota superior,
+\[
+\sum_{j=1}^{d} |x_{j}|^{p} \leq d \max_{1\leq j\leq d} |x_{j}|^{p},
+\]
+y al tomar $p$-ésima raíz se concluye. La última desigualdad combina ambas con la cota euclídea $\leq \sqrt{d} \|\cdot\|_{\infty}$.
+\end{proof}
+
+\begin{namedres}{Lema}{Las normas $p$ definen los mismos abiertos en $\R^{d}$}
+Las normas $\|\cdot\|_{p}$ ($1\leq p\leq\infty$) determinan la misma familia de conjuntos abiertos en $\R^{d}$.
+\end{namedres}
+\begin{proof}
+Basta mostrar que dado $r > 0$ existe $r_{p} > 0$ con $B_{p}(x,r_{p}) \subseteq B(x,r)$ y, recíprocamente, existe $r' > 0$ con $B(x,r') \subseteq B_{p}(x,r)$. Por la proposición anterior, si $\|x-y\|_{p} < r/\sqrt{d}$ entonces $\|x-y\| \leq \sqrt{d}\,\|x-y\|_{p} < r$, de modo que $r_{p} = r/\sqrt{d}$ cumple
+\[
+B_{p}\!\left(x,\tfrac{r}{\sqrt{d}}\right) \subseteq B(x,r).
+\]
+Análogamente, $B(x, r/d^{1/p}) \subseteq B_{p}(x,r)$. Por tanto cada abierto respecto de una norma lo es respecto de la otra.
+\end{proof}
+
+\subsection{Conexidad y arcoconexidad en \texorpdfstring{$\R^{d}$}{Rd}}
+
+\begin{namedstd}{Definición}{Conjunto disconexo y conexo}
+$G \subseteq \R^{d}$ es \emph{disconexo} si existen $G_{0}, G_{1}$ abiertos tales que
+\[
+G_{0} \cap G \neq \emptyset, \quad G_{1} \cap G \neq \emptyset, \quad G_{0} \cap G_{1} = \emptyset \quad\text{y}\quad G \subseteq G_{0} \cup G_{1}.
+\]
+Un conjunto se dice \emph{conexo} si no es disconexo.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Curva}
+Una \emph{curva} es una función continua $\gamma : [a,b] \to \R^{d}$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Conjunto arcoconexo}
+$E \subseteq \R^{d}$ es \emph{arcoconexo} si para todos $x_{0}, x_{1} \in E$ existe una curva $\gamma : [a,b] \to \R^{d}$ tal que
+\[
+\gamma(a) = x_{0}, \quad \gamma(b) = x_{1} \quad\text{y}\quad \gamma(t) \in E \text{ para todo } t \in [a,b].
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Reparametrización al intervalo $[0,1]$}
+Si $\gamma : [a,b] \to \R^{d}$ es continua, entonces $\gamma_{1} : [0,1] \to \R^{d}$ dada por $\gamma_{1}(s) = \gamma((b-a)s + a)$ es continua. Por tanto, en la definición de arcoconexidad puede suponerse $a = 0$ y $b = 1$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Un arcoconexo no admite descomposición en abiertos disjuntos}
+Sea $E \subseteq \R^{d}$ arcoconexo. Entonces no existen $G_{0}, G_{1}$ abiertos no vacíos tales que $E \subseteq G_{0} \cup G_{1}$ y $G_{0} \cap G_{1} = \emptyset$.
+\end{namedres}
+\begin{proof}
+Supongamos que tales $G_{0}, G_{1}$ existen y tomemos $x_{0} \in G_{0} \cap E$, $x_{1} \in G_{1} \cap E$. Por arcoconexidad existe $\gamma : [0,1] \to E$ con $\gamma(0)=x_{0}$ y $\gamma(1)=x_{1}$. Como $G_{0}$ es abierto, existe $r > 0$ con $B(x_{0}, r) \subseteq G_{0}$. Por continuidad de $\gamma$ existe $\delta > 0$ tal que $|t| < \delta$ implica $\|\gamma(0) - \gamma(t)\| < r$, de modo que $\gamma(t) \in B(x_{0}, r) \subseteq G_{0}$ para $0 < t < \delta$.
+
+Definamos
+\[
+t_{0} = \sup \{ t > 0 : \gamma(s) \in G_{0},\ 0 \leq s < t \}.
+\]
+El conjunto está acotado por $1$ y contiene a $\delta/2$ (pues $\gamma(s) \in G_{0}$ para $0 \leq s < \delta$ por lo anterior), así que $\delta/2 \leq t_{0} \leq 1$. Si $\gamma(t_{0}) \in G_{0}$, existe $r_{1} > 0$ con $B(\gamma(t_{0}), r_{1}) \subseteq G_{0}$ y, por continuidad, existe $\delta_{1} > 0$ con $|t_{0} - s| < \delta_{1} \implies \gamma(s) \in B(\gamma(t_{0}), r_{1}) \subseteq G_{0}$. Esto contradice la definición de supremo.
+
+Por tanto $\gamma(t_{0}) \in E \setminus G_{0} \subseteq G_{1}$. Pero existirían entonces $r_{2}, \delta_{2} > 0$ tales que $|t_{0} - s| < \delta_{2} \implies \gamma(s) \in B(\gamma(t_{0}), r_{2}) \subseteq G_{1}$. Por definición de supremo existe $s' \in (t_{0} - \delta_{2}, t_{0})$ con $\gamma(s') \in G_{0}$; pero entonces $\gamma(s') \in G_{0} \cap G_{1} = \emptyset$, contradicción.
+\end{proof}
+
+\begin{namedres}{Teorema}{Relación entre conexidad y arcoconexidad en $\R^{d}$}
+Sea $G \subseteq \R^{d}$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $G$ es arcoconexo, entonces $G$ es conexo.
+\item Si $G$ es abierto y conexo, entonces $G$ es arcoconexo.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+La parte (1) es consecuencia directa del lema anterior. La parte (2) se demuestra fijando $x_{0} \in G$ y considerando el conjunto $A = \{ x \in G : x \text{ se puede unir a } x_{0} \text{ por una curva en } G\}$; usando que $G$ es abierto se prueba que $A$ y $G \setminus A$ son ambos abiertos, y por conexidad y $A \neq \emptyset$ se concluye $A = G$.
+\end{proof}
+
+% =============================================================================
+\section{Espacios métricos}
+% =============================================================================
+
+\subsection{Normas, distancias y métricas}
+
+\begin{namedstd}{Definición}{Norma}
+Una \emph{norma} en $\R^{d}$ es una función $\|\cdot\| : \R^{d} \to [0, +\infty)$ que satisface:
+\begin{enumerate}[label=(\arabic*)]
+\item $\|x\| \geq 0$ para todo $x \in \R^{d}$, con $\|x\| = 0$ si y solo si $x = 0$;
+\item $\|\lambda x\| = |\lambda|\,\|x\|$ para todo $\lambda \in \R$ y $x \in \R^{d}$;
+\item $\|x + y\| \leq \|x\| + \|y\|$ para todos $x, y \in \R^{d}$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Distancia inducida por una norma en $\R^{d}$}
+Una norma induce una \emph{distancia} (o métrica) $d : \R^{d} \times \R^{d} \to [0, +\infty)$ mediante $d(x,y) = \|x - y\|$, la cual cumple:
+\begin{enumerate}[label=(\arabic*)]
+\item $d(x,y) = d(y,x)$;
+\item $d(x,y) = 0 \iff x = y$;
+\item $d(x,z) = \|x-z\| = \|x-y+y-z\| \leq \|x-y\| + \|y-z\| = d(x,y) + d(y,z)$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Espacio métrico}
+Sea $E$ un conjunto. Una \emph{métrica} es una función $d : E \times E \to [0, +\infty)$ que satisface:
+\begin{enumerate}[label=(\arabic*)]
+\item $d(x,y) = d(y,x)$;
+\item $d(x,y) = 0$ si y solo si $x = y$;
+\item $d(x,y) \leq d(x,z) + d(z,y)$ \emph{(desigualdad triangular)}.
+\end{enumerate}
+El par $(E, d)$ se llama \emph{espacio métrico}.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La métrica usual en $\R^{d}$}
+En $\R^{d}$ con la norma euclídea, $d(x,y) = \|x - y\|$ es métrica; la desigualdad triangular es la usual del módulo.
+\end{namedstd}
+
+\subsection{Topología métrica: bolas, abiertos y cerrados}
+
+\begin{namedstd}{Definición}{Bola abierta en un espacio métrico}
+Sea $(E, d)$ un espacio métrico. Para $x_{0} \in E$ y $r > 0$ se define
+\[
+B(x_{0}, r) = \{ y \in E : d(x_{0}, y) < r \}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Conjunto abierto en un espacio métrico}
+$D \subseteq E$ es un \emph{conjunto abierto} si para todo $x_{0} \in D$ existe $r > 0$ tal que $B(x_{0}, r) \subseteq D$. En particular $\emptyset$ y $E$ son abiertos.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Las bolas son abiertos}
+Para todos $x_{0} \in E$ y $r > 0$, $B(x_{0}, r)$ es un conjunto abierto.
+\end{namedres}
+\begin{proof}
+Sea $x_{1} \in B(x_{0}, r)$. Mostraremos que si $0 < r_{1} < r - d(x_{0}, x_{1})$, entonces $B(x_{1}, r_{1}) \subseteq B(x_{0}, r)$. En efecto, si $y \in B(x_{1}, r_{1})$, entonces
+\[
+d(x_{0}, y) \leq d(x_{0}, x_{1}) + d(x_{1}, y) < d(x_{0}, x_{1}) + r_{1} < d(x_{0}, x_{1}) + r - d(x_{0}, x_{1}) = r,
+\]
+de donde $y \in B(x_{0}, r)$.
+\end{proof}
+
+\begin{namedres}{Lema}{Intersección finita de abiertos es abierto}
+Si $G_{1}, G_{2}, \dots, G_{m}$ son abiertos en $(E, d)$, entonces $\bigcap_{i=1}^{m} G_{i}$ es abierto.
+\end{namedres}
+\begin{proof}
+Basta probarlo para $m = 2$ y aplicar inducción. Sea $x_{0} \in G_{1} \cap G_{2}$. Existen $r_{1}, r_{2} > 0$ tales que $B(x_{0}, r_{1}) \subseteq G_{1}$ y $B(x_{0}, r_{2}) \subseteq G_{2}$. Tomando $r = \min(r_{1}, r_{2})$,
+\[
+B(x_{0}, r) \subseteq B(x_{0}, r_{1}) \cap B(x_{0}, r_{2}) \subseteq G_{1} \cap G_{2}. \qedhere
+\]
+\end{proof}
+
+\begin{namedres}{Lema}{Unión arbitraria de abiertos es abierto}
+Si $\{ G_{\lambda} \}_{\lambda \in \Lambda}$ es una colección cualquiera de abiertos en $(E, d)$, entonces $\bigcup_{\lambda \in \Lambda} G_{\lambda}$ es abierto.
+\end{namedres}
+\begin{proof}
+Si $x_{0} \in \bigcup_{\lambda \in \Lambda} G_{\lambda}$, entonces existe $\lambda_{0}$ con $x_{0} \in G_{\lambda_{0}}$. Como $G_{\lambda_{0}}$ es abierto, existe $r > 0$ tal que $B(x_{0}, r) \subseteq G_{\lambda_{0}} \subseteq \bigcup_{\lambda \in \Lambda} G_{\lambda}$.
+\end{proof}
+
+\begin{namedstd}{Definición}{Conjunto cerrado}
+$F \subseteq E$ es \emph{cerrado} si $E \setminus F$ es abierto.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Propiedades básicas de los cerrados}
+\begin{enumerate}[label=(\arabic*)]
+\item Si $\{ F_{\lambda} \}_{\lambda \in \Lambda}$ es una familia de cerrados, $\bigcap_{\lambda \in \Lambda} F_{\lambda}$ es cerrado, pues
+\[
+E \setminus \bigcap_{\lambda \in \Lambda} F_{\lambda} = \bigcup_{\lambda \in \Lambda} (E \setminus F_{\lambda})
+\]
+es unión de abiertos.
+\item Si $F_{1}, \dots, F_{m}$ son cerrados, entonces $\bigcup_{i=1}^{m} F_{i}$ es cerrado.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Las propiedades de cerrados/abiertos no se preservan al pasar a colecciones arbitrarias}
+\begin{enumerate}[label=(\arabic*)]
+\item $\bigcap_{n=1}^{\infty} \left( a - \tfrac{1}{n}, a + \tfrac{1}{n}\right) = \{ a\}$ no es abierto. Es decir, la intersección numerable de abiertos no es necesariamente abierta.
+\item $\left( a, b \right) = \bigcup_{n=1}^{\infty} \left[a + \tfrac{1}{n}, b - \tfrac{1}{n}\right]$ no es cerrado. Es decir, la unión numerable de cerrados no es necesariamente cerrada.
+\end{enumerate}
+\end{namedstd}
+
+% =============================================================================
+\section{Propiedades topológicas básicas}
+% =============================================================================
+
+\subsection{Interior de un conjunto}
+
+\begin{namedstd}{Definición}{Punto interior e interior de un conjunto}
+Sea $(E, d)$ un espacio métrico y $A \subseteq E$. Decimos que $x_{0} \in A$ es un \emph{punto interior} de $A$ si existe $r > 0$ con $B(x_{0}, r) \subseteq A$. El \emph{interior} de $A$, denotado $A^{\circ}$, es el conjunto de los puntos interiores de $A$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{$A^{\circ}$ es el mayor abierto contenido en $A$}
+Sea $G \subseteq A$ con $G$ abierto. Entonces $G \subseteq A^{\circ}$. En particular, $A^{\circ}$ es el abierto más grande contenido en $A$.
+\end{namedres}
+\begin{proof}
+Si $x_{0} \in G$, como $G$ es abierto existe $r > 0$ con $B(x_{0}, r) \subseteq G \subseteq A$, por lo que $x_{0} \in A^{\circ}$. Concluimos que $G \subseteq A^{\circ}$.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{$A^{\circ}$ es abierto}
+Pruebe que para todo $A \subseteq E$, $A^{\circ}$ es un conjunto abierto.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Interior de la intersección}
+Sean $A_{1}, A_{2} \subseteq E$. Entonces $(A_{1} \cap A_{2})^{\circ} = A_{1}^{\circ} \cap A_{2}^{\circ}$.
+\end{namedres}
+\begin{proof}
+Como $A_{1}^{\circ} \cap A_{2}^{\circ}$ es abierto y está contenido en $A_{1} \cap A_{2}$, por el lema previo $A_{1}^{\circ} \cap A_{2}^{\circ} \subseteq (A_{1} \cap A_{2})^{\circ}$.
+
+Recíprocamente, si $x \in (A_{1} \cap A_{2})^{\circ}$, existe $r > 0$ con $B(x, r) \subseteq A_{1} \cap A_{2}$. Entonces $B(x, r) \subseteq A_{1}$ y $B(x, r) \subseteq A_{2}$, lo que implica $x \in A_{1}^{\circ} \cap A_{2}^{\circ}$.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{Monotonía del interior}
+Si $A \subseteq B$ entonces $A^{\circ} \subseteq B^{\circ}$. \emph{Sugerencia:} use el lema $G \subseteq A^{\circ}$ siempre que $G$ sea abierto y $G \subseteq A$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Caracterización de abierto por interior}
+Dado $B \subseteq E$, $B$ es abierto si y solo si $B = B^{\circ}$.
+\end{namedstd}
+
+\subsection{Convergencia de sucesiones y distancia entre conjuntos}
+
+\begin{namedstd}{Definición}{Convergencia de sucesiones}
+Una sucesión $\{ x_{n} \}_{n=1}^{\infty} \subseteq E$ \emph{converge} a $x \in E$ si para todo $\varepsilon > 0$ existe $n_{0} \in \N$ tal que $n \geq n_{0}$ implica $d(x_{n}, x) < \varepsilon$. Se escribe $x_{n} \to x$ cuando $n \to \infty$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Distancia entre conjuntos}
+Dados $A, B \subseteq E$, se define
+\[
+d(A, B) = \inf \{ d(x, y) : (x, y) \in A \times B \}.
+\]
+En particular, para $x \in E$ y $A \subseteq E$, $d(x, A) = \inf\{ d(x,a) : a \in A\}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{La distancia a un conjunto es $1$-Lipschitz}
+Para todo $A \subseteq E$ y $x, y \in E$, $|d(x, A) - d(y, A)| \leq d(x, y)$.
+\end{namedstd}
+
+\subsection{Clausura de un conjunto}
+
+\begin{namedres}{Lema}{Caracterización de la clausura por sucesiones y por distancia}
+Dados $x \in E$ y $A \subseteq E$, son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $d(x, A) = 0$;
+\item existe $\{ x_{n} \}_{n=1}^{\infty} \subseteq A$ tal que $x_{n} \to x$ cuando $n \to \infty$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(1) \implies (2)$: Si $d(x, A) = 0$, para cada $n \in \N$ existe $x_{n} \in A$ con $d(x, x_{n}) < 1/n$, por lo que $\{x_{n}\}_{n=1}^{\infty} \subseteq A$ y $x_{n} \to x$.
+
+$(2) \implies (1)$: Si $\{x_{n}\}_{n=1}^{\infty} \subseteq A$ y $x_{n} \to x$, entonces $d(x, A) \leq d(x, x_{n}) \to 0$, de donde $d(x, A) = 0$.
+\end{proof}
+
+\begin{namedstd}{Definición}{Clausura y puntos de adherencia}
+Dado $A \subseteq E$, la \emph{clausura} de $A$ es
+\[
+\overline{A} = \{ x \in E : d(x, A) = 0\}.
+\]
+Sus elementos se llaman \emph{puntos de adherencia} de $A$. Inmediatamente $A \subseteq \overline{A}$.
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Monotonía de la clausura}
+Si $A \subseteq B \subseteq E$, entonces $\overline{A} \subseteq \overline{B}$.
+\end{namedres}
+\begin{proof}
+Para $x \in E$,
+\[
+\inf_{b \in B} d(x, b) \leq \inf_{a \in A} d(x, a),
+\]
+i.e.\ $d(x, B) \leq d(x, A)$. Así, $d(x, A) = 0$ implica $d(x, B) = 0$.
+\end{proof}
+
+\begin{namedstd}{Ejemplo}{Distancia cero entre dos cerrados disjuntos}
+Sean $A = \{ n + \tfrac{1}{n} \}_{n=1}^{\infty}$ y $B = \Z$. Ambos son cerrados (por ejemplo $\R \setminus B = \bigcup_{n \in \Z} (n, n+1)$ es abierto). Sin embargo,
+\[
+d\!\left(n + \tfrac{1}{n}, n\right) = \tfrac{1}{n} \to 0,
+\]
+de modo que $d(A, B) = 0$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Cerrado equivale a igual a su clausura}
+Sea $A \subseteq E$. Entonces $A$ es cerrado si y solo si $A = \overline{A}$.
+\end{namedres}
+\begin{proof}
+$(\impliedby)$: Si $A = \overline{A}$ y $x \notin A$, entonces $d(x, A) > 0$. Existe $r > 0$ con $r \leq d(x, A)$ y entonces $B(x, r) \cap A = \emptyset$, i.e.\ $B(x, r) \subseteq E \setminus A$. Así $E\setminus A$ es abierto y $A$ es cerrado.
+
+$(\implies)$: Supongamos $A$ cerrado y tomemos $x \in E \setminus A$. Como $E\setminus A$ es abierto, existe $r_{1} > 0$ con $B(x, r_{1}) \subseteq E \setminus A$, por lo que $B(x, r_{1}) \cap A = \emptyset$ y $d(x, A) \geq r_{1} > 0$. Por tanto $x \notin \overline{A}$, lo cual prueba $\overline{A} \subseteq A$. La inclusión $A \subseteq \overline{A}$ es inmediata.
+\end{proof}
+
+\begin{namedres}{Proposición}{La clausura es un conjunto cerrado}
+Para todo $A \subseteq E$, $\overline{A}$ es cerrado.
+\end{namedres}
+\begin{proof}
+Sea $z \notin \overline{A}$, es decir $d(z, A) = r > 0$. Veremos que $B(z, r/2) \subseteq E \setminus \overline{A}$. Si $w \in B(z, r/2)$ y $a \in A$, entonces
+\[
+r \leq d(z, a) \leq d(z, w) + d(w, a) < \tfrac{r}{2} + d(w, a),
+\]
+por lo que $d(w, a) > r/2$ y, tomando ínfimo, $d(w, A) \geq r/2 > 0$, i.e.\ $w \notin \overline{A}$.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{Propiedades de la clausura sobre uniones e intersecciones}
+Para $A, B \subseteq E$:
+\begin{enumerate}[label=(\arabic*)]
+\item $\overline{A \cup B} = \overline{A} \cup \overline{B}$;
+\item $\overline{A \cap B} \subseteq \overline{A} \cap \overline{B}$.
+\end{enumerate}
+\end{namedstd}
+
+\subsection{Acumulación y frontera}
+
+\begin{namedstd}{Definición}{Punto de acumulación}
+Un punto $x_{0} \in E$ es un \emph{punto de acumulación} de $A \subseteq E$ si para todo $r > 0$,
+\[
+\big(B(x_{0}, r) \setminus \{ x_{0}\}\big) \cap A \neq \emptyset.
+\]
+Es decir, toda bola centrada en $x_{0}$ contiene puntos de $A$ distintos de $x_{0}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Caracterización de los puntos de acumulación por sucesiones}
+$x_{0}$ es punto de acumulación de $A$ si y solo si existe una sucesión $\{ x_{n}\}_{n=1}^{\infty} \subseteq A \setminus \{x_{0}\}$ tal que $x_{n} \to x_{0}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Punto de acumulación único de $\{1/n\}$}
+Sea $A = \{ 1/n : n \geq 1\}$. Entonces $\overline{A} = A \cup \{ 0\}$ y $0$ es el único punto de acumulación de $A$, pues
+\[
+B\!\left(\tfrac{1}{n}, \tfrac{1}{(n+1)^{2}}\right) \cap A = \left\{ \tfrac{1}{n}\right\} \quad \text{si } n \geq 1.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Punto frontera y frontera de un conjunto}
+Dado $A \subseteq E$ y $x \in E$, decimos que $x$ es \emph{punto frontera} de $A$ si para todo $r > 0$,
+\[
+B(x, r) \cap A \neq \emptyset \quad\text{y}\quad B(x, r) \cap (E \setminus A) \neq \emptyset.
+\]
+Equivalentemente, $d(x, A) = d(x, E \setminus A) = 0$.
+\end{namedstd}
+
+\begin{namedstd}{Notación}{Frontera}
+La \emph{frontera} de $A$ se denota
+\[
+\partial A = \{\text{puntos frontera de } A\} = \{ x \in E : d(x, A) = d(x, E \setminus A) = 0\} = \overline{A} \cap \overline{E \setminus A}.
+\]
+Observe que $\partial A \subseteq \overline{A}$.
+\end{namedstd}
+
+\subsection{Vecindarios y densidad}
+
+\begin{namedstd}{Definición}{Vecindario de un punto}
+Dado $x \in E$, $V \subseteq E$ es un \emph{vecindario} de $x$ si existe $r > 0$ tal que $B(x, r) \subseteq V$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Abiertos como vecindarios}
+Si $V$ es abierto, $V$ es vecindario de cada uno de sus puntos.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Vecindario $r$ de un conjunto}
+Dado $A \subseteq E$ y $r > 0$, se define
+\[
+V_{r}(A) = \{ x \in E : d(x, A) < r\}.
+\]
+En particular $A \subseteq \overline{A} \subseteq V_{r}(A)$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Las bolas centradas en $A$ están contenidas en $V_{r}(A)$}
+Sea $x \notin \overline{A}$ con $x \in V_{r}(A)$. Si $0 < r_{1} < r - d(x, A)$, muestre que
+\[
+B(x, r_{1}) \subseteq V_{r}(A).
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{$V_{r}(A)$ es abierto}
+Si $A \subseteq E$ y $r > 0$, entonces $V_{r}(A)$ es abierto.
+\end{namedres}
+\begin{proof}
+Sea $x \in V_{r}(A)$ y tome $a \in A$ con $d(x, a) < r$. Defina $r_{1} = r - d(x, a) > 0$. Para $y \in B(x, r_{1})$ se tiene
+\[
+d(y, A) \leq d(y, a) \leq d(y, x) + d(x, a) < r_{1} + d(x, a) = r,
+\]
+es decir $y \in V_{r}(A)$. Así $B(x, r_{1}) \subseteq V_{r}(A)$.
+\end{proof}
+
+\begin{namedres}{Proposición}{La clausura es intersección de vecindarios}
+Para todo $A \subseteq E$,
+\[
+\overline{A} = \bigcap_{r > 0} V_{r}(A).
+\]
+En particular, $\overline{A}$ es intersección numerable de abiertos.
+\end{namedres}
+\begin{proof}
+Si $x \in \overline{A}$ entonces $d(x, A) = 0 < r$ para todo $r > 0$, así $x \in V_{r}(A)$. Recíprocamente, si $x \in \bigcap_{r > 0} V_{r}(A)$ entonces $d(x, A) < r$ para todo $r > 0$, por lo que $d(x, A) = 0$ y $x \in \overline{A}$.
+\end{proof}
+
+\begin{namedstd}{Definición}{Conjunto denso y espacio separable}
+$A \subseteq E$ es \emph{denso} en $E$ si $\overline{A} = E$. Un espacio métrico $(E, d)$ es \emph{separable} si posee un conjunto denso y numerable.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$\R$ y $\R^{d}$ son separables}
+$(\R, |\cdot|)$ es separable pues $\Q$ es denso en $\R$. En general $(\R^{d}, \|\cdot\|)$ es separable porque $\Q^{d}$ es denso en $\R^{d}$.
+\end{namedstd}
+
+% =============================================================================
+\section{Continuidad}
+% =============================================================================
+
+\subsection{Definiciones y ejemplos}
+
+\begin{namedstd}{Definición}{Límite de una función entre espacios métricos}
+Sean $(X, d), (Y, \rho)$ espacios métricos, $f : X \to Y$, $a \in X$ y $\ell \in Y$. Decimos que $\lim_{z \to a} f(z) = \ell$ si para todo $\varepsilon > 0$ existe $\delta > 0$ tal que
+\[
+0 < d(z, a) < \delta \implies \rho(f(z), \ell) < \varepsilon.
+\]
+Note que para definir el límite no es necesario que $f$ esté definida en $a$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Función continua}
+La función $f : X \to Y$ es \emph{continua} en $a \in X$ si $\lim_{z \to a} f(z) = f(a)$. Es decir, para todo $\varepsilon > 0$ existe $\delta > 0$ tal que
+\[
+d(z, a) < \delta \implies \rho(f(z), f(a)) < \varepsilon,
+\]
+o equivalentemente, $f(B_{X}(a, \delta)) \subseteq B_{Y}(f(a), \varepsilon)$. Decimos simplemente que $f$ es \emph{continua} si lo es en todo punto de $X$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Función Lipschitz}
+$f : X \to Y$ es \emph{$\lambda$-Lipschitz} si para todos $x, y \in X$,
+\[
+\rho(f(x), f(y)) \leq \lambda\, d(x, y).
+\]
+Se dice simplemente que $f$ es \emph{Lipschitz} si existe $\lambda \geq 0$ con tal propiedad.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La distancia a un punto es $1$-Lipschitz}
+Sea $(X, d)$ un espacio métrico y $a \in X$. La función $f(x) = d(x, a)$ es $1$-Lipschitz, ya que de la desigualdad triangular
+\[
+|d(x, a) - d(y, a)| \leq d(x, y),
+\]
+es decir $|f(x) - f(y)| \leq d(x, y)$. En particular $f$ es continua.
+\end{namedstd}
+
+\subsection{Caracterizaciones topológicas de la continuidad}
+
+\begin{namedres}{Lema}{Continuidad y preimágenes de abiertos}
+Si $f : X \to Y$ es continua y $G \subseteq Y$ es abierto, entonces $f^{-1}(G)$ es abierto en $X$.
+\end{namedres}
+\begin{proof}
+Sea $x_{0} \in f^{-1}(G)$ y $y_{0} = f(x_{0}) \in G$. Como $G$ es abierto, existe $\varepsilon > 0$ con $B_{Y}(y_{0}, \varepsilon) \subseteq G$. Por continuidad de $f$ en $x_{0}$, existe $\delta > 0$ tal que $f(B_{X}(x_{0}, \delta)) \subseteq B_{Y}(y_{0}, \varepsilon) \subseteq G$, es decir $B_{X}(x_{0}, \delta) \subseteq f^{-1}(G)$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Caracterizaciones de la continuidad}
+Sea $f : X \to Y$. Son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $f$ es continua;
+\item $f^{-1}(G)$ es abierto en $X$ para todo abierto $G \subseteq Y$;
+\item $f^{-1}(F)$ es cerrado en $X$ para todo cerrado $F \subseteq Y$;
+\item $f(\overline{B}) \subseteq \overline{f(B)}$ para todo $B \subseteq X$ (clausura en $X$ a la izquierda, en $Y$ a la derecha).
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(1) \implies (2)$: Demostrado en el lema anterior.
+
+$(2) \implies (1)$: Dado $\varepsilon > 0$ y $a \in X$, $B_{Y}(f(a), \varepsilon)$ es abierto, por lo que $f^{-1}(B_{Y}(f(a), \varepsilon))$ es abierto. Como $a \in f^{-1}(B_{Y}(f(a), \varepsilon))$, existe $\delta > 0$ con $B_{X}(a, \delta) \subseteq f^{-1}(B_{Y}(f(a), \varepsilon))$, i.e.\ $f(B_{X}(a, \delta)) \subseteq B_{Y}(f(a), \varepsilon)$.
+
+$(2) \iff (3)$: Si $F \subseteq Y$ es cerrado, entonces $Y \setminus F$ es abierto y $f^{-1}(Y \setminus F) = X \setminus f^{-1}(F)$. Por tanto $f^{-1}(F)$ es cerrado si y solo si $f^{-1}(Y\setminus F)$ es abierto.
+
+$(3) \iff (4)$: $f(\overline{B}) \subseteq \overline{f(B)}$ para todo $B$ equivale a $\overline{B} \subseteq f^{-1}(\overline{f(B)})$ para todo $B$. Tomando $B = f^{-1}(F)$ con $F$ cerrado, se obtiene $\overline{f^{-1}(F)} \subseteq f^{-1}(F)$, esto es $f^{-1}(F)$ cerrado, y recíprocamente.
+\end{proof}
+
+\begin{namedres}{Teorema}{Caracterización por sucesiones}
+Sea $f : X \to Y$ y $a \in X$. Entonces $f$ es continua en $a$ si y solo si para toda sucesión $\{ x_{n}\}_{n \in \N} \subseteq X$ con $x_{n} \to a$ se cumple $f(x_{n}) \to f(a)$.
+\end{namedres}
+\begin{proof}
+$(\implies)$: Si $x_{n} \to a$ y $\varepsilon > 0$, por continuidad existe $\delta > 0$ con $d(x, a) < \delta \implies \rho(f(x), f(a)) < \varepsilon$. Tome $n_{0}$ tal que $n \geq n_{0}$ implique $d(x_{n}, a) < \delta$; entonces $\rho(f(x_{n}), f(a)) < \varepsilon$, esto es $f(x_{n}) \to f(a)$.
+
+$(\impliedby)$: Si $f$ no fuese continua en $a$, existiría $\varepsilon > 0$ tal que para todo $\delta > 0$ existe $x_{\delta} \in X$ con $d(x_{\delta}, a) < \delta$ y $\rho(f(x_{\delta}), f(a)) \geq \varepsilon$. Tomando $\delta = 1/n$ se obtiene $x_{n}$ con $d(x_{n}, a) < 1/n$ y $\rho(f(x_{n}), f(a)) \geq \varepsilon$. Así $x_{n} \to a$ pero $f(x_{n}) \not\to f(a)$, contradicción.
+\end{proof}
+
+\subsection{Homeomorfismos e isometrías}
+
+\begin{namedstd}{Definición}{Homeomorfismo}
+Sea $f : X \to Y$. Decimos que $f$ es un \emph{homeomorfismo} si $f$ es continua, biyectiva y $f^{-1}$ es continua. En tal caso, $X$ y $Y$ se dicen \emph{homeomorfos}.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Los homeomorfismos envían abiertos en abiertos}
+Si $f : X \to Y$ es un homeomorfismo y $A \subseteq X$ es abierto, entonces $f(A) = (f^{-1})^{-1}(A)$ es abierto en $Y$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Homeomorfismos preservan el interior}
+Si $f : X \to Y$ es un homeomorfismo y $A \subseteq X$, entonces $f(A^{\circ}) = (f(A))^{\circ}$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Isometría}
+	Sea $\phi : (X, d_X) \to (Y, d_Y)$. Decimos que $\phi$ es una \emph{isometría} si $\phi$ es sobreyectiva y preserva la métrica, es decir, si para todos $x,y \in X$, 
+	$$d_Y(\phi(x), \phi(y)) = d_X(x,y)$$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Toda isometría es biyectiva}
+ Si $\phi : (X, d_X) \to (Y, d_Y)$ es una isometría, entonces $\phi$ es inyectiva, pues si $\phi(x) = \phi(y)$ entonces $d_Y(\phi(x),\phi(y))=d_X(x,y) = 0$, de donde tenemos que $x=y$.
+\end{namedstd}
+
+% =============================================================================
+\section{Compacidad}
+% =============================================================================
+
+\subsection{Compacidad secuencial}
+
+\begin{namedstd}{Definición}{Conjunto secuencialmente compacto}
+$C \subseteq X$ es \emph{secuencialmente compacto} si toda sucesión $\{ x_{n}\}_{n=1}^{\infty} \subseteq C$ posee una subsucesión convergente a un punto de $C$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Caracterización por intersección de clausuras de colas}
+Sea $(X, d)$ un espacio métrico y $C \subseteq X$. Son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $C$ es secuencialmente compacto;
+\item para toda $\{ x_{n}\}_{n=1}^{\infty} \subseteq C$,
+\[
+C \cap \left( \bigcap_{k=1}^{\infty} \overline{ \{ x_{m} : m \geq k\}} \right) \neq \emptyset.
+\]
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(1) \implies (2)$: Si $\{ x_{n_{k}}\}_{k=1}^{\infty}$ es una subsucesión que converge a $x_{0} \in C$, dado $\varepsilon > 0$ existe $k_{0}$ tal que $k \geq k_{0}$ implica $d(x_{n_{k}}, x_{0}) < \varepsilon$. Como $n_{k} \geq k$, se sigue que $B(x_{0}, \varepsilon) \cap \{ x_{m} : m \geq k\} \neq \emptyset$ para todo $k \geq 1$, así $x_{0} \in \overline{ \{ x_{m} : m \geq k\}}$ para todo $k$.
+
+$(2) \implies (1)$: Sea $x_{0} \in C \cap \bigcap_{k=1}^{\infty} \overline{ \{ x_{m} : m \geq k\}}$. Construimos iterativamente una subsucesión convergente a $x_{0}$: tomamos $x_{n_{1}} \in B(x_{0}, 1) \cap \{ x_{m} : m \geq 1\}$, luego $x_{n_{2}} \in B(x_{0}, \tfrac{1}{2}) \cap \{ x_{m} : m \geq n_{1} + 1\}$, y en general $x_{n_{k+1}} \in B(x_{0}, \tfrac{1}{k}) \cap \{ x_{m} : m \geq n_{k} + 1\}$. Entonces $x_{n_{k}} \to x_{0}$.
+\end{proof}
+
+\begin{namedres}{Lema}{Secuencialmente compacto implica cerrado y acotado}
+Sea $C \subseteq X$ secuencialmente compacto. Entonces $C$ es cerrado y acotado.
+\end{namedres}
+\begin{proof}
+\emph{Cerrado:} Sea $x \in \overline{C}$. Existe $\{x_{n}\}_{n=1}^{\infty} \subseteq C$ con $x_{n} \to x$. Por compacidad secuencial existe una subsucesión $\{x_{n_{k}}\}_{k=1}^{\infty}$ que converge a un punto de $C$. Por unicidad del límite, $x \in C$, así $\overline{C} \subseteq C$.
+
+\emph{Acotado:} Si $C$ no fuese acotado, fijado $x_{0} \in X$ podríamos elegir $x_{n} \in C$ con $d(x_{0}, x_{n}) \geq n$. Toda subsucesión $\{x_{n_{k}}\}$ satisfaría $d(x_{0}, x_{n_{k}}) \to \infty$ y por tanto no podría ser convergente, contradiciendo la compacidad secuencial.
+\end{proof}
+
+\subsection{Cubrimientos por abiertos y compacidad}
+
+\begin{namedstd}{Definición}{Recubrimiento por abiertos}
+Una colección $\mathcal{U} = \{ U_{\alpha} : \alpha \in \Lambda\}$ de abiertos es un \emph{recubrimiento} (o \emph{cubrimiento}) de $A \subseteq X$ si
+\[
+A \subseteq \bigcup_{\alpha \in \Lambda} U_{\alpha}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Lema}{Lema técnico de cubrimientos para conjuntos secuencialmente compactos (Lebesgue)}
+Sea $C \subseteq X$ secuencialmente compacto y $\mathcal{U}$ un recubrimiento por abiertos de $C$. Entonces existe $\varepsilon > 0$ tal que para todo $x \in C$ existe $U \in \mathcal{U}$ con $B(x, \varepsilon) \subseteq U$.
+\end{namedres}
+\begin{proof}
+Por contradicción: suponga que para todo $\varepsilon > 0$ existe $x_{\varepsilon} \in C$ tal que $B(x_{\varepsilon}, \varepsilon) \not\subseteq U$ para ningún $U \in \mathcal{U}$. En particular, para $\varepsilon = 1/n$ existe $x_{n} \in C$ con $B(x_{n}, 1/n) \not\subseteq U_{\alpha}$ para todo $\alpha \in \Lambda$.
+
+Por compacidad secuencial existen $\{x_{n_{k}}\}_{k=1}^{\infty}$ y $x_{0} \in C$ tales que $x_{n_{k}} \to x_{0}$. Como $\mathcal{U}$ recubre $C$, existe $U_{\alpha_{0}} \in \mathcal{U}$ con $x_{0} \in U_{\alpha_{0}}$ y $\varepsilon > 0$ tal que $B(x_{0}, \varepsilon) \subseteq U_{\alpha_{0}}$. Tome $k_{0}$ tal que $k \geq k_{0}$ implique $d(x_{n_{k}}, x_{0}) < \varepsilon/2$ y $1/n_{k} < \varepsilon/2$. Entonces, para $y \in B(x_{n_{k}}, 1/n_{k})$,
+\[
+d(y, x_{0}) \leq d(y, x_{n_{k}}) + d(x_{n_{k}}, x_{0}) < \tfrac{1}{n_{k}} + \tfrac{\varepsilon}{2} < \varepsilon,
+\]
+así $B(x_{n_{k}}, 1/n_{k}) \subseteq B(x_{0}, \varepsilon) \subseteq U_{\alpha_{0}}$, lo cual contradice la construcción.
+\end{proof}
+
+\begin{namedstd}{Definición}{Conjunto compacto}
+$C \subseteq X$ es \emph{compacto} si dado un recubrimiento por abiertos $\mathcal{U} = \{U_{\alpha} : \alpha \in \Lambda\}$ de $C$, existen $U_{\alpha_{1}}, \dots, U_{\alpha_{m}} \in \mathcal{U}$ tales que
+\[
+C \subseteq \bigcup_{k=1}^{m} U_{\alpha_{k}}.
+\]
+Es decir, todo recubrimiento por abiertos admite un subrecubrimiento finito.
+\end{namedstd}
+
+\subsection{Equivalencia entre las dos nociones de compacidad}
+
+\begin{namedres}{Lema}{Compacidad secuencial equivale a compacidad}
+Para $C \subseteq X$ son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $C$ es secuencialmente compacto;
+\item $C$ es compacto.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+$(1) \implies (2)$: Sea $\mathcal{U}$ recubrimiento por abiertos de $C$. Por el lema técnico anterior existe $\varepsilon > 0$ tal que para cada $x \in C$ alguna bola $B(x, \varepsilon)$ está contenida en algún $U_{\alpha}$. Tomemos $x_{1} \in C$ y $\alpha_{1}$ con $B(x_{1}, \varepsilon) \subseteq U_{\alpha_{1}}$. Si $C \subseteq B(x_{1}, \varepsilon)$ ya tenemos un subrecubrimiento finito; si no, escogemos $x_{2} \in C \setminus B(x_{1}, \varepsilon)$ y $U_{\alpha_{2}}$ con $B(x_{2}, \varepsilon) \subseteq U_{\alpha_{2}}$. Iterando, si en algún paso $C \subseteq \bigcup_{i=1}^{m} B(x_{i}, \varepsilon) \subseteq \bigcup_{i=1}^{m} U_{\alpha_{i}}$, hemos terminado. De lo contrario, obtenemos $\{x_{k}\}_{k=1}^{\infty} \subseteq C$ con $d(x_{i}, x_{j}) \geq \varepsilon$ para $i \neq j$. Esta sucesión no admite subsucesión convergente: toda subsucesión convergente sería de Cauchy, luego sus términos estarían eventualmente a distancia $< \varepsilon$, contradiciendo $d(x_{i}, x_{j}) \geq \varepsilon$. Esto contradice la compacidad secuencial.
+
+$(2) \implies (1)$: Sea $\{x_{m}\}_{m=1}^{\infty} \subseteq C$ y suponga, por contradicción, que no admite subsucesión convergente en $C$. Defina $U_{n} = X \setminus \overline{\{x_{m} : m \geq n\}}$. Entonces $U_{n} \subseteq U_{n+1}$ y $X \setminus \bigcup_{n=1}^{\infty} U_{n} = \bigcap_{n=1}^{\infty} \overline{\{x_{m} : m \geq n\}}$. Como $\{x_{m}\}$ no tiene subsucesión convergente en $C$, $C \cap \bigcap_{k=1}^{\infty} \overline{\{x_{m} : m \geq k\}} = \emptyset$, así $C \subseteq \bigcup_{n=1}^{\infty} U_{n}$. Por compacidad existe un subrecubrimiento finito; por monotonía de $\{U_{n}\}$, existe $m_{0}$ con $C \subseteq U_{m_{0}}$. Pero entonces $\{x_{k} : k \geq m_{0}\} \subseteq C \subseteq X \setminus \overline{\{x_{k} : k \geq m_{0}\}}$, contradicción.
+\end{proof}
+
+\subsection{Compacidad y funciones continuas}
+
+\begin{namedres}{Lema}{La imagen continua de un compacto es compacto}
+Sea $f : X \to Y$ continua y $K \subseteq X$ compacto. Entonces $f(K)$ es compacto en $Y$.
+\end{namedres}
+\begin{proof}
+Sea $\mathcal{U} = \{ U_{\alpha} : \alpha \in \Lambda_{1}\}$ un cubrimiento por abiertos de $f(K)$. Entonces $K \subseteq f^{-1}\!\left( \bigcup_{\alpha \in \Lambda_{1}} U_{\alpha}\right) = \bigcup_{\alpha \in \Lambda_{1}} f^{-1}(U_{\alpha})$, y cada $f^{-1}(U_{\alpha})$ es abierto en $X$. Por compacidad de $K$, existen $\alpha_{1}, \dots, \alpha_{m}$ tales que
+\[
+K \subseteq \bigcup_{i=1}^{m} f^{-1}(U_{\alpha_{i}}),
+\]
+de donde $f(K) \subseteq \bigcup_{i=1}^{m} U_{\alpha_{i}}$.
+\end{proof}
+
+\begin{namedres}{Teorema}{Caracterización por la propiedad de intersección finita}
+Sea $(X, d)$ un espacio métrico. Son equivalentes:
+\begin{enumerate}[label=(\arabic*)]
+\item $X$ es compacto;
+\item si $\mathcal{F} = \{ F_{\alpha} : \alpha \in \Lambda\}$ es una familia de cerrados tal que $\bigcap_{\alpha \in A} F_{\alpha} \neq \emptyset$ para todo $A \subseteq \Lambda$ finito, entonces $\bigcap_{\alpha \in \Lambda} F_{\alpha} \neq \emptyset$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+Para ambas direcciones se usa que $\bigcap_{\alpha \in \Lambda} F_{\alpha} = \emptyset$ si y solo si $X = \bigcup_{\alpha \in \Lambda} (X \setminus F_{\alpha})$, esto es, $\{X \setminus F_{\alpha}\}_{\alpha}$ es un cubrimiento por abiertos de $X$.
+
+Si $X$ es compacto y se cumple la propiedad de intersección finita pero $\bigcap_{\alpha} F_{\alpha} = \emptyset$, existirían $\alpha_{1}, \dots, \alpha_{m}$ con $X = \bigcup_{i=1}^{m} (X \setminus F_{\alpha_{i}})$, i.e.\ $\bigcap_{i=1}^{m} F_{\alpha_{i}} = \emptyset$, contradicción.
+
+Recíprocamente, dado un cubrimiento por abiertos $\{ U_{\alpha}\}$ sin subrecubrimiento finito, $\{X \setminus U_{\alpha}\}$ es una familia de cerrados con la propiedad de intersección finita pero intersección total vacía.
+\end{proof}
+
+\subsection{Compacidad en \texorpdfstring{$\R^{d}$}{Rd}}
+
+\begin{namedstd}{Nota}{Las cajas en $\R^{d}$ son secuencialmente compactas}
+Por el teorema de Bolzano-Weierstrass, $C = [a_{1}, b_{1}] \times \dots \times [a_{d}, b_{d}]$ con $a_{i} \leq b_{i}$ es secuencialmente compacto. Además todo compacto es cerrado y acotado.
+\end{namedstd}
+
+\begin{namedres}{Teorema}{Heine-Borel en $\R^{d}$}
+Sea $C \subseteq \R^{d}$. Entonces $C$ es compacto respecto de la norma euclídea si y solo si $C$ es cerrado y acotado.
+\end{namedres}
+\begin{proof}
+$(\implies)$: Todo compacto es cerrado y acotado por el lema general.
+
+$(\impliedby)$: Sea $F \subseteq \R^{d}$ cerrado y acotado. Existe $n$ tal que $F \subseteq C_{n} = [-n, n]^{d}$. Sea $\{x_{m}\}_{m=1}^{\infty} \subseteq F$. Como $C_{n}$ es secuencialmente compacto, existe $\{x_{m_{k}}\}_{k=1}^{\infty}$ subsucesión que converge a $x_{0} \in C_{n}$. Como $\{x_{m_{k}}\} \subseteq F$ y $F$ es cerrado, $x_{0} \in F$. Así $F$ es secuencialmente compacto y, por la equivalencia, compacto.
+\end{proof}
+
+\begin{namedres}{Teorema}{Valores extremos}
+Sean $K \subseteq X$ compacto y $f : X \to \R$ continua. Entonces $f(K)$ es compacto y, en particular, $f$ alcanza su ínfimo y su supremo en $K$.
+\end{namedres}
+\begin{proof}
+$f(K)$ es compacto, luego cerrado y acotado en $\R$. Sean $a = \inf_{x \in K} f(x)$ y $b = \sup_{x \in K} f(x)$. Para cada $n \in \N^{\ast}$ existe $x_{n} \in K$ con $a \leq f(x_{n}) \leq a + 1/n$. Por compacidad de $K$, existe una subsucesión $\{x_{n_{k}}\}$ que converge a $y_{0} \in K$, y por continuidad $f(x_{n_{k}}) \to f(y_{0})$; pero $f(x_{n_{k}}) \to a$, luego $f(y_{0}) = a$. Análogamente, $b$ se alcanza.
+\end{proof}
+
+% =============================================================================
+\section{Completitud}
+% =============================================================================
+
+\subsection{Sucesiones de Cauchy y espacios completos}
+
+\begin{namedstd}{Definición}{Sucesión de Cauchy}
+Una sucesión $\{x_{n}\}_{n=1}^{\infty}$ en $(X, d)$ es \emph{de Cauchy} si para todo $\varepsilon > 0$ existe $n_{0} \in \N$ tal que
+\[
+n, m \geq n_{0} \implies d(x_{n}, x_{m}) < \varepsilon.
+\]
+A diferencia de la compacidad, este concepto es \emph{intrínseco} al espacio métrico.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Recordatorio sobre sucesiones de Cauchy}
+\begin{enumerate}[label=(\arabic*)]
+\item Toda sucesión convergente es de Cauchy.
+\item Toda sucesión de Cauchy es acotada.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Espacio métrico completo}
+$(X, d)$ es \emph{completo} si toda sucesión de Cauchy en $X$ es convergente en $X$.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{$(\mathcal{C}([0,1], \R), d_{\infty})$ es completo}
+Sea $\mathcal{C} = \{ f : [0,1] \to \R \;:\; f \text{ continua}\}$ con $d_{\infty}(f, g) = \sup_{x \in [0,1]} |f(x) - g(x)|$. Sea $\{f_{n}\}_{n=1}^{\infty}$ de Cauchy. Para cada $x \in [0,1]$, $|f_{n}(x) - f_{m}(x)| \leq d_{\infty}(f_{n}, f_{m})$, por lo que $\{f_{n}(x)\}_{n=1}^{\infty}$ es de Cauchy en $\R$. Como $\R$ es completo, defina $f(x) = \lim_{n \to \infty} f_{n}(x)$.
+
+Veamos que $f \in \mathcal{C}$. Dado $\varepsilon > 0$, fije $n_{0}$ con $d_{\infty}(f_{n}, f_{m}) < \varepsilon/2$ para $n, m \geq n_{0}$. Para $x \in [0,1]$, existe $m_{1} \geq n_{0}$ con $|f(x) - f_{m_{1}}(x)| < \varepsilon/2$, luego para $n \geq n_{0}$,
+\[
+|f(x) - f_{n}(x)| \leq |f(x) - f_{m_{1}}(x)| + d_{\infty}(f_{m_{1}}, f_{n}) < \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2} = \varepsilon.
+\]
+Por tanto $f_{n} \to f$ uniformemente y, como límite uniforme de continuas, $f$ es continua.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Estrategia para demostrar que una sucesión de Cauchy converge}
+Como es usual, para probar que una sucesión de Cauchy converge se empieza encontrando un \emph{candidato} para el límite y luego se verifica la convergencia hacia él.
+\end{namedstd}
+
+\subsection{Completitud y conjuntos cerrados}
+
+\begin{namedres}{Lema}{Caracterización de subespacios completos como cerrados}
+Sea $(X, d)$ un espacio métrico y $C \subseteq X$. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item Si $(C, d)$ es completo, entonces $C$ es cerrado en $(X, d)$;
+\item Si $X$ es completo y $C$ es cerrado en $X$, entonces $(C, d)$ es completo.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\emph{(2)}: Sea $\{x_{n}\}_{n=1}^{\infty} \subseteq C$ de Cauchy. Como $X$ es completo, existe $x \in X$ con $x_{n} \to x$. Por ser $C$ cerrado, $x \in C$, así $\{x_{n}\}$ converge en $C$.
+
+\emph{(1)}: Sea $x \in \overline{C}$ y tome $\{x_{n}\}_{n=1}^{\infty} \subseteq C$ con $x_{n} \to x$ en $X$. Como $\{x_{n}\}$ es convergente, es de Cauchy en $C$. Por completitud de $C$, existe $x' \in C$ con $x_{n} \to x'$. Por unicidad del límite, $x = x' \in C$, lo que prueba $\overline{C} \subseteq C$.
+\end{proof}
+
+\begin{namedres}{Lema}{Compacto implica completo}
+Si $(X, d)$ es compacto, entonces $(X, d)$ es completo.
+\end{namedres}
+\begin{proof}
+Sea $\{x_{n}\}_{n=1}^{\infty}$ de Cauchy. Por compacidad existe $\{x_{n_{k}}\}$ que converge a $x \in X$. Dado $\varepsilon > 0$, existen $n_{0}, k_{0}$ con $n, m \geq n_{0} \implies d(x_{n}, x_{m}) < \varepsilon/2$ y $k \geq k_{0} \implies d(x, x_{n_{k}}) < \varepsilon/2$. Para $n, k \geq \max\{n_{0}, k_{0}\}$,
+\[
+d(x_{n}, x) \leq d(x_{n}, x_{n_{k}}) + d(x_{n_{k}}, x) < \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2} = \varepsilon. \qedhere
+\]
+\end{proof}
+
+\begin{namedstd}{Nota}{Completitud no implica compacidad}
+La implicación recíproca es falsa: $\R$ es completo pero no compacto.
+\end{namedstd}
+
+\subsection{Conjuntos totalmente acotados}
+
+\begin{namedstd}{Definición}{Espacio totalmente acotado}
+$(X, d)$ es \emph{totalmente acotado} (o \emph{paracompacto}) si para todo $\varepsilon > 0$ existen $x_{1}, \dots, x_{m} \in X$ tales que
+\[
+X = \bigcup_{i=1}^{m} B(x_{i}, \varepsilon).
+\]
+En particular, todo espacio compacto es totalmente acotado.
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{Acotado pero no totalmente acotado}
+Considere $\rho : \N \times \N \to \{0, 1\}$ con $\rho(n, m) = 1$ si $n \neq m$ y $\rho(n, n) = 0$. Para cualquier $n$, $\N = B(n, 2)$, así $(\N, \rho)$ es acotado. Sin embargo, $B(n, 1/2) = \{n\}$, por lo que no es posible cubrir $\N$ con una colección finita de bolas de radio $1/2$. Concluimos que $(\N, \rho)$ es acotado pero no totalmente acotado.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Sucesiones que toman finitos valores admiten subsucesión convergente}
+Si el conjunto $\{ x_{n} : n \in \N\}$ es finito, entonces existe una subsucesión $\{x_{n_{k}}\}_{k=1}^{\infty}$ que converge a un punto de la sucesión.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Caracterización de totalmente acotado por subsucesiones de Cauchy}
+$(X, d)$ es totalmente acotado si y solo si toda sucesión $\{x_{n}\}_{n=1}^{\infty} \subseteq X$ posee una subsucesión de Cauchy.
+\end{namedres}
+\begin{proof}
+$(\implies)$: Por el ejercicio anterior, podemos asumir que la sucesión toma infinitos valores distintos. Como $X$ es totalmente acotado existen $y_{1}, \dots, y_{m}$ con $X \subseteq \bigcup_{i=1}^{m} B(y_{i}, 1)$. Alguno de estos $B(y_{i_{1}}, 1)$ contiene infinitos puntos de $\{x_{n}\}$; sea $\{x_{n_{k,1}}\}_{k=1}^{\infty}$ la subsucesión correspondiente.
+
+Iterando, en el paso $\ell$ existen $\tilde{y}_{\ell}$ y una subsucesión $\{x_{n_{k,\ell}}\}_{k=1}^{\infty} \subseteq B(\tilde{y}_{\ell}, 1/\ell)$ extraída de $\{x_{n_{k,\ell-1}}\}$. Note que $d(x_{n_{k,\ell}}, x_{n_{s,\ell}}) < 2/\ell$ para todos $k, s$. Considere la subsucesión diagonal $\{x_{n_{\ell,\ell}}\}_{\ell=1}^{\infty}$: si $\ell \leq s$, $d(x_{n_{\ell,\ell}}, x_{n_{s,s}}) \leq 2/\ell$, lo cual muestra que es de Cauchy.
+
+$(\impliedby)$: Si $X$ no fuese totalmente acotado, existiría $\varepsilon > 0$ tal que ninguna colección finita de bolas de radio $\varepsilon$ recubre $X$. Construya iterativamente $x_{0} \in X$ y, dado $x_{1}, \dots, x_{n-1}$, $x_{n} \in X \setminus \bigcup_{i=1}^{n-1} B(x_{i}, \varepsilon)$. Entonces $d(x_{i}, x_{j}) \geq \varepsilon$ para $i \neq j$, sucesión sin subsucesiones de Cauchy.
+\end{proof}
+
+\begin{namedres}{Teorema}{Compacto $=$ completo $+$ totalmente acotado}
+Un espacio métrico es compacto si y solo si es completo y totalmente acotado.
+\end{namedres}
+\begin{proof}
+$(\implies)$: Todo compacto es completo (probado anteriormente). Para ver que todo compacto es totalmente acotado, dado $\varepsilon > 0$ la familia $\{ B(x, \varepsilon) : x \in X\}$ es un cubrimiento por abiertos de $X$, así por compacidad existen $x_{1}, \dots, x_{m} \in X$ con $X = \bigcup_{i=1}^{m} B(x_{i}, \varepsilon)$.
+
+$(\impliedby)$: Sea $\{x_{n}\}_{n=1}^{\infty} \subseteq X$. Por ser totalmente acotado, posee una subsucesión $\{x_{n_{k}}\}$ de Cauchy. Por completitud, $\{x_{n_{k}}\}$ converge en $X$. Así $X$ es secuencialmente compacto, equivalentemente compacto.
+\end{proof}
+
+\subsection{Compleción de un espacio métrico}
+
+\begin{namedres}{Teorema}{Existencia de la compleción}
+Sea $(X, d)$ un espacio métrico. Entonces:
+\begin{enumerate}[label=(\arabic*)]
+\item Existe un espacio métrico completo $(X^{\sharp}, d^{\sharp})$ y una función inyectiva $i : X \to X^{\sharp}$ que preserva distancias, con $i(X)$ denso en $X^{\sharp}$.
+\item Si $(X, d)$ es completo, entonces $(X^{\sharp}, d^{\sharp})$ es isométrico a $(X, d)$.
+\end{enumerate}
+\end{namedres}
+\begin{proof}
+\emph{Construcción.} Sean $\{x_{n}\}, \{y_{n}\} \subseteq X$ de Cauchy. La desigualdad triangular da
+\[
+|d(x_{m}, y_{m}) - d(x_{n}, y_{n})| \leq d(x_{m}, x_{n}) + d(y_{m}, y_{n}),
+\]
+luego $\{d(x_{m}, y_{m})\}_{m=1}^{\infty}$ es de Cauchy en $\R$. Definimos
+\[
+\tilde{d}(\{x_{n}\}, \{y_{n}\}) = \lim_{m \to \infty} d(x_{m}, y_{m}).
+\]
+Esta $\tilde{d}$ es simétrica y satisface la desigualdad triangular pero puede valer $0$ entre dos sucesiones distintas; es una \emph{semimétrica}. Definimos $\{x_{n}\} \sim \{y_{n}\}$ cuando $\tilde{d}(\{x_{n}\}, \{y_{n}\}) = 0$ y consideramos
+\[
+X^{\sharp} = \big\{[\{x_{n}\}] \;:\; \{x_{n}\} \subseteq X \text{ de Cauchy}\big\}, \quad d^{\sharp}([\{x_{n}\}], [\{y_{n}\}]) = \tilde{d}(\{x_{n}\}, \{y_{n}\}).
+\]
+
+\emph{$d^{\sharp}$ está bien definida.} Si $\{x_{n}\} \sim \{x_{n}'\}$, entonces $d(x_{m}, x_{m}') \to 0$, y dado $\{y_{n}\}$ de Cauchy,
+\[
+d(x_{m}, y_{m}) \leq d(x_{m}, x_{m}') + d(x_{m}', y_{m}),
+\]
+luego $\lim_{m} d(x_{m}, y_{m}) \leq \lim_{m} d(x_{m}', y_{m})$. Recíprocamente, $d(x_{m}', y_{m}) \leq d(x_{m}', x_{m}) + d(x_{m}, y_{m})$ implica $\lim_{m} d(x_{m}', y_{m}) \leq \lim_{m} d(x_{m}, y_{m})$, de donde se sigue la igualdad y por tanto $d^{\sharp}$ no depende de los representantes.
+
+\emph{$i$ preserva distancias y $i(X)$ es denso.} Para $x \in X$ defina $i(x) = [\{x, x, \dots\}]$. Entonces $d^{\sharp}(i(x), i(y)) = \lim_{m} d(x, y) = d(x, y)$. Dado $[\{x_{n}\}] \in X^{\sharp}$ y $\varepsilon > 0$, existe $n_{0}$ con $d(x_{n}, x_{n_{0}}) < \frac{\varepsilon}{2}$ para $n \geq n_{0}$, así $d^{\sharp}([\{x_{n}\}], i(x_{n_{0}})) = \lim_{m} d(x_{m}, x_{n_{0}}) \leq \frac{\varepsilon}{2} < \varepsilon$.
+
+\emph{$X^{\sharp}$ es completo.} Sea $\{\underline{x}^{m}\}_{m=1}^{\infty} \subseteq X^{\sharp}$ de Cauchy. Por la densidad de $i(X)$ en $X^{\sharp}$ recién probada, para cada $m \in \N$ existe $y_{m} \in X$ con $d^{\sharp}(\underline{x}^{m}, i(y_{m})) < 1/m$. Entonces
+\[
+d(y_{m}, y_{n}) = d^{\sharp}(i(y_{m}), i(y_{n})) \leq \tfrac{1}{m} + d^{\sharp}(\underline{x}^{m}, \underline{x}^{n}) + \tfrac{1}{n},
+\]
+así $\{y_{n}\}$ es de Cauchy en $X$. Sea $\underline{y} = [\{y_{n}\}] \in X^{\sharp}$. Dado $\varepsilon > 0$, escoja $k_{0}$ con $d(y_{n}, y_{j}) < \varepsilon/2$ para todos $n, j \geq k_{0}$. Para $m \geq k_{0}$,
+\[
+d^{\sharp}(i(y_{m}), \underline{y}) = \lim_{j \to \infty} d(y_{m}, y_{j}) \leq \tfrac{\varepsilon}{2},
+\]
+de donde
+\[
+d^{\sharp}(\underline{x}^{m}, \underline{y}) \leq d^{\sharp}(\underline{x}^{m}, i(y_{m})) + d^{\sharp}(i(y_{m}), \underline{y}) \leq \tfrac{1}{m} + \tfrac{\varepsilon}{2} < \varepsilon
+\]
+para $m$ suficientemente grande. Concluimos $\underline{x}^{m} \to \underline{y}$ en $X^{\sharp}$.
+
+\emph{(2)}: Si $(X, d)$ es completo, dada $\{x_{n}\}$ de Cauchy existe $x \in X$ con $x_{n} \to x$. Entonces $d^{\sharp}([\{x_{n}\}], i(x)) = \lim_{m} d(x_{m}, x) = 0$, así $i(x) = [\{x_{n}\}]$ y $i$ es sobreyectiva, luego una isometría.
+\end{proof}
+
+\begin{namedres}{Definición}{Compleción de un espacio}
+	Decimos que $X^\ast$ es complecion de $X$ si $X^\ast$ es completo y contiene una copia de $X$, la cual es densa. Es decir, existe una isometría $\phi: X \to \phi(X) \subseteq X^\ast$, con $\overline{\phi(X)} = X^\ast$.
+\end{namedres}
+
+\begin{namedres}{Lema}{Propiedad universal de la compleción}
+Sea $(Y, \rho)$ un espacio métrico completo y $j : X \to Y$ una función que preserva distancias con $j(X)$ denso en $Y$. Entonces existe $\theta : X^{\sharp} \to Y$, una isometría tal que $\theta \circ i = j$.
+\end{namedres}
+\begin{proof}
+Ejercicio (extender $\theta$ a partir de $\theta(i(x)) = j(x)$ usando densidad y completitud).
+\end{proof}
+
+% =============================================================================
+\section{El Teorema de Arzelà-Ascoli}
+% =============================================================================
+
+\subsection{El espacio \texorpdfstring{$\mathcal{C}(K, \R)$}{C(K,R)}}
+
+\begin{namedstd}{Definición}{Espacio de funciones continuas sobre un compacto}
+Sea $(X, d)$ un espacio métrico y $K \subseteq X$ compacto. Se define
+\[
+\mathcal{C}(K, \R) = \{ f : K \to \R \;:\; f \text{ continua}\}
+\]
+y, para $f, g \in \mathcal{C}(K, \R)$,
+\[
+d_{\infty}(f, g) = \sup_{x \in K} |f(x) - g(x)|.
+\]
+$(\mathcal{C}(K, \R), d_{\infty})$ es un espacio métrico cuya convergencia coincide con la convergencia uniforme.
+\end{namedstd}
+
+\subsection{Equicontinuidad}
+
+\begin{namedstd}{Definición}{Familia equicontinua}
+Sea $\{f_{\alpha}\}_{\alpha \in \Omega}$ una familia de funciones $f_{\alpha} : X \to Y$ con $(X, d), (Y, \rho)$ espacios métricos. Decimos que $\{f_{\alpha}\}_{\alpha \in \Omega}$ es \emph{equicontinua} en $x_{0} \in X$ si para todo $\varepsilon > 0$ existe $\delta > 0$ tal que
+\[
+d(x_{0}, y) < \delta \implies \rho(f_{\alpha}(y), f_{\alpha}(x_{0})) < \varepsilon \quad \text{para todo } \alpha \in \Omega.
+\]
+La familia es \emph{equicontinua} si lo es en todo punto de $X$.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Compactos en $\mathcal{C}(K, \R)$ son equicontinuos}
+Sea $C \subseteq \mathcal{C}(K, \R)$ compacto. Entonces $C$ es equicontinuo: dados $\varepsilon > 0$ y $x_{0} \in K$, existe $\delta > 0$ tal que para todo $f \in C$ y todo $y \in K$ con $d(x_{0}, y) < \delta$ se cumple $|f(y) - f(x_{0})| < \varepsilon$.
+\end{namedres}
+\begin{proof}
+Por contradicción: si fallase, existirían $\varepsilon > 0$ y $x_{0} \in K$ tales que para todo $n \in \N$ existen $y_{n}, k_{n}$ con $d(x_{0}, y_{n}) < 1/n$ y $|f_{k_{n}}(x_{0}) - f_{k_{n}}(y_{n})| \geq \varepsilon$, donde $\{f_{k_{n}}\} \subseteq C$. Por compacidad existe una subsucesión $\{f_{k_{n_{l}}}\}_{l \geq 1}$ que converge uniformemente a una función continua $f : K \to \R$. Para simplificar la notación, escribamos $\tilde{f}_{l} := f_{k_{n_{l}}}$ y $\tilde{y}_{l} := y_{n_{l}}$. Entonces $\tilde{y}_{l} \to x_{0}$ y $|\tilde{f}_{l}(x_{0}) - \tilde{f}_{l}(\tilde{y}_{l})| \geq \varepsilon$.
+
+Como $\tilde{y}_{l} \to x_{0}$ y $f$ es continua, existe $l_{0}$ tal que $|f(\tilde{y}_{l}) - f(x_{0})| < \varepsilon/3$ para $l \geq l_{0}$. Entonces, para $l$ grande,
+\[
+|\tilde{f}_{l}(\tilde{y}_{l}) - \tilde{f}_{l}(x_{0})| \leq d_{\infty}(\tilde{f}_{l}, f) + |f(\tilde{y}_{l}) - f(x_{0})| + d_{\infty}(\tilde{f}_{l}, f) < \tfrac{\varepsilon}{3} + \tfrac{\varepsilon}{3} + \tfrac{\varepsilon}{3} = \varepsilon,
+\]
+contradiciendo que $|f_{m_{l}}(y_{l}) - f_{m_{l}}(x_{0})| \geq \varepsilon$.
+\end{proof}
+
+\begin{namedres}{Lema}{Equicontinuidad y convergencia puntual a un continuo dan convergencia uniforme}
+Sea $\{f_{n}\}_{n=1}^{\infty}$ una familia equicontinua de funciones $f_{n} : X \to Y$ y $K \subseteq X$ compacto tal que $\lim_{n \to \infty} f_{n}(x) = f_{0}(x)$ para todo $x \in K$, con $f_{0}$ continua en $K$. Entonces $\{f_{n}\}$ converge uniformemente a $f_{0}$ en $K$.
+\end{namedres}
+\begin{proof}
+Sea $\varepsilon > 0$. Por equicontinuidad, para cada $x \in K$ existe $\delta_{x} > 0$ tal que $y \in B(x, \delta_{x})$ implica $\rho(f_{n}(x), f_{n}(y)) < \varepsilon/3$ para todo $n \geq 0$. Como $K$ es compacto, existen $x_{1}, \dots, x_{m}$ con $K \subseteq \bigcup_{i=1}^{m} B(x_{i}, \delta_{x_{i}})$. Tome $n_{0}$ tal que $\rho(f_{n}(x_{i}), f_{0}(x_{i})) < \varepsilon/3$ para todo $1 \leq i \leq m$ y todo $n \geq n_{0}$.
+
+Para $y \in K$, existe $i$ con $y \in B(x_{i}, \delta_{x_{i}})$, así
+\[
+\rho(f_{n}(y), f_{0}(y)) \leq \rho(f_{n}(y), f_{n}(x_{i})) + \rho(f_{n}(x_{i}), f_{0}(x_{i})) + \rho(f_{0}(x_{i}), f_{0}(y)) < \tfrac{\varepsilon}{3} + \tfrac{\varepsilon}{3} + \tfrac{\varepsilon}{3} = \varepsilon
+\]
+para $n \geq n_{0}$.
+\end{proof}
+
+\begin{namedres}{Lema}{Convergencia en denso para familia equicontinua produce continuidad}
+Sean $D \subseteq X$ denso y $\{f_{n}\}_{n=1}^{\infty}$ una sucesión equicontinua de funciones $f_{n} : X \to Y$. Suponga que $\{f_{n}(x)\}_{n=1}^{\infty}$ converge para todo $x \in D$ y que para cada $x \in X$ el conjunto $\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$ es completo (en particular esto se cumple si $Y$ es completo, o si $\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$ es compacto). Entonces $\{f_{n}(x)\}$ converge para todo $x \in X$ y su límite es continuo.
+\end{namedres}
+\begin{proof}
+\emph{Convergencia.} Sea $x \in X$ y $\varepsilon > 0$. Por equicontinuidad existe $\delta > 0$ con
+\[
+d(x, y) < \delta \implies \rho(f_{n}(x), f_{n}(y)) < \varepsilon/3 \quad \text{para todo } n \geq 1.
+\]
+Por densidad existe $y \in B(x, \delta) \cap D$ y, como $\{f_{n}(y)\}$ converge, existe $n_{0}$ con $\rho(f_{n}(y), f_{m}(y)) < \varepsilon/3$ para $n, m \geq n_{0}$. Entonces
+\[
+\rho(f_{n}(x), f_{m}(x)) \leq \rho(f_{n}(x), f_{n}(y)) + \rho(f_{n}(y), f_{m}(y)) + \rho(f_{m}(y), f_{m}(x)) < \varepsilon,
+\]
+así $\{f_{n}(x)\}$ es de Cauchy. Como $\{f_{n}(x)\} \subseteq \overline{\{f_{n}(x)\}}$ y este último es completo por hipótesis, $\{f_{n}(x)\}$ converge en $\overline{\{f_{n}(x)\}} \subseteq Y$.
+
+\emph{Continuidad del límite.} Definamos $f(x) = \lim_{n} f_{n}(x)$. Para $d(x, y) < \delta$,
+\[
+\rho(f(x), f(y)) = \lim_{n \to \infty} \rho(f_{n}(x), f_{n}(y)) \leq \tfrac{\varepsilon}{3},
+\]
+así $f$ es continua en $x$.
+\end{proof}
+
+\begin{namedstd}{Nota}{Hipótesis suficientes sobre el codominio}
+La hipótesis ``$\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$ completo'' del lema anterior se satisface, por ejemplo, cuando $Y$ es completo (todo cerrado de un completo es completo) o cuando $\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$ es compacto (por compacto $\Rightarrow$ completo). El segundo caso es el que se usa en el Teorema de Arzelà-Ascoli más adelante.
+\end{namedstd}
+
+\begin{namedres}{Lema}{Convergencia puntual en compacto bajo equicontinuidad implica uniforme}
+Sea $\{f_{n}\}_{n=1}^{\infty}$ una familia equicontinua, $f_{n} : X \to Y$, y $K \subseteq X$ compacto. Si $\lim_{n \to \infty} f_{n}(x) = f_{0}(x)$ existe en $Y$ para todo $x \in K$, entonces $f_{0}$ es continua y $f_{n}$ converge uniformemente a $f_{0}$ en $K$.
+\end{namedres}
+\begin{proof}
+\emph{Continuidad de $f_{0}$.} Sea $x \in K$ y $\varepsilon > 0$. Por equicontinuidad existe $\delta > 0$ tal que para todo $n \geq 1$, $d(x, y) < \delta$ implica $\rho(f_{n}(x), f_{n}(y)) < \varepsilon/3$. Pasando al límite $n \to \infty$,
+\[
+\rho(f_{0}(x), f_{0}(y)) = \lim_{n \to \infty} \rho(f_{n}(x), f_{n}(y)) \leq \tfrac{\varepsilon}{3} < \varepsilon
+\]
+para $d(x, y) < \delta$, lo que prueba la continuidad de $f_{0}$ sin requerir hipótesis adicional sobre $Y$.
+
+\emph{Convergencia uniforme.} Aplicando el primer lema de equicontinuidad (\emph{Equicontinuidad y convergencia puntual a un continuo dan convergencia uniforme}) con el límite continuo $f_{0}$ recién obtenido, $f_{n} \to f_{0}$ uniformemente en $K$.
+\end{proof}
+
+\subsection{El teorema}
+
+\begin{namedres}{Teorema}{Arzelà-Ascoli}
+Sean $X$ separable y $\{f_{n}\}_{n=1}^{\infty}$ una familia equicontinua de funciones $f_{n} : X \to Y$. Suponga que $\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$ es compacto para todo $x \in X$. Entonces existe una subsucesión de $\{f_{n}\}$ que converge puntualmente a una función continua $f : X \to Y$. Además, la convergencia es uniforme en cada compacto $K \subseteq X$.
+\end{namedres}
+\begin{proof}
+Sea $D = \{x_{n}\}_{n=1}^{\infty} \subseteq X$ denso (existe por separabilidad). Como $\overline{\{f_{n}(x_{1})\}_{n=1}^{\infty}}$ es compacto, existe una subsucesión $\{f_{n_{k}}^{1}\}_{k}$ tal que $\{f_{n_{k}}^{1}(x_{1})\}$ converge. Análogamente $\overline{\{f_{n_{k}}^{1}(x_{2})\}_{k}}$ es compacto (es un cerrado contenido en el compacto $\overline{\{f_{n}(x_{2})\}_{n=1}^{\infty}}$, luego compacto), de modo que existe una subsucesión $\{f_{n_{k}}^{2}\}$ de $\{f_{n_{k}}^{1}\}$ tal que $\{f_{n_{k}}^{2}(x_{2})\}$ converge.
+
+Iterando, dado $\{f_{n_{k}}^{m}\}$ con $\{f_{n_{k}}^{m}(x_{j})\}$ convergente para $1 \leq j \leq m$, extraemos $\{f_{n_{k}}^{m+1}\}$ subsucesión de $\{f_{n_{k}}^{m}\}$ tal que $\{f_{n_{k}}^{m+1}(x_{m+1})\}$ converge. Por construcción, $\{f_{n_{k}}^{m}(x_{j})\}$ converge para $1 \leq j \leq m$.
+
+Tomamos la subsucesión \emph{diagonal} $\{f_{n_{m}}^{m}\}_{m=1}^{\infty}$. Para $j \leq m$, $\{f_{n_{m}}^{m}(x_{j})\}_{m \geq j}$ es una subsucesión de $\{f_{n_{k}}^{j}\}$ y por tanto converge. Así $\{f_{n_{m}}^{m}\}$ converge puntualmente sobre $D$ y es equicontinua. Además, para cada $x \in X$, $\overline{\{f_{n_{m}}^{m}(x)\}_{m=1}^{\infty}}$ es un cerrado contenido en el compacto $\overline{\{f_{n}(x)\}_{n=1}^{\infty}}$, luego compacto y en particular completo. Por el lema previo (aplicado con esta condición de completitud sobre las clausuras de los valores), $\{f_{n_{m}}^{m}\}$ converge en todo $X$ a una función continua $f$, y la convergencia es uniforme en compactos.
+\end{proof}
+
+% =============================================================================
+\section{Conexidad}
+% =============================================================================
+
+\subsection{Conjuntos disconexos y conexos}
+
+\begin{namedstd}{Definición}{Espacio disconexo y conexo}
+Un espacio $(X, d)$ es \emph{disconexo} si existen $A, B$ abiertos no vacíos tales que
+\[
+X = A \cup B, \quad A \cap B = \emptyset.
+\]
+Un espacio se dice \emph{conexo} si no es disconexo. Equivalentemente, si $X = A \cup B$ con $A, B$ abiertos disjuntos, entonces $A = X$ o $B = X$.
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Disconexidad de un subconjunto}
+$E \subseteq X$ es \emph{disconexo} si existen $A, B$ abiertos en $(X, d)$ tales que
+\[
+E = (A \cap E) \cup (B \cap E), \quad (A \cap B) \cap E = \emptyset, \quad A \cap E \neq \emptyset \neq B \cap E.
+\]
+Es decir, $E$ se descompone en dos abiertos relativos no vacíos y disjuntos.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Caracterización de los abiertos en subespacios}
+Dado $E \subseteq X$, defina $d_{E} : E \times E \to \R$ por $(x, y) \mapsto d(x, y)$. $(E, d_{E})$ es un espacio métrico. Pruebe que $D \subseteq E$ es abierto en $(E, d_{E})$ si y solo si existe $O \subseteq X$ abierto en $(X, d)$ tal que $D = E \cap O$.
+\end{namedstd}
+
+\subsection{Conexos en \texorpdfstring{$\R$}{R} y propiedades}
+
+\begin{namedres}{Lema}{Los intervalos abiertos son conexos}
+Para $a < b$, el intervalo $I = (a, b)$ es conexo.
+\end{namedres}
+\begin{proof}
+Suponga que $I = (I \cap A) \cup (I \cap B)$ con $A, B$ abiertos disjuntos y ambos cortes no vacíos. Sean $s \in I \cap A$, $t \in I \cap B$ con $s < t$; entonces $[s, t] \subseteq I$. Como $s \in A$ existe $\delta_{1} > 0$ con $(s - \delta_{1}, s + \delta_{1}) \subseteq A$, así $[s, s + \delta_{1}/2] \subseteq [s, t] \cap A$.
+
+Defina $u = \sup\{ x \in [s, t] : [s, x] \subseteq A\}$. Por construcción $s < u \leq t$. Si $u \in B$, existe $\delta_{2} > 0$ con $(u - \delta_{2}, u + \delta_{2}) \subseteq B \cap [s,t]$; pero por propiedades del supremo existe $w \in [s, t] \cap A$ con $u - \delta_{2} < w \leq u$, lo cual implicaría $w \in A \cap B$ (pues $w \in [s, t] \cap A$ por la definición del supremo y $w \in (u - \delta_{2}, u + \delta_{2}) \subseteq B$), contradiciendo $A \cap B = \emptyset$. Si $u \in A$, existe $\delta_{3} > 0$ con $[u, u + \delta_{3}] \subseteq [s, t] \cap A$, lo que contradice la definición del supremo cuando $u < t$, o contradice $t \in B$ cuando $u = t$.
+\end{proof}
+
+\begin{namedres}{Lema}{Las funciones continuas preservan la conexidad}
+Sea $f : X \to Y$ continua. Si $E \subseteq X$ es conexo, entonces $f(E)$ es conexo.
+\end{namedres}
+\begin{proof}
+Suponga que existen $B, C \subseteq Y$ abiertos tales que $f(E) = (f(E) \cap C) \cup (f(E) \cap B)$ con ambos cortes no vacíos y disjuntos. Entonces
+\[
+\emptyset \neq f^{-1}(f(E) \cap C) = E \cap f^{-1}(C), \quad \emptyset \neq f^{-1}(f(E) \cap B) = E \cap f^{-1}(B),
+\]
+y $E = (E \cap f^{-1}(C)) \cup (E \cap f^{-1}(B))$ con $f^{-1}(C), f^{-1}(B)$ abiertos disjuntos en $X$, contradiciendo que $E$ es conexo.
+\end{proof}
+
+\begin{namedres}{Corolario}{$\R^{d}$ es conexo}
+$\R^{d}$ es conexo para todo $d \geq 1$.
+\end{namedres}
+\begin{proof}
+Suponga $\R^{d} = A \cup B$ con $A, B$ abiertos no vacíos disjuntos. Tome $x \in A$, $y \in B$ y $f : [0, 1] \to \R^{d}$, $t \mapsto (1-t)x + ty$, continua. Como $[0, 1]$ es conexo, $[x, y] = f([0,1])$ es conexo. Pero $[x, y] = ([x,y] \cap A) \cup ([x,y] \cap B)$ con ambos cortes no vacíos, contradicción.
+\end{proof}
+
+\begin{namedres}{Lema}{Unión de conexos con un punto en común}
+Sea $\{ E_{\alpha} : \alpha \in A\}$ una familia de conjuntos conexos tal que $\bigcap_{\alpha \in A} E_{\alpha} \neq \emptyset$. Entonces $E = \bigcup_{\alpha \in A} E_{\alpha}$ es conexo.
+\end{namedres}
+\begin{proof}
+Sea $x \in \bigcap_{\alpha \in A} E_{\alpha}$ y suponga, por contradicción, que existen $A', B'$ abiertos con $E = (A' \cap E) \cup (B' \cap E)$, $A' \cap E \neq \emptyset$, $B' \cap E \neq \emptyset$ y $A' \cap B' \cap E = \emptyset$. Sin pérdida de generalidad $x \in B'$.
+
+Como $A' \cap E \neq \emptyset$, tome $y \in A' \cap E$; como $E = \bigcup_{\alpha} E_{\alpha}$, existe $\alpha_{0}$ con $y \in E_{\alpha_{0}}$, luego $A' \cap E_{\alpha_{0}} \neq \emptyset$. Por otra parte $x \in E_{\alpha_{0}}$ (pues $x$ está en \emph{cada} $E_{\alpha}$) y $x \in B'$, así $B' \cap E_{\alpha_{0}} \neq \emptyset$.
+
+\noindent Veamos que esto descompone $E_{\alpha_{0}}$ en dos abiertos relativos no vacíos y disjuntos:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Cobertura:} todo $z \in E_{\alpha_{0}}$ satisface $z \in E$, luego (por la descomposición global) $z \in A'$ o $z \in B'$. Por tanto
+\[
+E_{\alpha_{0}} \;\subseteq\; (E_{\alpha_{0}} \cap A') \cup (E_{\alpha_{0}} \cap B');
+\]
+la inclusión recíproca es inmediata. Concluimos $E_{\alpha_{0}} = (E_{\alpha_{0}} \cap A') \cup (E_{\alpha_{0}} \cap B')$.
+\item \textbf{Disjuntez:} $(E_{\alpha_{0}} \cap A') \cap (E_{\alpha_{0}} \cap B') = E_{\alpha_{0}} \cap (A' \cap B') \subseteq E \cap (A' \cap B') = \emptyset$.
+\item \textbf{Ambos no vacíos:} ya probado arriba.
+\end{itemize}
+
+Esto contradice que $E_{\alpha_{0}}$ sea conexo.
+\end{proof}
+
+\subsection{Componentes conexas}
+
+\begin{namedstd}{Definición}{Componente conexa de un punto}
+Sea $(X, d)$ un espacio métrico y $x \in X$. La \emph{componente conexa} de $x$ es
+\[
+C(x) = \bigcup\{ E \subseteq X : E \text{ conexo}, \; x \in E\}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{La componente conexa es conexa}
+Por el lema de unión de conexos con punto en común, $C(x)$ es conexo para todo $x \in X$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Las componentes son clases de equivalencia}
+Defina la relación $\mathcal{R}$ en $X$ por $x \mathcal{R} y \iff \exists\, C \text{ conexo}\,(x, y \in C)$. Pruebe que $\mathcal{R}$ es una relación de equivalencia y que $[x] = C(x)$.
+\end{namedstd}
+
+\subsection{Caracterización de los conexos en \texorpdfstring{$\R$}{R}}
+
+\begin{namedres}{Lema}{Un conexo de $\R$ contiene los segmentos entre sus puntos}
+Sea $E \subseteq \R$ conexo y $a, b \in E$ con $a \leq b$. Entonces $[a, b] \subseteq E$.
+\end{namedres}
+\begin{proof}
+Suponga que existe $x \in [a, b] \setminus E$. Entonces
+\[
+E = (E \cap (-\infty, x)) \cup (E \cap (x, \infty)),
+\]
+descomposición de $E$ en dos abiertos relativos no vacíos y disjuntos, contradiciendo que $E$ es conexo.
+\end{proof}
+
+\begin{namedres}{Teorema}{Los conexos de $\R$ son los intervalos}
+$E \subseteq \R$ es conexo si y solo si $E$ es un intervalo (acotado o no, abierto, cerrado o semiabierto).
+\end{namedres}
+\begin{proof}
+$(\impliedby)$: Los intervalos abiertos son conexos por un lema previo, y la unión creciente $\bigcup_{n} (a + 1/n, b - 1/n)$, $\bigcup_{n} [a, b - 1/n]$, etc., con intersección no vacía permite obtener todos los demás tipos por aplicación del lema de unión.
+
+$(\implies)$: Si $E$ es conexo y acotado, defina $\alpha = \inf E$, $\beta = \sup E$. Tome $\{a_{n}\}, \{b_{n}\} \subseteq E$ con $a_{n} \downarrow \alpha$ y $b_{n} \uparrow \beta$. Entonces, por el lema anterior, $[a_{n}, b_{n}] \subseteq E$, y por tanto $(\alpha, \beta) = \bigcup_{n} [a_{n}, b_{n}] \subseteq E \subseteq [\alpha, \beta]$. Así $E$ es uno de $[\alpha, \beta], (\alpha, \beta], [\alpha, \beta), (\alpha, \beta)$, según si $\alpha, \beta \in E$. Si $E$ no es acotado superiormente, defina $\beta = +\infty$ y tome $b_{n} \in E$ con $b_{n} \to +\infty$; entonces $(\alpha, +\infty) = \bigcup_{n} [a_{n}, b_{n}] \subseteq E$, así $E \in \{ (\alpha, +\infty),\; [\alpha, +\infty) \}$. Análogamente para $E$ no acotado inferiormente, y el caso $E = \R$ se obtiene combinando ambos.
+\end{proof}
+
+\begin{namedstd}{Ejercicio}{Estructura de los abiertos en $\R$}
+Sea $G \subseteq \R$ abierto. Pruebe que existen intervalos abiertos disjuntos $\{ (a_{i}, b_{i})\}_{i=1}^{\infty}$ tales que $G = \bigcup_{i=1}^{\infty} (a_{i}, b_{i})$.
+\end{namedstd}
+
+\subsection{Arcoconexidad}
+
+\begin{namedstd}{Definición}{Conjunto arcoconexo en $\R^{d}$}
+$E \subseteq \R^{d}$ es \emph{arcoconexo} si para todos $x_{0}, x_{1} \in E$ existe una curva $\gamma : [0, 1] \to \R^{d}$ tal que
+\begin{enumerate}[label=(\arabic*)]
+\item $\gamma(0) = x_{0}$ y $\gamma(1) = x_{1}$;
+\item $\gamma(t) \in E$ para todo $t \in [0, 1]$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedstd}{Ejemplo}{La curva del seno topológico: conexo no arcoconexo}
+Considere
+\[
+E = \{(0, 0)\} \cup \left\{ (x, y) : 0 < x \leq 1,\; y = \sin\!\left(\tfrac{1}{x}\right) \right\}.
+\]
+\emph{$E$ es conexo.} Sean $A, B$ abiertos con $A \cap E \neq \emptyset \neq B \cap E$, $E \subseteq A \cup B$ y $A \cap B = \emptyset$, y supóngase $(0, 0) \in A$. Para $n \in \N$ con $n$ grande, $x_{n} = (\tfrac{1}{\pi n}, \sin(\pi n)) = (\tfrac{1}{\pi n}, 0) \in A$ (por convergencia a $(0,0)$ y abierto $A$). Para cada $n$,
+\[
+E_{n} = \left\{ (x, y) : \tfrac{1}{n\pi} \leq x \leq 1,\; y = \sin\!\left(\tfrac{1}{x}\right)\right\}
+\]
+es la imagen continua del intervalo $[\tfrac{1}{\pi n}, 1]$ y por tanto es conexo. Como $E_{n} \cap A \neq \emptyset$, $E_{n} \cap B = \emptyset$, así $E_{n} \subseteq A$, y tomando uniones $\{(x, \sin(1/x)) : 0 < x \leq 1\} \subseteq A$. Concluimos $E \subseteq A$, contradiciendo $B \cap E \neq \emptyset$.
+
+\emph{$E$ no es arcoconexo.} Suponga que existe $\tilde{\gamma} : [0, 1] \to E$ continua con $\tilde{\gamma}(0) = (0, 0)$ y $\tilde{\gamma}(1) = (1/(n_{0}\pi), 0)$. Sea $t_{0} = \sup\{ t > 0 : \tilde{\gamma}(t) = (0, 0)\}$. Tomando $\{t_{n}\}$ decreciente con $t_{n} \to t_{0}$, $\tilde{\gamma}(t_{n}) \to (0, 0)$, así $\tilde{\gamma}_{1}(t_{n}) \to 0$ y $\tilde{\gamma}_{2}(t_{n}) = \sin(1/\tilde{\gamma}_{1}(t_{n}))$ no converge (oscila entre $-1$ y $1$ a lo largo de los $t_{n}$ adecuados), contradiciendo la continuidad de $\tilde{\gamma}_{2}$ en $t_{0}$.
+\end{namedstd}
+
+\begin{namedstd}{Ejercicio}{Detalles del contraejemplo de arcoconexidad}
+En el ejemplo anterior, pruebe:
+\begin{enumerate}[label=(\alph*)]
+\item Si $x_{n} < x_{n+1}$ entonces, para $x_{n} \leq x \leq x_{n+1}$, $(x, \sin(1/x)) \in \tilde{\gamma}([0,1])$.
+\item $B = \{ (x, \sin(1/x)) : 0 < x < 1/(n_{0}\pi)\} \subseteq \tilde{\gamma}([0,1])$.
+\item $\tilde{\gamma}([t_{0}, 1]) \setminus B = \{ (0, 0)\}$.
+\item $\tilde{\gamma}$ no es continua en $t_{0}$.
+\end{enumerate}
+\end{namedstd}
+
+\begin{namedres}{Lema}{En abiertos de $\R^{d}$, conexo equivale a arcoconexo}
+Sea $E \subseteq \R^{d}$ abierto. Entonces $E$ es conexo si y solo si $E$ es arcoconexo.
+\end{namedres}
+\begin{proof}
+$(\impliedby)$: Por el teorema general, todo arcoconexo es conexo.
+
+$(\implies)$: Fije $x_{0} \in E$ y considere $A = \{ x \in E : x \text{ se une a } x_{0} \text{ por una curva en } E\}$. Como $E$ es abierto y unión de curvas con bolas, $A$ y $E \setminus A$ son ambos abiertos en $E$ (alrededor de cualquier $y \in A$ una bola en $E$ se une a $y$ con una recta y por concatenación a $x_{0}$). Por conexidad y $A \neq \emptyset$, $A = E$. (Detalles: \emph{ejercicio}.)
+\end{proof}
+
+% =============================================================================
+\section{Categorías de Baire}
+% =============================================================================
+
+\subsection{Conjuntos de primera y segunda categoría}
+
+\begin{namedstd}{Definición}{Conjunto denso en ninguna parte}
+Dado un espacio métrico $(X, d)$, $A \subseteq X$ es \emph{denso en ninguna parte} si $(\overline{A})^{c}$ es denso en $X$. Equivalentemente, $(\overline{A})^{\circ} = \emptyset$.
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Caracterización por interior de la clausura}
+$A$ es denso en ninguna parte si y solo si para todo $x \in X$ y $r > 0$,
+\[
+(\overline{A})^{c} \cap B(x, r) \neq \emptyset.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Definición}{Primera y segunda categoría (magro)}
+\begin{enumerate}[label=(\arabic*)]
+\item Un conjunto $A \subseteq X$ es de \emph{primera categoría} (o \emph{magro}) si es unión numerable de conjuntos densos en ninguna parte.
+\item Un conjunto es de \emph{segunda categoría} si no es de primera categoría.
+\end{enumerate}
+\end{namedstd}
+
+\subsection{Los teoremas de Baire}
+
+\begin{namedres}{Teorema}{Baire (intersección numerable de abiertos densos)}
+Sea $(X, d)$ completo. Si $\{G_{n}\}_{n=1}^{\infty}$ es una sucesión de conjuntos abiertos y densos en $X$, entonces $\bigcap_{n=1}^{\infty} G_{n}$ es denso en $X$.
+\end{namedres}
+\begin{proof}
+Sea $A \subseteq X$ un abierto no vacío. Como $G_{1}$ es denso, existe $x_{1} \in A \cap G_{1}$, y como $A \cap G_{1}$ es abierto, existe $r_{1} > 0$ con $B(x_{1}, r_{1}) \subseteq A \cap G_{1}$. Tome $B_{1} = B(x_{1}, r_{1}/2)$, así $\overline{B}_{1} \subseteq B(x_{1}, r_{1}) \subseteq A \cap G_{1}$.
+
+Aplicando el mismo argumento a $B_{1}$ y $G_{2}$, existen $x_{2} \in G_{2}$ y $0 < r_{2} < r_{1}/2$ tales que $B(x_{2}, r_{2}) \subseteq B_{1} \cap G_{2} \subseteq A \cap G_{1} \cap G_{2}$ y, definiendo $B_{2} = B(x_{2}, r_{2}/2)$, $\overline{B}_{2} \subseteq B_{1} \cap G_{2}$.
+
+Iterando se obtiene una sucesión $\{x_{n}\}$ con $x_{n} \in G_{n}$ y $r_{n} < r_{n-1}/2 \leq r_{1}/2^{n-1}$ tal que
+\[
+B(x_{n}, r_{n}) \subseteq B_{n-1} \cap G_{n} \subseteq A \cap \bigcap_{i=1}^{n} G_{i}, \quad \overline{B}_{n} \subseteq B_{n-1} \cap G_{n}.
+\]
+Si $n \geq m$ entonces $B_{n} \subseteq B_{m}$ y $x_{n}, x_{m} \in B_{m}$, por lo que $d(x_{n}, x_{m}) < 2 r_{m} < r_{1}/2^{m-2}$. Así $\{x_{n}\}$ es de Cauchy. Por completitud existe $x = \lim_{n} x_{n}$, y como $\{x_{n}\}_{n=m}^{\infty} \subseteq B_{m}$, $x \in \overline{B}_{m} \subseteq A \cap \bigcap_{i=1}^{m} G_{i}$ para todo $m \geq 1$, así $x \in A \cap \bigcap_{i=1}^{\infty} G_{i}$. Concluimos que $\bigcap_{i=1}^{\infty} G_{i}$ es denso.
+\end{proof}
+
+\begin{namedres}{Teorema}{Categorías de Baire}
+Sea $(X, d)$ un espacio métrico completo. Si $G \subseteq X$ es un abierto no vacío, entonces $G$ es de segunda categoría.
+\end{namedres}
+\begin{proof}
+Suponga, por contradicción, que $G$ es de primera categoría. Existen $A_{n}$ densos en ninguna parte con $G = \bigcup_{n=1}^{\infty} A_{n}$. Sea $G_{n} = (\overline{A}_{n})^{c}$; cada $G_{n}$ es abierto y denso (por la definición de denso en ninguna parte). Por el teorema de Baire,
+\[
+\bigcap_{n=1}^{\infty} G_{n} \;=\; \bigcap_{n=1}^{\infty} (\overline{A}_{n})^{c} \;=\; \Big(\bigcup_{n=1}^{\infty} \overline{A}_{n}\Big)^{c}
+\]
+es denso en $X$. Por otro lado, como $A_{n} \subseteq \overline{A}_{n}$ para todo $n$,
+\[
+G \;=\; \bigcup_{n=1}^{\infty} A_{n} \;\subseteq\; \bigcup_{n=1}^{\infty} \overline{A}_{n},
+\]
+de donde
+\[
+G \cap \Big(\bigcup_{n=1}^{\infty} \overline{A}_{n}\Big)^{c} \;=\; G \cap \bigcap_{n=1}^{\infty} G_{n} \;=\; \emptyset.
+\]
+Pero $G$ es un abierto no vacío, así $G$ debe intersecar a todo conjunto denso. Esto contradice que $\bigcap_{n=1}^{\infty} G_{n}$ sea denso, concluyendo el resultado.
+\end{proof}
+
+\newpage
+\appendix
+% =============================================================================
+\section{Anexo: caracterizaciones equivalentes}
+% =============================================================================
+
+A lo largo del curso, varios conceptos clave admitieron \emph{múltiples caracterizaciones equivalentes} que conviene tener juntas a la vista. Este anexo recopila esos paquetes de equivalencias en cajas autocontenidas, una por concepto. Cada caja indica además dónde se prueba cada caracterización dentro del documento.
+
+\anexogroup{Topología métrica}
+
+\begin{equivbox}{blue}{Caracterizaciones de la clausura $\overline{A}$}
+Sean $(E, d)$ un espacio métrico, $A \subseteq E$ y $x \in E$. Las siguientes afirmaciones son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(distancia)}\; $d(x, A) = 0$. \hfill\textit{Definición de $\overline{A}$.}
+\item \textbf{(secuencial)}\; Existe $\{x_{n}\}_{n=1}^{\infty} \subseteq A$ con $x_{n} \to x$. \hfill\textit{Lema 3.3.1.}
+\item \textbf{(bolas)}\; $\forall r > 0,\ B(x, r) \cap A \neq \emptyset$. \hfill\textit{Equivalente a $d(x, A) = 0$.}
+\item \textbf{(vecindarios)}\; $x \in \displaystyle\bigcap_{r > 0} V_{r}(A)$. \hfill\textit{Proposición 3.5.2.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{teal}{Caracterizaciones de un conjunto abierto $D \subseteq E$}
+Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición por bolas)}\; Para todo $x \in D$ existe $r > 0$ con $B(x, r) \subseteq D$. \hfill\textit{Definición 2.2.2.}
+\item \textbf{(interior)}\; $D = D^{\circ}$. \hfill\textit{Ejercicio 3.1.6.}
+\item \textbf{(vecindarios)}\; $D$ es vecindario de cada uno de sus puntos. \hfill\textit{Nota 3.5.2.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{cyan!70!black}{Caracterizaciones de un conjunto cerrado $F \subseteq E$}
+Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición por complemento)}\; $E \setminus F$ es abierto. \hfill\textit{Definición 2.2.4.}
+\item \textbf{(igual a su clausura)}\; $F = \overline{F}$. \hfill\textit{Lema 3.3.4.}
+\item \textbf{(secuencial)}\; Toda sucesión convergente con términos en $F$ tiene su límite en $F$. \hfill\textit{Consecuencia inmediata de (2).}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{violet}{Caracterizaciones de un punto de acumulación}
+Sean $A \subseteq E$ y $x_{0} \in E$. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición por bolas)}\; $\forall r > 0,\ \big(B(x_{0}, r) \setminus \{x_{0}\}\big) \cap A \neq \emptyset$. \hfill\textit{Definición 3.4.1.}
+\item \textbf{(secuencial)}\; Existe $\{x_{n}\}_{n=1}^{\infty} \subseteq A \setminus \{x_{0}\}$ con $x_{n} \to x_{0}$. \hfill\textit{Ejercicio 3.4.2.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Continuidad}
+
+\begin{equivbox}{purple}{Caracterizaciones de la continuidad de $f : X \to Y$}
+Las siguientes son equivalentes (Teorema 4.2.2):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{($\varepsilon$--$\delta$)}\; Para todo $a \in X$ y $\varepsilon > 0$ existe $\delta > 0$ tal que $d(x, a) < \delta \implies \rho(f(x), f(a)) < \varepsilon$.
+\item \textbf{(preimagen de abiertos)}\; $f^{-1}(G)$ es abierto en $X$ para todo abierto $G \subseteq Y$.
+\item \textbf{(preimagen de cerrados)}\; $f^{-1}(F)$ es cerrado en $X$ para todo cerrado $F \subseteq Y$.
+\item \textbf{(clausuras)}\; $f(\overline{B}) \subseteq \overline{f(B)}$ para todo $B \subseteq X$.
+\item \textbf{(secuencial)}\; Para toda sucesión $\{x_{n}\} \subseteq X$ con $x_{n} \to a$ se cumple $f(x_{n}) \to f(a)$. \hfill\textit{Teorema 4.2.3.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Compacidad y completitud}
+
+\begin{equivbox}{orange!85!black}{Caracterizaciones de un conjunto compacto $C \subseteq X$}
+Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(cubrimientos)}\; Todo cubrimiento por abiertos de $C$ admite subcubrimiento finito. \hfill\textit{Definición 5.2.3.}
+\item \textbf{(secuencial)}\; Toda sucesión $\{x_{n}\}_{n=1}^{\infty} \subseteq C$ posee una subsucesión convergente a un punto de $C$. \hfill\textit{Lema 5.3.1.}
+\item \textbf{(intersección finita)}\; Toda familia $\{F_{\alpha}\}_{\alpha \in \Lambda}$ de cerrados con la propiedad de intersección finita ($\bigcap_{\alpha \in A} F_{\alpha} \neq \emptyset$ para todo $A \subseteq \Lambda$ finito) cumple $\bigcap_{\alpha \in \Lambda} F_{\alpha} \neq \emptyset$. \hfill\textit{Teorema 5.4.2.}
+\item \textbf{(completo $+$ totalmente acotado)}\; $C$ es completo y totalmente acotado. \hfill\textit{Teorema 6.3.2.}
+\end{enumerate}
+\textit{Caracterización adicional en $\R^{d}$ (Heine-Borel, Teorema 5.5.2):}
+\begin{enumerate}[label=(\arabic*),leftmargin=2em,resume]
+\item \textbf{(Heine-Borel)}\; $C$ es cerrado y acotado.
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{red!75!black}{Caracterizaciones de un espacio totalmente acotado}
+Sea $(X, d)$ un espacio métrico. Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición por $\varepsilon$-redes)}\; Para todo $\varepsilon > 0$ existen $x_{1}, \dots, x_{m} \in X$ tales que $X = \bigcup_{i=1}^{m} B(x_{i}, \varepsilon)$. \hfill\textit{Definición 6.3.1.}
+\item \textbf{(subsucesiones de Cauchy)}\; Toda sucesión $\{x_{n}\}_{n=1}^{\infty} \subseteq X$ posee una subsucesión de Cauchy. \hfill\textit{Lema 6.3.4.}
+\end{enumerate}
+\end{equivbox}
+
+\begin{equivbox}{brown!85!black}{Caracterizaciones de la completitud de $C \subseteq X$}
+Sean $(X, d)$ completo y $C \subseteq X$. Son equivalentes (Lema 6.2.1):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(intrínseca)}\; $(C, d)$ es un espacio métrico completo.
+\item \textbf{(topológica)}\; $C$ es cerrado en $(X, d)$.
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Conexidad}
+
+\begin{equivbox}{olive!80!black}{Caracterizaciones de la conexidad de $E \subseteq X$}
+Las siguientes son equivalentes:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(definición)}\; No existen abiertos $A, B$ en $X$ tales que $E = (A \cap E) \cup (B \cap E)$ con $A \cap E \neq \emptyset \neq B \cap E$ y $(A \cap B) \cap E = \emptyset$. \hfill\textit{Definición 8.1.2.}
+\end{enumerate}
+\textit{Especialización en $\R$ (Teorema 8.3.2):}
+\begin{enumerate}[label=(\arabic*),leftmargin=2em,resume]
+\item \textbf{(intervalos)}\; $E \subseteq \R$ es conexo si y solo si $E$ es un intervalo.
+\end{enumerate}
+\textit{Especialización en abiertos de $\R^{d}$ (Lema 8.4.4):}
+\begin{enumerate}[label=(\arabic*),leftmargin=2em,resume]
+\item \textbf{(arcoconexidad)}\; Para $E \subseteq \R^{d}$ \textit{abierto}, $E$ es conexo si y solo si $E$ es arcoconexo.
+\end{enumerate}
+\textit{Implicaciones generales (no equivalencias):}
+\begin{itemize}[leftmargin=2em]
+\item Arcoconexo $\Rightarrow$ conexo (Teorema 1.3.1).
+\item Conexo $\not\Rightarrow$ arcoconexo en general (contraejemplo: \textit{topologist's sine}, Ejemplo 8.4.2).
+\end{itemize}
+\end{equivbox}
+
+\anexogroup{Equicontinuidad y Arzelà-Ascoli}
+
+\begin{equivbox}{magenta!75!black}{Convergencia uniforme bajo equicontinuidad}
+Sea $\{f_{n}\}_{n=1}^{\infty}$ una familia equicontinua $f_{n} : X \to Y$. Las siguientes condiciones implican convergencia uniforme del límite puntual sobre el dominio relevante:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(en compactos)}\; Si $K \subseteq X$ es compacto y $f_{n}(x) \to f_{0}(x)$ para todo $x \in K$, entonces $f_{n} \to f_{0}$ uniformemente en $K$ y $f_{0}$ es continua. \hfill\textit{Lema 7.2.5.}
+\item \textbf{(en denso $+$ completitud)}\; Si $D \subseteq X$ es denso, $\{f_{n}(x)\}$ converge para todo $x \in D$ y $\overline{\{f_{n}(x)\}}$ es completo para cada $x$, entonces $\{f_{n}(x)\}$ converge en todo $X$ y el límite es continuo. \hfill\textit{Lema 7.2.3.}
+\item \textbf{(Arzelà-Ascoli)}\; Si además $X$ es separable y $\overline{\{f_{n}(x)\}}$ es compacto para todo $x$, alguna subsucesión converge puntualmente a una función continua y la convergencia es uniforme en compactos. \hfill\textit{Teorema 7.3.1.}
+\end{enumerate}
+\end{equivbox}
+
+\anexogroup{Categorías de Baire}
+
+\begin{equivbox}{gray!80!black}{Caracterizaciones de un conjunto denso en ninguna parte}
+Sea $(X, d)$ un espacio métrico y $A \subseteq X$. Las siguientes son equivalentes (Definición 9.1.1 y Nota 9.1.2):
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{(complemento de la clausura)}\; $(\overline{A})^{c}$ es denso en $X$.
+\item \textbf{(intersección con bolas)}\; Para todo $x \in X$ y $r > 0$, $(\overline{A})^{c} \cap B(x, r) \neq \emptyset$.
+\item \textbf{(interior vacío de la clausura)}\; $(\overline{A})^{\circ} = \emptyset$.
+\end{enumerate}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: contraejemplos canónicos}
+% =============================================================================
+
+Esta tabla recopila los contraejemplos más útiles para el examen --- cada uno responde a una pregunta del estilo ``¿es necesariamente \textit{X}?'' con \textit{no, este conjunto/espacio cumple A pero no B}.
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{p{0.30\textwidth} p{0.30\textwidth} p{0.32\textwidth}}
+\hline
+\textbf{Propiedad afirmativa} & \textbf{Contraejemplo a la implicación} & \textbf{Comentario / referencia} \\
+\hline
+\endhead
+
+Cerrado y acotado $\Rightarrow$ compacto & Bola unidad cerrada en un espacio normado de dimensión infinita; o $(\N, \rho_{\mathrm{discreta}})$ acotado pero sin subcubrimientos finitos de bolas $B(n,1/2)$. & Heine-Borel falla fuera de $\R^{d}$ (cf.\ §5.5).\\
+\hline
+Acotado $\Rightarrow$ totalmente acotado & $(\N, \rho)$ con $\rho(n,m)=1$ si $n\neq m$. Es acotado ($\N=B(n,2)$) pero no totalmente acotado ($B(n,1/2)=\{n\}$). & §6.3 (Ejemplo).\\
+\hline
+Completo $\Rightarrow$ compacto & $(\R, |\cdot|)$ es completo pero no compacto. & §6.2.\\
+\hline
+Conexo $\Rightarrow$ arcoconexo & \emph{Topologist's sine}: $E = \{(0,0)\}\cup\{(x,\sin(1/x)) : 0<x\leq 1\}$. & §8.4 (Ejemplo).\\
+\hline
+Conexo $\Rightarrow$ acotado & $\R$ es conexo y no acotado. & Trivial.\\
+\hline
+Continua $\Rightarrow$ Lipschitz & $f(x)=\sqrt{x}$ en $[0,1]$ es continua, no Lipschitz cerca de $0$. & §4.1.\\
+\hline
+Continua y biyectiva $\Rightarrow$ homeomorfismo & $f:[0,2\pi)\to S^{1}$, $t\mapsto e^{it}$. Continua, biyectiva, pero $f^{-1}$ no es continua en $1\in S^{1}$. & §4.3.\\
+\hline
+Cauchy $\Rightarrow$ convergente & En $(\Q, |\cdot|)$, una sucesión de racionales que aproxima $\sqrt{2}$. & Justificación de la compleción (§6.4).\\
+\hline
+Sucesión convergente con límite en el conjunto & $\{1/n\}_{n=1}^{\infty}\subseteq (0,1]$ converge a $0\notin (0,1]$. & Demuestra que $(0,1]$ no es cerrado.\\
+\hline
+$\overline{\bigcup_{n} A_{n}} = \bigcup_{n} \overline{A_{n}}$ (uniones numerables) & $A_{n}=\{q_{n}\}$, $\Q=\{q_{1},q_{2},\dots\}$. $\bigcup\overline{A_{n}}=\Q$, pero $\overline{\bigcup A_{n}}=\R$. & §9.2 (consultar nota en rojo).\\
+\hline
+Unión arbitraria de cerrados $\Rightarrow$ cerrado & $(a,b) = \bigcup_{n=1}^{\infty} [a+1/n, b-1/n]$ es unión numerable de cerrados pero no es cerrado. & §2.2 (Ejemplo).\\
+\hline
+Intersección arbitraria de abiertos $\Rightarrow$ abierto & $\{a\} = \bigcap_{n=1}^{\infty} (a-1/n, a+1/n)$. & §2.2 (Ejemplo).\\
+\hline
+Equicontinuidad puntual $\Rightarrow$ uniforme & $f_{n}(x)=x^{n}$ en $[0,1]$: convergencia puntual a discontinua en $1$, no equicontinua en $1$. & §7.2.\\
+\hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+\newpage
+% =============================================================================
+\section{Anexo: implicaciones y equivalencias}
+% =============================================================================
+
+Mapa rápido de las relaciones lógicas entre las propiedades del curso. Cada bloque agrupa un concepto y sus interrelaciones en tres categorías:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Equivalencias} ($\Leftrightarrow$): caracterizaciones intercambiables.
+\item \textbf{Implicaciones siempre válidas} ($\Rightarrow$): una propiedad implica otra (sin condición adicional, salvo aviso).
+\item \textbf{Implicaciones que \emph{no} valen en general} ($\not\Rightarrow$): cuidado, hay contraejemplo (ver \emph{Anexo: contraejemplos canónicos}).
+\end{itemize}
+Use estos paquetes para identificar qué hipótesis necesita una demostración y cuáles puede cambiar libremente por equivalentes.
+
+\medskip
+
+\begin{equivbox}{orange!85!black}{Compacidad}
+\textbf{Equivalencias (siempre válidas en cualquier espacio métrico).}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $C$ compacto $\Leftrightarrow$ $C$ secuencialmente compacto. \hfill\textit{Lema 5.3.1.}
+\item $C$ compacto $\Leftrightarrow$ $C$ completo $+$ totalmente acotado. \hfill\textit{Teorema 6.3.2.}
+\item $C$ compacto $\Leftrightarrow$ todo cubrimiento por abiertos admite subcubrimiento finito. \hfill\textit{Definición 5.2.3.}
+\item $C$ compacto $\Leftrightarrow$ toda familia de cerrados con la propiedad de intersección finita tiene intersección global no vacía. \hfill\textit{Teorema 5.4.2.}
+\end{itemize}
+
+\textbf{Equivalencia adicional sólo en $\R^{d}$.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $C \subseteq \R^{d}$ compacto $\Leftrightarrow$ $C$ cerrado y acotado. \hfill\textit{Heine-Borel, Teorema 5.5.2.}
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $C$ compacto $\Rightarrow$ $C$ cerrado.
+\item $C$ compacto $\Rightarrow$ $C$ acotado.
+\item $C$ compacto $\Rightarrow$ $C$ completo. \hfill\textit{Lema 6.2.1.}
+\item $C$ compacto $\Rightarrow$ $C$ totalmente acotado. \hfill\textit{Teorema 6.3.2.}
+\item $f$ continua $+$ $K$ compacto $\Rightarrow$ $f(K)$ compacto. \hfill\textit{Lema 5.4.1.}
+\item $f$ continua $+$ $K$ compacto $\Rightarrow$ $f$ acotada y alcanza extremos en $K$. \hfill\textit{Teorema valores extremos, 5.5.3.}
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Cerrado y acotado $\not\Rightarrow$ compacto en dim. infinita (e.g., bola unidad cerrada de $\ell^{2}$).
+\item Acotado $\not\Rightarrow$ totalmente acotado (e.g., $(\N, \rho_{\mathrm{discreta}})$).
+\item Completo $\not\Rightarrow$ compacto (e.g., $\R$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{olive!80!black}{Conexidad y arcoconexidad}
+\textbf{Equivalencias en sub-casos.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $E \subseteq \R$ conexo $\Leftrightarrow$ $E$ es un intervalo. \hfill\textit{Teorema 8.3.2.}
+\item Para $E \subseteq \R^{d}$ \emph{abierto}: $E$ conexo $\Leftrightarrow$ $E$ arcoconexo. \hfill\textit{Lema 8.4.4.}
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $E$ arcoconexo $\Rightarrow$ $E$ conexo. \hfill\textit{Teorema 1.3.1.}
+\item $f$ continua $+$ $E$ conexo $\Rightarrow$ $f(E)$ conexo. \hfill\textit{Lema 8.2.2.}
+\item $\{E_{\alpha}\}$ familia de conexos con $\bigcap_{\alpha} E_{\alpha} \neq \emptyset$ $\Rightarrow$ $\bigcup_{\alpha} E_{\alpha}$ conexo. \hfill\textit{Lema 8.2.4.}
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Conexo $\not\Rightarrow$ arcoconexo (e.g., \emph{topologist's sine}, Ejemplo 8.4.2).
+\item Conexo $\not\Rightarrow$ acotado ($\R$ es conexo y no acotado).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{purple}{Continuidad}
+\textbf{Equivalencias} (Teorema 4.2.2 y Teorema 4.2.3).
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ continua $\Leftrightarrow$ $\forall \varepsilon > 0\ \exists \delta > 0:\ d(x, a) < \delta \Rightarrow \rho(f(x), f(a)) < \varepsilon$.
+\item $f$ continua $\Leftrightarrow$ $f^{-1}(G)$ abierto para todo abierto $G \subseteq Y$.
+\item $f$ continua $\Leftrightarrow$ $f^{-1}(F)$ cerrado para todo cerrado $F \subseteq Y$.
+\item $f$ continua $\Leftrightarrow$ $f(\overline{B}) \subseteq \overline{f(B)}$ para todo $B \subseteq X$.
+\item $f$ continua en $a$ $\Leftrightarrow$ ($x_{n} \to a \Rightarrow f(x_{n}) \to f(a)$) para toda sucesión.
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $f$ es $\lambda$-Lipschitz $\Rightarrow$ $f$ continua.
+\item $f$ homeomorfismo $\Rightarrow$ $f$ biyectiva, continua, y $f^{-1}$ continua.
+\item Composición de continuas $\Rightarrow$ continua.
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Continua $\not\Rightarrow$ Lipschitz (e.g., $f(x) = \sqrt{x}$ en $[0, 1]$).
+\item Continua y biyectiva $\not\Rightarrow$ homeomorfismo (e.g., $t \mapsto e^{it}$ de $[0, 2\pi)$ a $S^{1}$).
+\item Continua puntualmente $\not\Rightarrow$ uniformemente continua (necesita compacidad o Lipschitz, etc.).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{brown!85!black}{Completitud y total acotamiento}
+\textbf{Equivalencias.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Sea $X$ completo y $C \subseteq X$. Entonces $(C, d)$ completo $\Leftrightarrow$ $C$ cerrado en $(X, d)$. \hfill\textit{Lema 6.2.1.}
+\item $X$ totalmente acotado $\Leftrightarrow$ toda sucesión en $X$ admite subsucesión de Cauchy. \hfill\textit{Lema 6.3.4.}
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $X$ compacto $\Rightarrow$ $X$ completo. \hfill\textit{Lema 6.2.2.}
+\item $X$ compacto $\Rightarrow$ $X$ totalmente acotado. \hfill\textit{Teorema 6.3.2.}
+\item Sucesión convergente $\Rightarrow$ Cauchy.
+\item Sucesión de Cauchy $\Rightarrow$ acotada.
+\item $X$ totalmente acotado $\Rightarrow$ $X$ acotado.
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $X$ completo $\not\Rightarrow$ $X$ compacto (e.g., $\R$).
+\item $X$ acotado $\not\Rightarrow$ $X$ totalmente acotado (e.g., $(\N, \rho_{\mathrm{discreta}})$).
+\item Cauchy $\not\Rightarrow$ convergente sin completitud (e.g., racional aproximando $\sqrt{2}$ en $\Q$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{blue!75!black}{Topología: clausura, interior, abiertos, cerrados}
+\textbf{Caracterizaciones de la clausura $\overline{A}$.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $x \in \overline{A}$ $\Leftrightarrow$ $d(x, A) = 0$. \hfill\textit{Definición de $\overline{A}$.}
+\item $x \in \overline{A}$ $\Leftrightarrow$ existe $\{x_{n}\} \subseteq A$ con $x_{n} \to x$. \hfill\textit{Lema 3.3.1.}
+\item $x \in \overline{A}$ $\Leftrightarrow$ $\forall r > 0,\ B(x, r) \cap A \neq \emptyset$.
+\item $\overline{A} = \bigcap_{r > 0} V_{r}(A)$. \hfill\textit{Proposición 3.5.2.}
+\end{itemize}
+
+\textbf{Caracterizaciones de ``abierto''.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $D$ abierto $\Leftrightarrow$ $\forall x \in D,\ \exists r > 0:\ B(x, r) \subseteq D$. \hfill\textit{Definición.}
+\item $D$ abierto $\Leftrightarrow$ $D = D^{\circ}$.
+\item $D$ abierto $\Leftrightarrow$ $D$ es vecindario de cada uno de sus puntos.
+\end{itemize}
+
+\textbf{Caracterizaciones de ``cerrado''.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $F$ cerrado $\Leftrightarrow$ $E \setminus F$ abierto. \hfill\textit{Definición.}
+\item $F$ cerrado $\Leftrightarrow$ $F = \overline{F}$. \hfill\textit{Lema 3.3.4.}
+\item $F$ cerrado $\Leftrightarrow$ toda sucesión convergente con términos en $F$ tiene su límite en $F$.
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Intersección \emph{finita} de abiertos $\Rightarrow$ abierto.
+\item Unión \emph{arbitraria} de abiertos $\Rightarrow$ abierto.
+\item Unión \emph{finita} de cerrados $\Rightarrow$ cerrado.
+\item Intersección \emph{arbitraria} de cerrados $\Rightarrow$ cerrado.
+\item $A \subseteq B$ $\Rightarrow$ $\overline{A} \subseteq \overline{B}$ (monotonía).
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Intersección \emph{numerable} de abiertos $\not\Rightarrow$ abierto (e.g., $\{a\} = \bigcap_{n} (a - 1/n, a + 1/n)$).
+\item Unión \emph{numerable} de cerrados $\not\Rightarrow$ cerrado (e.g., $(a, b) = \bigcup_{n} [a + 1/n, b - 1/n]$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{magenta!75!black}{Equicontinuidad y Arzelà-Ascoli}
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $\{f_{n}\}$ equicontinua $+$ $f_{n} \to f_{0}$ puntual con $f_{0}$ continua $+$ $K$ compacto $\Rightarrow$ convergencia uniforme en $K$. \hfill\textit{Lema 7.2.1.}
+\item $\{f_{n}\}$ equicontinua $+$ convergencia puntual en denso $D$ $+$ $\overline{\{f_{n}(x)\}}$ completo $\forall x$ $\Rightarrow$ convergencia puntual en todo $X$ y límite continuo. \hfill\textit{Lema 7.2.3.}
+\item $X$ separable $+$ $\{f_{n}\}$ equicontinua $+$ $\overline{\{f_{n}(x)\}}$ compacto $\forall x$ $\Rightarrow$ existe subsucesión convergente a continua, uniforme en compactos. \hfill\textit{Arzelà-Ascoli, Teorema 7.3.1.}
+\item $C \subseteq \mathcal{C}(K, \R)$ compacto $\Rightarrow$ $C$ equicontinuo. \hfill\textit{Lema 7.2.x.}
+\end{itemize}
+
+\textbf{Implicaciones que \emph{no} valen en general.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item Equicontinuidad puntual $\not\Rightarrow$ uniforme (sin compacidad del dominio).
+\item Convergencia puntual $\not\Rightarrow$ uniforme sin equicontinuidad (e.g., $f_{n}(x) = x^{n}$ en $[0, 1]$).
+\end{itemize}
+\end{equivbox}
+
+\medskip
+
+\begin{equivbox}{gray!85!black}{Categorías de Baire}
+\textbf{Caracterizaciones de ``denso en ninguna parte''.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $A$ denso en ninguna parte $\Leftrightarrow$ $(\overline{A})^{c}$ denso. \hfill\textit{Definición 9.1.1.}
+\item $A$ denso en ninguna parte $\Leftrightarrow$ $(\overline{A})^{\circ} = \emptyset$.
+\end{itemize}
+
+\textbf{Implicaciones siempre válidas.}
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+\item $X$ completo $+$ $\{G_{n}\}$ abiertos densos $\Rightarrow$ $\bigcap_{n} G_{n}$ denso. \hfill\textit{Teorema de Baire, 9.2.1.}
+\item $X$ completo $+$ $G \subseteq X$ abierto no vacío $\Rightarrow$ $G$ es de segunda categoría. \hfill\textit{Categorías de Baire, 9.2.2.}
+\end{itemize}
+\end{equivbox}
+
+\newpage
+% =============================================================================
+\section{Anexo: estrategias de demostración}
+% =============================================================================
+
+Patrones meta de demostración que recurren a lo largo del curso. Cuando un problema de examen pida ``muestre que \dots'', revise estos patrones antes de empezar a escribir.
+
+\newtcolorbox{strategybox}[1]{%
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=blue!50!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  fontupper=\small,
+  title=#1,
+  arc=3pt,
+  boxrule=0.6pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt,
+}
+
+\begin{strategybox}{1.\ Para mostrar que una sucesión de Cauchy converge}
+\textbf{Patrón:} \textit{primero hallar el candidato límite, luego verificar.}
+\begin{itemize}[leftmargin=1.5em]
+\item Si el espacio es completo, basta usar la definición.
+\item Si no, fabrique un candidato concreto (e.g., límite puntual; clase de equivalencia de la sucesión; punto en una compleción).
+\item Verifique que el candidato satisface $d(x_{n}, \text{candidato}) \to 0$.
+\end{itemize}
+\textbf{Apariciones:} compleción de un espacio métrico (§6.4), $\mathcal{C}([0,1],\R)$ es completo (§6.1), Arzelà-Ascoli (§7).
+\end{strategybox}
+
+\begin{strategybox}{2.\ Para usar compacidad}
+\textbf{Patrón:} \textit{extraer subsucesión convergente \underline{o} subcubrimiento finito --- elija la formulación que coincida con el dato.}
+\begin{itemize}[leftmargin=1.5em]
+\item Datos sobre sucesiones $\Rightarrow$ secuencial: extraiga subsucesión.
+\item Datos sobre abiertos / vecindarios $\Rightarrow$ cubrimientos: extraiga subcubrimiento finito.
+\item Datos sobre cerrados $\Rightarrow$ propiedad de intersección finita.
+\item Datos sobre $\R^{d}$ $\Rightarrow$ Heine-Borel: cerrado y acotado bastan.
+\end{itemize}
+\textbf{Apariciones:} Teorema de valores extremos (§5.5), imagen continua de compacto (§5.4), Arzelà-Ascoli (§7).
+\end{strategybox}
+
+\begin{strategybox}{3.\ Para mostrar que un conjunto es denso}
+\textbf{Patrón:} \textit{tome una bola arbitraria $B(x, r)$ y produzca un punto del conjunto en ella.}
+\begin{itemize}[leftmargin=1.5em]
+\item Equivalentemente: muestre $d(x, A) = 0$ para todo $x \in E$.
+\item Equivalentemente: para todo $x \in E$ exhiba sucesión $\{x_{n}\} \subseteq A$ con $x_{n} \to x$.
+\end{itemize}
+\textbf{Apariciones:} $\Q$ denso en $\R$ (§3.5), $i(X)$ denso en $X^{\sharp}$ (§6.4), Teorema de Baire (§9.2).
+\end{strategybox}
+
+\begin{strategybox}{4.\ Para mostrar continuidad: cinco caracterizaciones}
+\textbf{Patrón:} \textit{elija la caracterización que mejor encaje con los datos.}
+\begin{itemize}[leftmargin=1.5em]
+\item Datos $\varepsilon$-$\delta$ explícitos $\Rightarrow$ caracterización $\varepsilon$-$\delta$.
+\item Datos topológicos (abiertos, cerrados) $\Rightarrow$ preimagen de abiertos / cerrados.
+\item Datos sobre clausuras $\Rightarrow$ $f(\overline{B}) \subseteq \overline{f(B)}$.
+\item Datos sobre sucesiones $\Rightarrow$ caracterización secuencial (suele ser la más rápida).
+\end{itemize}
+\textbf{Apariciones:} Teorema de caracterizaciones (§4.2), Arzelà-Ascoli (§7).
+\end{strategybox}
+\newpage
+\begin{strategybox}{5.\ Para mostrar que un conjunto NO es conexo}
+\textbf{Patrón:} \textit{exhiba dos abiertos $A, B$ disjuntos cuya unión cubre $E$ y cada uno corta a $E$.}
+Concretamente:
+\[
+E = (A \cap E) \sqcup (B \cap E), \quad A \cap E \neq \emptyset \neq B \cap E, \quad A \cap B = \emptyset.
+\]
+\textbf{Para mostrar conexidad por contradicción:} suponga tal descomposición y derive contradicción usando supremos / IVT / continuidad / arcoconexidad.
+
+\textbf{Apariciones:} Intervalos abiertos son conexos (§8.2), $\R^{d}$ es conexo (§8.2), funciones continuas preservan conexidad (§8.2).
+\end{strategybox}
+
+\begin{strategybox}{6.\ Para igualdad de conjuntos: doble inclusión}
+\textbf{Patrón:} muestre $A \subseteq B$ y $B \subseteq A$ por separado.
+Útil cuando ambos lados son ``intersecciones de \dots'' (e.g., clausura, interior, vecindarios).
+
+\textbf{Variantes:}
+\begin{itemize}[leftmargin=1.5em]
+\item $A \subseteq B$: tome $x \in A$ arbitrario y muestre $x \in B$.
+\item $A \supseteq B$: a menudo es la inclusión ``trivial'' (uno de los lados se construye como ínfimo / unión más grande / intersección más pequeña).
+\end{itemize}
+\textbf{Apariciones:} Caracterización de la clausura por bolas y vecindarios (§3.3, §3.5), $A_{1}^{\circ} \cap A_{2}^{\circ} = (A_{1}\cap A_{2})^{\circ}$ (§3.1).
+\end{strategybox}
+
+\begin{strategybox}{7.\ Para construir subsucesiones: argumento diagonal}
+\textbf{Patrón:} \textit{indexe en una rejilla y tome la diagonal.}
+\begin{itemize}[leftmargin=1.5em]
+\item Para cada $j$, extraiga subsucesión $\{f_{n_{k}}^{j}\}_{k}$ que converge en el punto $x_{j}$.
+\item La subsucesión diagonal $\{f_{n_{m}}^{m}\}_{m}$ converge en \emph{todos} los $x_{j}$ simultáneamente.
+\end{itemize}
+\textbf{Apariciones:} Arzelà-Ascoli (§7.3, prueba). Caracterización de totalmente acotado por subsucesiones de Cauchy (§6.3).
+\end{strategybox}
+
+\begin{strategybox}{8.\ Para convergencia uniforme: equicontinuidad $+$ compacidad $+$ límite continuo}
+\textbf{Patrón:} si $\{f_{n}\}$ es equicontinua, $f_{n}(x) \to f_{0}(x)$ puntualmente con $f_{0}$ continua, y $K$ es compacto, entonces $f_{n} \to f_{0}$ uniformemente en $K$.
+\begin{itemize}[leftmargin=1.5em]
+\item La equicontinuidad por sí sola da continuidad del límite (§7.2).
+\item Compacidad por sí sola permite extraer subsucesión convergente.
+\item Combinadas, se obtiene la convergencia uniforme.
+\end{itemize}
+\textbf{Apariciones:} Lema de equicontinuidad uniforme (§7.2), Arzelà-Ascoli (§7.3).
+\end{strategybox}
+
+% =============================================================================
+\newpage
+\section{Anexo: supremos e ínfimos}
+% =============================================================================
+
+Resumen autocontenido de las propiedades del supremo y el ínfimo en \(\R\) que se usan implícitamente a lo largo del curso. Pensado para repasar antes del examen.
+
+\subsection{Caracterizaciones por épsilon}
+
+\begin{equivbox}{teal}{Caracterización-\(\varepsilon\) del supremo y del ínfimo}
+Sea \(A \subseteq \R\) no vacío y acotado superiormente. Entonces \(s = \sup A\) si y sólo si:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \(s\) es cota superior de \(A\): \(\forall a \in A,\ a \leq s\);
+\item para todo \(\varepsilon > 0\) existe \(a \in A\) con \(a > s - \varepsilon\).
+\end{enumerate}
+Análogamente, si \(A\) es no vacío y acotado inferiormente, \(i = \inf A\) si y sólo si:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \(i\) es cota inferior de \(A\): \(\forall a \in A,\ i \leq a\);
+\item para todo \(\varepsilon > 0\) existe \(a \in A\) con \(a < i + \varepsilon\).
+\end{enumerate}
+\medskip
+\textit{Lectura intuitiva.} La condición (2) dice que ningún número estrictamente menor que \(s\) (resp.\ mayor que \(i\)) sigue siendo cota superior (resp.\ inferior); en otras palabras, el supremo y el ínfimo se pueden \emph{aproximar tan cerca como se quiera} desde dentro de \(A\).
+\end{equivbox}
+
+\begin{namedres}{Proposición}{Caracterización secuencial del supremo y del ínfimo}
+Sea \(A \subseteq \R\) no vacío y acotado superiormente. Existe una sucesión \(\{a_{n}\}_{n=1}^{\infty} \subseteq A\) con \(a_{n} \to \sup A\). Análogamente, si \(A\) es acotado inferiormente, existe \(\{b_{n}\}_{n=1}^{\infty} \subseteq A\) con \(b_{n} \to \inf A\).
+\end{namedres}
+
+\begin{namedstd}{Nota}{Consecuencia para clausuras}
+La proposición anterior implica que \(\sup A \in \overline{A}\) e \(\inf A \in \overline{A}\) siempre que \(A \neq \emptyset\) y los respectivos extremos sean finitos. Por tanto, si \(A\) es \emph{cerrado} y acotado, entonces el supremo y el ínfimo \emph{pertenecen} a \(A\) (es decir, son máximo y mínimo).
+\end{namedstd}
+
+\subsection{Monotonía respecto a la inclusión de conjuntos}
+
+\begin{namedres}{Proposición}{Monotonía del supremo y del ínfimo}
+Sean \(\emptyset \neq A \subseteq B \subseteq \R\) con \(B\) acotado. Entonces
+\[
+\sup A \leq \sup B, \qquad \inf A \geq \inf B.
+\]
+\end{namedres}
+
+\begin{namedstd}{Nota}{Relación universal}
+Si \(A\) es no vacío y acotado, \(\inf A \leq \sup A\). Vale la igualdad si y sólo si \(A\) es un singleton.
+\end{namedstd}
+
+\subsection{Operaciones aritméticas con conjuntos}
+
+\begin{namedstd}{Notación}{Suma, opuesto y multiplicación escalar de conjuntos}
+Para \(A, B \subseteq \R\) y \(\lambda \in \R\) se definen
+\[
+A + B = \{a + b : a \in A,\ b \in B\}, \qquad \lambda A = \{\lambda a : a \in A\}, \qquad -A = \{-a : a \in A\}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Supremo del opuesto}
+Sea \(A \subseteq \R\) no vacío y acotado. Entonces
+\[
+\sup(-A) = -\inf A, \qquad \inf(-A) = -\sup A.
+\]
+\end{namedres}
+
+\begin{namedres}{Proposición}{Supremo e ínfimo de una suma de conjuntos}
+Sean \(A, B \subseteq \R\) no vacíos y acotados. Entonces
+\[
+\sup(A + B) = \sup A + \sup B, \qquad \inf(A + B) = \inf A + \inf B.
+\]
+\end{namedres}
+
+\begin{namedres}{Proposición}{Multiplicación escalar}
+Sea \(A \subseteq \R\) no vacío y acotado, y \(\lambda \in \R\). Entonces:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item Si \(\lambda \geq 0\): \(\sup(\lambda A) = \lambda \sup A\) e \(\inf(\lambda A) = \lambda \inf A\).
+\item Si \(\lambda < 0\): \(\sup(\lambda A) = \lambda \inf A\) e \(\inf(\lambda A) = \lambda \sup A\).
+\end{enumerate}
+\end{namedres}
+
+\subsection{Uniones, intersecciones y supremos iterados}
+
+\begin{namedres}{Proposición}{Supremo e ínfimo de una unión finita}
+Sean \(A, B \subseteq \R\) no vacíos y acotados. Entonces
+\[
+\sup(A \cup B) = \max\{\sup A,\ \sup B\}, \qquad \inf(A \cup B) = \min\{\inf A,\ \inf B\}.
+\]
+\end{namedres}
+
+\begin{namedstd}{Nota}{Cotas para la intersección}
+Si \(A \cap B \neq \emptyset\), entonces \(A \cap B \subseteq A\) y \(A \cap B \subseteq B\), así por monotonía
+\[
+\sup(A \cap B) \leq \min\{\sup A,\ \sup B\}, \qquad \inf(A \cap B) \geq \max\{\inf A,\ \inf B\}.
+\]
+Ambas desigualdades pueden ser estrictas a la vez. Por ejemplo, con \(A = \{0, 2, 4\}\) y \(B = \{1, 2, 3\}\) se tiene \(A \cap B = \{2\}\), de modo que
+\[
+\sup(A \cap B) = 2 \;<\; 3 = \min\{\sup A,\ \sup B\}, \qquad \inf(A \cap B) = 2 \;>\; 1 = \max\{\inf A,\ \inf B\}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Supremo de un supremo (sup iterado)}
+Sea \(\{A_{i}\}_{i \in I}\) una familia no vacía de subconjuntos no vacíos y acotados superiormente de \(\R\), tal que la familia \(\{\sup A_{i}\}_{i \in I}\) es acotada superiormente. Entonces
+\[
+\sup_{i \in I} \sup A_{i} \;=\; \sup \bigcup_{i \in I} A_{i}.
+\]
+Análogamente para el ínfimo iterado de una familia acotada inferiormente.
+\end{namedres}
+
+\subsection{Funciones: \texorpdfstring{\(\sup f\)}{sup f} e \texorpdfstring{\(\inf f\)}{inf f}}
+
+\begin{namedstd}{Notación}{Supremo e ínfimo de una función sobre un conjunto}
+Para \(f: X \to \R\) acotada y \(\emptyset \neq A \subseteq X\), se define
+\[
+\sup_{x \in A} f(x) = \sup \{f(x) : x \in A\}, \qquad \inf_{x \in A} f(x) = \inf \{f(x) : x \in A\}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Subaditividad del supremo y superaditividad del ínfimo}
+Sean \(f, g : X \to \R\) acotadas y \(\emptyset \neq A \subseteq X\). Entonces
+\[
+\sup_{x \in A} \big(f(x) + g(x)\big) \leq \sup_{x \in A} f(x) + \sup_{x \in A} g(x),
+\]
+\[
+\inf_{x \in A} \big(f(x) + g(x)\big) \geq \inf_{x \in A} f(x) + \inf_{x \in A} g(x).
+\]
+Las desigualdades pueden ser estrictas cuando \(f\) y \(g\) no alcanzan sus extremos en el mismo punto.
+\end{namedres}
+
+\begin{namedstd}{Ejemplo}{La desigualdad puede ser estricta}
+Sea \(A = [0, 1]\), \(f(x) = x\), \(g(x) = 1 - x\). Entonces \(\sup f = \sup g = 1\), pero \(f(x) + g(x) = 1\) para todo \(x\), así \(\sup(f+g) = 1 < 2 = \sup f + \sup g\).
+\end{namedstd}
+
+\subsection{Límites superior e inferior de sucesiones}
+
+\begin{namedstd}{Definición}{Límite superior e inferior}
+Sea \(\{x_{n}\}_{n=1}^{\infty} \subseteq \R\). Se definen
+\[
+\limsup_{n \to \infty} x_{n} = \inf_{n \in \N^{\ast}} \sup_{k \geq n} x_{k}, \qquad \liminf_{n \to \infty} x_{n} = \sup_{n \in \N^{\ast}} \inf_{k \geq n} x_{k}.
+\]
+\end{namedstd}
+
+\begin{namedstd}{Nota}{Las colas son monótonas}
+La sucesión \(\{\sup_{k \geq n} x_{k}\}_{n}\) es \emph{no creciente} en \(n\) (al aumentar \(n\) se toma supremo sobre un conjunto cada vez menor, no más grande), por lo que su ínfimo coincide con su límite. Análogamente, \(\{\inf_{k \geq n} x_{k}\}_{n}\) es no decreciente y su supremo coincide con su límite. Por tanto
+\[
+\limsup_{n} x_{n} = \lim_{n \to \infty} \sup_{k \geq n} x_{k}, \qquad \liminf_{n} x_{n} = \lim_{n \to \infty} \inf_{k \geq n} x_{k}.
+\]
+\end{namedstd}
+
+\begin{namedres}{Proposición}{Caracterización de la convergencia por \(\limsup\) y \(\liminf\)}
+Para \(\{x_{n}\} \subseteq \R\),
+\[
+\liminf_{n \to \infty} x_{n} \leq \limsup_{n \to \infty} x_{n},
+\]
+con igualdad si y sólo si la sucesión converge (admitiendo \(\pm \infty\) como límites en el sentido extendido). En tal caso,
+\[
+\lim_{n \to \infty} x_{n} = \limsup_{n \to \infty} x_{n} = \liminf_{n \to \infty} x_{n}.
+\]
+\end{namedres}
+
+\begin{namedstd}{Nota}{Subaditividad del \(\limsup\)}
+Para sucesiones \(\{x_{n}\},\{y_{n}\}\) acotadas:
+\[
+\limsup_{n} (x_{n} + y_{n}) \leq \limsup_{n} x_{n} + \limsup_{n} y_{n},
+\]
+\[
+\liminf_{n} (x_{n} + y_{n}) \geq \liminf_{n} x_{n} + \liminf_{n} y_{n}.
+\]
+La igualdad vale si al menos una de las dos sucesiones converge.
+\end{namedstd}
+
+\subsection{Resumen}
+
+\begin{equivbox}{orange}{Resumen rápido --- todas las fórmulas en un vistazo}
+Sean \(A, B \subseteq \R\) no vacíos y acotados, \(\lambda \in \R\), \(f, g : X \to \R\) acotadas, \(\{x_{n}\}, \{y_{n}\}\) sucesiones reales acotadas.
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Caract.-\(\varepsilon\):} \(s = \sup A \iff (a \leq s\ \forall a \in A)\ \land\ (\forall \varepsilon > 0\ \exists a \in A,\ a > s - \varepsilon)\).
+\item \textbf{Secuencial:} existe \(\{a_{n}\} \subseteq A\) con \(a_{n} \to \sup A\); por tanto \(\sup A \in \overline{A}\).
+\item \textbf{Opuesto:} \(\sup(-A) = -\inf A\); \(\inf(-A) = -\sup A\).
+\item \textbf{Inclusión:} \(A \subseteq B\ \Rightarrow\ \sup A \leq \sup B,\ \inf A \geq \inf B\).
+\item \textbf{Suma:} \(\sup(A + B) = \sup A + \sup B\); \(\inf(A + B) = \inf A + \inf B\).
+\item \textbf{Escalar (\(\lambda \geq 0\)):} \(\sup(\lambda A) = \lambda \sup A\); \(\inf(\lambda A) = \lambda \inf A\).
+\item \textbf{Escalar (\(\lambda < 0\)):} \(\sup(\lambda A) = \lambda \inf A\); \(\inf(\lambda A) = \lambda \sup A\).
+\item \textbf{Unión:} \(\sup(A \cup B) = \max\{\sup A, \sup B\}\); \(\inf(A \cup B) = \min\{\inf A, \inf B\}\).
+\item \textbf{Intersección (cuando \(A \cap B \neq \emptyset\)):} \(\sup(A \cap B) \leq \min\{\sup A, \sup B\}\); \(\inf(A \cap B) \geq \max\{\inf A, \inf B\}\) (puede ser estricta).
+\item \textbf{Sup iterado:} \(\sup_{i} \sup A_{i} = \sup \bigcup_{i} A_{i}\).
+\item \textbf{Funciones:} \(\sup_{A}(f + g) \leq \sup_{A} f + \sup_{A} g\) (subaditiva, puede ser estricta).
+\item \textbf{\(\limsup\)/\(\liminf\):} \(\limsup x_{n} = \lim_{n} \sup_{k \geq n} x_{k}\); \(\liminf x_{n} = \lim_{n} \inf_{k \geq n} x_{k}\); siempre \(\liminf \leq \limsup\).
+\item \textbf{Convergencia:} \(\lim x_{n} = L\ \iff\ \limsup x_{n} = \liminf x_{n} = L\).
+\end{itemize}
+\end{equivbox}
+
+\end{document}

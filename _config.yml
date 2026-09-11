@@ -169,6 +169,17 @@ kramdown:
 include: ["_pages", "_scripts"]
 exclude:
   - bin/
+  # LaTeX sources for the MA0505/MA0561 notes, and anything a local build of
+  # them leaves behind. They live beside the course they belong to, but
+  # _courses is an output collection, so without this they would be copied
+  # verbatim into _site and served at /notes/<course>/<file>.
+  - "_courses/**/*.tex"
+  - "_courses/**/*.pdf"
+  - "_courses/**/*.aux"
+  - "_courses/**/*.log"
+  - "_courses/**/*.out"
+  - "_courses/**/*.toc"
+  - "_courses/**/*.synctex.gz"
   - CONTRIBUTING.md
   - CUSTOMIZE.md
   - Dockerfile
