@@ -47,28 +47,37 @@ $$
 
 
 ### Lemma (The function must tend to zero) 
-Let $$f:[a,+\infty) \to \mathbb{R}$$. If $$\lim_{ x \to \infty } f(x) = L \neq 0$$, then $$\int_{a}^{\infty} f(x) \, dx$$ diverges.
+Let $$f:[a,+\infty) \to \mathbb{R}$$ be Riemann integrable on $$[a,b]$$ for every $$b>a$$. If $$\lim_{ x \to \infty } f(x) = L \neq 0$$, then $$\int_{a}^{\infty} f(x) \, dx$$ diverges.
 
-***Proof:***  Assume that $$\lim_{ x \to \infty } = \ell \neq 0$$. We know that, given $$\varepsilon>0$$, there exists $$M>0$$ such that if $$x>M$$ then $$\lvert f(x)-L \rvert < \varepsilon$$. Hence, if $$x>M$$, we have that $$L - \varepsilon <f(x)<L+\varepsilon$$. 
-If $$L >0$$, take $$\varepsilon>0$$ such that $$L - \varepsilon > 0$$. Then $$L - \varepsilon < f(x)$$ if $$x>M$$. Integrating, 
-
-
-$$
-\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = \lim_{ b \to \infty } \left( \int_{a}^{M} f(x)  \, dx  + \int_{M}^{b} f(x) \, dx + \right) \geq \lim_{ b \to \infty } \left( \int_{a}^{M} f(x) + (l-\varepsilon)(b-M) \, dx  \right)= +\infty,
-$$
-
-
-Hence 
+***Proof:***  Assume first that $$L>0$$ and take $$\varepsilon = \frac{L}{2} > 0$$. By the definition of the limit, there exists $$M>a$$ such that $$\lvert f(x)-L \rvert < \varepsilon$$ whenever $$x>M$$. In particular,
 
 
 $$
-\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = \lim_{ b \to \infty } \left( \int_{a}^{M} f(x)  \, dx  + \int_{M}^{b} f(x) \, dx + (l-\varepsilon)(b-M)  \right) = +\infty,
+f(x) > L - \varepsilon = \frac{L}{2} > 0 \qquad \text{for every } x > M.
 $$
 
 
-If $$\ell<0$$, the argument is analogous but towards $$-\infty$$.
+Let $$b>M$$. Splitting the integral at $$M$$ and bounding $$f$$ below by the constant $$L-\varepsilon$$ on $$[M,b]$$,
 
-Assume that $$\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = I \in \mathbb{R}$$. Given $$\varepsilon>0$$ there exists $$M>0$$ such that if $$b>M$$, then 
+
+$$
+\int_{a}^{b} f(x) \, dx = \int_{a}^{M} f(x) \, dx + \int_{M}^{b} f(x) \, dx \geq \int_{a}^{M} f(x) \, dx + (L-\varepsilon)(b-M).
+$$
+
+
+The term $$\int_{a}^{M} f(x) \, dx$$ is a fixed real number and $$L-\varepsilon>0$$, so the right-hand side tends to $$+\infty$$ as $$b \to \infty$$. Hence
+
+
+$$
+\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = +\infty,
+$$
+
+
+and therefore $$\int_{a}^{\infty} f(x) \, dx$$ diverges.
+
+If $$L<0$$, apply the case already proved to $$-f$$: since $$\lim_{ x \to \infty } (-f(x)) = -L > 0$$, we obtain $$\lim_{ b \to \infty } \int_{a}^{b} (-f(x)) \, dx = +\infty$$, that is, $$\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = -\infty$$, and the integral diverges as well.
+
+***Remark (a necessary Cauchy condition):*** Assume that $$\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = I \in \mathbb{R}$$. Given $$\varepsilon>0$$ there exists $$M>0$$ such that if $$b>M$$, then 
 
 
 $$
@@ -82,12 +91,12 @@ Take $$b_{2} > b_{1} > M$$. Now,
 $$
 \begin{aligned}
 \left\lvert  \int_{b_{1}}^{b_{2}} f(x)  \, dx   \right\rvert &=  \left\lvert  \int_{a}^{b_{2}} f(x) \, dx - \int_{a}^{b_{1}} f(x)  \, dx    \right\rvert \\
-&\leq \left\lvert  \int_{a}^{b_{1}} f(x) \, dx - I \right\rvert  + \left\lvert  \int_{a}^{b_{2}} f(x) \, dx - I   \right\rvert  < \varepsilon.
+&\leq \left\lvert  \int_{a}^{b_{1}} f(x) \, dx - I \right\rvert  + \left\lvert  \int_{a}^{b_{2}} f(x) \, dx - I   \right\rvert  < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
 \end{aligned} 
 $$
 
 
-We conclude that $$\lvert  \int_{a}^{b_{1}} f(x) \, dx  \rvert < \varepsilon$$.
+We conclude that $$\left\lvert  \int_{b_{1}}^{b_{2}} f(x) \, dx  \right\rvert < \varepsilon$$ whenever $$b_{2}>b_{1}>M$$; this is the converse of the Cauchy condition proved below.
 ### Lemma  (Reduction to sequences)
 $$\int_{0}^{\infty}  f(x)\, dx$$ converges to $$L$$ if, given $$\{ x_{n} \}_{n=1}^{\infty} \subseteq [a,+\infty]$$ with $$x_{n} \underset{n \rightarrow \infty}{\longrightarrow} \infty$$, we have that 
 
