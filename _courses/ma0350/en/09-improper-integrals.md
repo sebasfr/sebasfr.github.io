@@ -54,7 +54,7 @@ If $$L >0$$, take $$\varepsilon>0$$ such that $$L - \varepsilon > 0$$. Then $$L 
 
 
 $$
-\int_{M}^{b} (l - \varepsilon) \, dx = (b-M)(L-\varepsilon) \leq \int_{M}^{b} f(x) \, dx.
+\lim_{ b \to \infty } \int_{a}^{b} f(x) \, dx = \lim_{ b \to \infty } \left( \int_{a}^{M} f(x)  \, dx  + \int_{M}^{b} f(x) \, dx + \right) \geq \lim_{ b \to \infty } \left( \int_{a}^{M} f(x) + (l-\varepsilon)(b-M) \, dx  \right)= +\infty,
 $$
 
 
