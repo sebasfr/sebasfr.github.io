@@ -1240,7 +1240,7 @@ H_{f}\left( \frac{1}{3}, \frac{1}{3} \right) &= \begin{bmatrix}
 H_{f}\left( \frac{1}{3}, \frac{-1}{3} \right) &= \begin{bmatrix}
 2 & 2 \\
 2 & 0
-\end{bmatrix} \implies \Delta_{1} = 2 > 0, \ \Delta_{2} = -4 <0  \quad \text{(indefinda)}.
+\end{bmatrix} \implies \Delta_{1} = 2 > 0, \ \Delta_{2} = -4 <0  \quad \text{(indefinida)}.
 \end{aligned}
 $$
 
