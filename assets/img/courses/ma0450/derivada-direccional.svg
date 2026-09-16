@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="290" viewBox="0 0 640 290"
+     role="img" aria-label="Left: the line through a in the unit direction u inside the domain. Right: the one-variable function h maps to f(a + h u), whose slope at h = 0 is the directional derivative">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <line class="ink-thin" x1="40" y1="250" x2="264" y2="250" marker-end="url(#ah)"/>
+  <line class="ink-thin" x1="40" y1="250" x2="40" y2="61" marker-end="url(#ah)"/>
+  <text class="lbl" x="270" y="255" text-anchor="start">x₁</text>
+  <text class="lbl" x="36" y="55" text-anchor="end">x₂</text>
+  <line class="gray dash" x1="42.61" y1="196.20" x2="249.22" y2="92.89"/>
+  <line class="acc" x1="124" y1="155.5" x2="180.35" y2="127.33" marker-end="url(#ah-acc)"/>
+  <circle class="dot" cx="124" cy="155.5" r="3.5"/>
+  <text class="lbl" x="122" y="175.5" text-anchor="middle">a</text>
+  <text class="lbl lbl-acc" x="158.35" y="115.33" text-anchor="start">u</text>
+  <circle class="dot-acc" cx="217.91" cy="108.54" r="3.5"/>
+  <text class="lbl lbl-acc" x="223.91" y="126.54" text-anchor="start">a + hu</text>
+  <text class="lbl lbl-gray" x="239.22" y="84.89" text-anchor="end">{a + hu : h ∈ ℝ}</text>
+  <line class="ink-thin" x1="344" y1="250" x2="554" y2="250" marker-end="url(#ah)"/>
+  <line class="ink-thin" x1="440" y1="250" x2="440" y2="82" marker-end="url(#ah)"/>
+  <text class="lbl" x="560" y="255" text-anchor="start">h</text>
+  <text class="lbl" x="446" y="84" text-anchor="start">φ(h) = f(a + hu)</text>
+  <polyline class="acc" points="356,231.64 359,228.90 362,226.21 365,223.56 368,220.96 371,218.40 374,215.89 377,213.42 380,211 383,208.62 386,206.29 389,204.00 392,201.76 395,199.56 398,197.41 401,195.30 404,193.24 407,191.22 410,189.25 413,187.32 416,185.44 419,183.60 422,181.81 425,180.06 428,178.36 431,176.70 434,175.09 437,173.52 440,172 443,170.52 446,169.09 449,167.70 452,166.36 455,165.06 458,163.81 461,162.60 464,161.44 467,160.32 470,159.25 473,158.22 476,157.24 479,156.30 482,155.41 485,154.56 488,153.76 491,153.00 494,152.29 497,151.62 500,151 503,150.42 506,149.89 509,149.40 512,148.96 515,148.56 518,148.21 521,147.90 524,147.64 527,147.42 530,147.25 533,147.12 536,147.04 539,147.00 542,147.01"/>
+  <circle class="dot" cx="440" cy="172" r="3.5"/>
+  <text class="lbl" x="432" y="176" text-anchor="end">f(a)</text>
+  <line class="ink" x1="380" y1="202" x2="500" y2="142" stroke-width="2.4"/>
+  <text class="lbl" x="506" y="146" text-anchor="start">D<tspan dy="4" font-size="10">u</tspan><tspan dy="-4"> </tspan>f(a) = φ′(0)</text>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="335" viewBox="0 0 640 335"
+     role="img" aria-label="The segment from a to x inside the ball, parametrised by g(t) = f(a + t(x - a)); the remainder is evaluated at a point xi on this segment">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <circle class="ink-thin dash" cx="300" cy="165" r="136.0"/>
+  <line class="acc" x1="300" y1="165" x2="412" y2="101"/>
+  <circle class="dot" cx="300" cy="165" r="3.5"/>
+  <circle class="dot" cx="412" cy="101" r="3.5"/>
+  <circle class="dot-acc" cx="356" cy="133" r="4"/>
+  <circle class="dot-acc" cx="378.4" cy="120.2" r="4"/>
+  <text class="lbl" x="292" y="183" text-anchor="end">a = g(0)</text>
+  <text class="lbl" x="420" y="95" text-anchor="start">x = g(1)</text>
+  <text class="lbl lbl-acc" x="360" y="153" text-anchor="start">a + t(x − a)</text>
+  <text class="lbl lbl-acc" x="372.4" y="110.2" text-anchor="end">ξ = a + λ(x − a)</text>
+  <text class="lbl" x="200" y="257" text-anchor="start">B<tspan dy="4" font-size="10">δ</tspan><tspan dy="-4"> </tspan>(a)</text>
+  <text class="cap" x="320" y="318" text-anchor="middle">g(t) = f(a + t(x − a)),  t ∈ [0, 1];  g(1) = g(0) + g′(0) + g″(0)/2! + … + g⁽ᵈ⁺¹⁾(λ)/(d+1)!</text>
+</svg>
