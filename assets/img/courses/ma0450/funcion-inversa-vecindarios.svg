@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="305" viewBox="0 0 640 305"
+     role="img" aria-label="The inverse function theorem: when the Jacobian determinant at a is nonzero, f maps an open neighbourhood V of a bijectively onto an open neighbourhood W of f(a), with a C1 inverse">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <rect class="ink" x="40" y="40" width="230" height="200" rx="18"/>
+  <text class="lbl" x="56" y="62" text-anchor="start">A</text>
+  <ellipse class="acc" cx="160" cy="145" rx="70" ry="50"/>
+  <text class="lbl lbl-acc" x="160" y="214" text-anchor="middle">V</text>
+  <circle class="dot" cx="160" cy="145" r="3.5"/>
+  <text class="lbl" x="160" y="136" text-anchor="middle">a</text>
+  <rect class="ink" x="370" y="40" width="230" height="200" rx="18"/>
+  <text class="lbl" x="586" y="62" text-anchor="end">ℝⁿ</text>
+  <ellipse class="acc" cx="480" cy="145" rx="78" ry="46" transform="rotate(-18 480 145)"/>
+  <text class="lbl lbl-acc" x="480" y="214" text-anchor="middle">W = f(V)</text>
+  <circle class="dot" cx="480" cy="145" r="3.5"/>
+  <text class="lbl" x="480" y="136" text-anchor="middle">f(a)</text>
+  <path class="ink" d="M 232 118 C 300 80, 340 80, 406 118" marker-end="url(#ah)"/>
+  <text class="lbl" x="320" y="84" text-anchor="middle">f  (bijective on V)</text>
+  <path class="ink" d="M 406 172 C 340 210, 300 210, 232 172" marker-end="url(#ah)"/>
+  <text class="cap" x="320" y="266" text-anchor="middle">f⁻¹ ∈ C¹,  J<tspan dy="4" font-size="10">f⁻¹</tspan><tspan dy="-4"> </tspan>(y) = [J<tspan dy="4" font-size="10">f</tspan><tspan dy="-4"> </tspan>(f⁻¹(y))]⁻¹</text>
+  <text class="cap" x="320" y="288" text-anchor="middle">det J<tspan dy="4" font-size="10">f</tspan><tspan dy="-4"> </tspan>(a) ≠ 0</text>
+</svg>

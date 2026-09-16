@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="335" viewBox="0 0 640 335"
+     role="img" aria-label="The unit circle: near a point (a,b) with b nonzero it is the graph of a function y = g(x) over an interval A, but at (1,0) and (-1,0) the tangent is vertical and no such function exists">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <line class="ink-thin" x1="162.5" y1="165" x2="477.5" y2="165" marker-end="url(#ah)"/>
+  <line class="ink-thin" x1="320" y1="306.75" x2="320" y2="23.25" marker-end="url(#ah)"/>
+  <text class="lbl" x="483.5" y="170" text-anchor="start">x</text>
+  <text class="lbl" x="328" y="27.25" text-anchor="start">y</text>
+  <circle class="ink" cx="320" cy="165" r="105"/>
+  <rect class="acc-thin dash" x="341" y="44.25" width="73.5" height="63"/>
+  <polyline class="acc" points="341,62.12 342.05,62.34 343.1,62.57 344.15,62.81 345.2,63.07 346.25,63.33 347.3,63.61 348.35,63.90 349.4,64.2 350.45,64.51 351.5,64.84 352.55,65.17 353.6,65.52 354.65,65.88 355.7,66.26 356.75,66.64 357.8,67.04 358.85,67.45 359.9,67.88 360.95,68.31 362,68.77 363.05,69.23 364.1,69.71 365.15,70.20 366.2,70.71 367.25,71.23 368.3,71.77 369.35,72.32 370.4,72.89 371.45,73.47 372.5,74.07 373.55,74.68 374.6,75.31 375.65,75.96 376.7,76.63 377.75,77.31 378.8,78.01 379.85,78.73 380.9,79.47 381.95,80.22 383,81 384.05,81.80 385.1,82.62 386.15,83.46 387.2,84.32 388.25,85.21 389.3,86.12 390.35,87.05 391.4,88.01 392.45,89.00 393.5,90.02 394.55,91.06 395.6,92.13 396.65,93.24 397.7,94.38 398.75,95.55 399.8,96.76 400.85,98.01 401.9,99.29 402.95,100.62 404,102 405.05,103.42 406.1,104.90 407.15,106.43 408.2,108.03 409.25,109.69 410.3,111.42 411.35,113.23 412.4,115.13 413.45,117.12 414.5,119.23" stroke-width="3"/>
+  <circle class="dot-acc" cx="383" cy="81" r="4"/>
+  <text class="lbl lbl-acc" x="422.5" y="86" text-anchor="start">(a, b)</text>
+  <line class="acc" x1="341" y1="175.5" x2="414.5" y2="175.5"/>
+  <text class="lbl lbl-acc" x="377.75" y="193.5" text-anchor="middle">A</text>
+  <line class="acc" x1="309.5" y1="107.25" x2="309.5" y2="44.25"/>
+  <text class="lbl lbl-acc" x="301.5" y="80.75" text-anchor="end">B</text>
+  <text class="lbl lbl-acc" x="345" y="36.25" text-anchor="start">y = g(x)</text>
+  <circle class="dot" cx="425" cy="165" r="3.5"/>
+  <text class="lbl" x="433" y="185" text-anchor="start">(1, 0)</text>
+  <line class="gray dash" x1="425" y1="212.25" x2="425" y2="117.75"/>
+  <circle class="dot" cx="215" cy="165" r="3.5"/>
+  <text class="lbl" x="207" y="185" text-anchor="end">(−1, 0)</text>
+  <line class="gray dash" x1="215" y1="212.25" x2="215" y2="117.75"/>
+  <text class="cap" x="320" y="322" text-anchor="middle">f<tspan dy="4" font-size="10">y</tspan><tspan dy="-4"> </tspan> = 2y = 0 at (±1, 0):  vertical tangent, no g</text>
+</svg>

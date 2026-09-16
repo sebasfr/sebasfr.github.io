@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="230" viewBox="0 0 640 230"
+     role="img" aria-label="Composition diagram for the chain rule: f maps R^n to R^m, g maps R^m to R^p, and the Jacobian of g composed with f at a is the product of the Jacobians">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <circle cx="110" cy="150" r="26" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+  <text class="lbl" x="110" y="156" text-anchor="middle" font-size="18">ℝⁿ</text>
+  <circle cx="320" cy="150" r="26" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+  <text class="lbl" x="320" y="156" text-anchor="middle" font-size="18">ℝᵐ</text>
+  <circle cx="530" cy="150" r="26" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+  <text class="lbl" x="530" y="156" text-anchor="middle" font-size="18">ℝᵖ</text>
+  <line class="ink" x1="138" y1="150" x2="292" y2="150" marker-end="url(#ah)"/>
+  <text class="lbl" x="215" y="138" text-anchor="middle">f</text>
+  <text class="cap" x="215" y="174" text-anchor="middle">J<tspan dy="4" font-size="10">f</tspan><tspan dy="-4"> </tspan>(a) : m × n</text>
+  <line class="ink" x1="348" y1="150" x2="502" y2="150" marker-end="url(#ah)"/>
+  <text class="lbl" x="425" y="138" text-anchor="middle">g</text>
+  <text class="cap" x="425" y="174" text-anchor="middle">J<tspan dy="4" font-size="10">g</tspan><tspan dy="-4"> </tspan>(f(a)) : p × m</text>
+  <path class="acc" d="M 124 126 C 200 30, 440 30, 516 126" marker-end="url(#ah-acc)"/>
+  <text class="lbl lbl-acc" x="320" y="40" text-anchor="middle">g ∘ f</text>
+  <text class="cap" x="320" y="100" text-anchor="middle" fill="#c2410c">J<tspan dy="4" font-size="10">g∘f</tspan><tspan dy="-4"> </tspan>(a) = J<tspan dy="4" font-size="10">g</tspan><tspan dy="-4"> </tspan>(f(a)) · J<tspan dy="4" font-size="10">f</tspan><tspan dy="-4"> </tspan>(a) : p × n</text>
+  <text class="lbl" x="110" y="212" text-anchor="middle">a</text>
+  <line class="gray" x1="110" y1="180" x2="110" y2="194"/>
+  <text class="lbl" x="320" y="212" text-anchor="middle">f(a)</text>
+  <line class="gray" x1="320" y1="180" x2="320" y2="194"/>
+  <text class="lbl" x="530" y="212" text-anchor="middle">g(f(a))</text>
+  <line class="gray" x1="530" y1="180" x2="530" y2="194"/>
+</svg>

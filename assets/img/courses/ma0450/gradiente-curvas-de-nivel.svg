@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="340" viewBox="0 0 640 340"
+     role="img" aria-label="Level curves of f with, at a point x0, the gradient (normal to the level curve, pointing towards increasing f), a tangent direction where the directional derivative vanishes, and a generic direction at angle theta">
+  <style>
+    .ink { stroke: #1a1a1a; stroke-width: 1.4; fill: none; }
+    .ink-thin { stroke: #1a1a1a; stroke-width: 1; fill: none; }
+    .acc { stroke: #c2410c; stroke-width: 2.2; fill: none; }
+    .acc-thin { stroke: #c2410c; stroke-width: 1.4; fill: none; }
+    .gray { stroke: #8a8a8a; stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+           font-style: italic; fill: #1a1a1a; }
+    .lbl-acc { fill: #c2410c; }
+    .lbl-gray { fill: #8a8a8a; }
+    .cap { font-family: Georgia, "Times New Roman", serif; font-size: 13px;
+           fill: #1a1a1a; }
+    .dot { fill: #1a1a1a; }
+    .dot-acc { fill: #c2410c; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="ah-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <ellipse class="gray" cx="250" cy="175" rx="60.48" ry="37.8"/>
+  <ellipse class="gray" cx="250" cy="175" rx="95.04" ry="59.4"/>
+  <ellipse class="gray" cx="250" cy="175" rx="129.6" ry="81"/>
+  <ellipse class="gray" cx="250" cy="175" rx="164.16" ry="102.6"/>
+  <text class="lbl lbl-gray" x="250" y="297.6" text-anchor="middle">f = c₁ &lt; c₂ &lt; c₃ &lt; c₄</text>
+  <circle class="dot" cx="311.09" cy="129.50" r="3.5"/>
+  <text class="lbl" x="303.09" y="147.50" text-anchor="end">x₀</text>
+  <line class="acc" x1="311.09" y1="129.50" x2="349.55" y2="56.17" marker-end="url(#ah-acc)"/>
+  <text class="lbl lbl-acc" x="355.55" y="54.17" text-anchor="start">∇f(x₀)</text>
+  <line class="ink" x1="311.09" y1="129.50" x2="378.04" y2="164.61" marker-end="url(#ah)"/>
+  <text class="lbl" x="384.04" y="169.61" text-anchor="start">u ⊥ ∇f :  D<tspan dy="4" font-size="10">u</tspan><tspan dy="-4"> </tspan>f(x₀) = 0</text>
+  <line class="ink dash" x1="311.09" y1="129.50" x2="388.73" y2="100.74" marker-end="url(#ah)"/>
+  <text class="lbl" x="394.73" y="105.74" text-anchor="start">u :  D<tspan dy="4" font-size="10">u</tspan><tspan dy="-4"> </tspan>f(x₀) = ‖∇f(x₀)‖ cos θ</text>
+  <path class="ink-thin" d="M 344.85 116.99 A 36 36 0 0 0 327.81 97.62"/>
+  <text class="lbl" x="348.78" y="103.12" text-anchor="start">θ</text>
+</svg>
